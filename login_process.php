@@ -1,4 +1,6 @@
 <?php
+session_start();
+
 $servername = "localhost";
 $username = "root"; 
 $password = ""; 
@@ -14,21 +16,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         $sql = "SELECT * FROM account WHERE email = :email";
         $stmt = $conn->prepare($sql);
-
         $stmt->bindParam(':email', $email);
-
         $stmt->execute();
+        
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ($stmt->rowCount() > 0) {
-            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($user && password_verify($pass, $user['password'])) {
+            $_SESSION['loggedin'] = true;
+            $_SESSION['email'] = $user['email'];
+            $_SESSION['username'] = $user['username'];
 
-            if (password_verify($pass, $user['password'])) {
-                echo "Login successful! Welcome, " . htmlspecialchars($user['username']) . ".";
-            } else {
-                echo "Incorrect password. Please try again.";
-            }
+            header("location: equipment_input.php");
         } else {
-            echo "No account found with that e-mail.";
+            echo "Incorrect email or password.";
         }
     } catch(PDOException $e) {
         echo "Error: " . $e->getMessage();
