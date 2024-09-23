@@ -1,9 +1,9 @@
 <?php
-session_start();
+session_start(); // Start session
 
 $servername = "localhost";
-$username = "root"; 
-$password = ""; 
+$username = "root";
+$password = "";
 $dbname = "pms";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -18,17 +18,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt = $conn->prepare($sql);
         $stmt->bindParam(':email', $email);
         $stmt->execute();
-        
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ($user && password_verify($pass, $user['password'])) {
-            $_SESSION['loggedin'] = true;
-            $_SESSION['email'] = $user['email'];
-            $_SESSION['username'] = $user['username'];
+        if ($stmt->rowCount() > 0) {
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            header("location: dashboard.php");
+            if (password_verify($pass, $user['password'])) {
+                $_SESSION['username'] = $user['username'];
+                
+                header("Location: dashboard.php");
+                exit;
+            } else {
+                echo "Incorrect password.";
+            }
         } else {
-            echo "Incorrect email or password.";
+            echo "No account found with that e-mail.";
         }
     } catch(PDOException $e) {
         echo "Error: " . $e->getMessage();

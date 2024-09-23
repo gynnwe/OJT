@@ -29,7 +29,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         $stmt->execute();
 
-        echo "Registration successful!";
+        echo "Registration successful! <br>";
+        echo "<p>You can now login <a href='login.php'>here</a>.</p>";
+         
     } catch(PDOException $e) {
         echo "Error: " . $e->getMessage();
     }
