@@ -22,9 +22,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($stmt->rowCount() > 0) {
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            if (password_verify($pass, $user['password'])) {
-                $_SESSION['username'] = $user['username'];
-                
+            if ($user && password_verify($pass, $user['password'])) {
+                $_SESSION['loggedin'] = true;
+				$_SESSION['email'] = $user['email'];
+				$_SESSION['username'] = $user['username'];
                 header("Location: dashboard.php");
                 exit;
             } else {
