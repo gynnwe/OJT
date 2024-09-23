@@ -26,7 +26,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['email'] = $user['email'];
             $_SESSION['username'] = $user['username'];
 
-            header("location: equipment_input.php");
+            header("location: dashboard.php");
         } else {
             echo "Incorrect email or password.";
         }
