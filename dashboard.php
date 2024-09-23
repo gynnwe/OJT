@@ -17,34 +17,35 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
 
 <h1>Welcome, <?php echo ucfirst(htmlspecialchars($_SESSION['username'])); ?>!</h1>
 
+<!-- Side Bar Menu for Dashboard -->
     <div class="menu-bar">
         <div class="menu">
             <ul class="menu-links">
             
                 <li class="nav-link">
                     <a href="dashboard.php">
-                    <i class=""></i> 
+                    <i class=""></i> <!-- Add Icon Here -->
                     <span class="text nav-text">Dashboard</span>
                     </a>
                 </li>
                 
                 <li class="nav-link">
                     <a href="equipment_input.php">
-                    <i class=""></i> 
+                    <i class=""></i> <!-- Add Icon Here -->
                     <span class="text nav-text">ICT Equipment</span>
                     </a>
                 </li>
                 
                 <li class="nav-link">
                     <a href="#">
-                    <i class=''></i> 
+                    <i class=''></i> <!-- Add Icon Here -->
                     <span class="text nav-text">Facility Building</span>
                     </a>
                 </li>
                 
                 <li class="nav-link">
                     <a href="#">
-                    <i class=""></i> 
+                    <i class=""></i> <!-- Add Icon Here -->
                     <span class="text nav-text">Reports</span>
                     </a>
                 </li>
@@ -54,14 +55,14 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
                     
                     <li class="Profile-btn">
                         <a href="#">
-                            <i class=""></i> 
+                            <i class=""></i> <!-- Add Icon Here -->
                             <span class="text nav-text">Profile</span>
                         </a>
                     </li>
                     
                     <li class="logout-btn">
                         <a href="logout.php">
-                            <i class=""></i>
+                            <i class=""></i> <!-- Add Icon Here -->
                             <span class="text nav-text">Logout</span>
                         </a>
                     </li>
