@@ -11,19 +11,16 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Input Equipment</title>
+    <title>Input Office Equipment Data</title>
 </head>
 <body>
-    <h1>Input Equipment Data</h1>
-    <form action="equipment_process.php" method="POST">
+    <h1>Input Office Equipment Data</h1>
+    <form action="office_equipment_process.php" method="POST">
         <label for="location_id">Location ID:</label>
         <input type="number" name="location_id" id="location_id" required><br>
 
         <label for="equipment_type">Equipment Type:</label>
-        <select name="equipment_type" id="equipment_type" required>
-            <option value="ICT">ICT</option>
-            <option value="Office">Office</option>
-        </select><br>
+        <input type="text" name="equipment_type" id="equipment_type" value="Office" readonly><br> <!-- Locked to Office -->
 
         <label for="equipment_name">Equipment Name:</label>
         <input type="text" name="equipment_name" id="equipment_name" required><br>
