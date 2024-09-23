@@ -14,7 +14,7 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
     <title>Input Equipment</title>
 </head>
 <body>
-    <h1>Input Equipment Data</h1>
+    <h1>Add Equipment</h1>
     <form action="equipment_process.php" method="POST">
         <label for="location_id">Location ID:</label>
         <input type="number" name="location_id" id="location_id" required><br>

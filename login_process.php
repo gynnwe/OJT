@@ -1,9 +1,9 @@
 <?php
-session_start(); // Start session
+session_start();
 
 $servername = "localhost";
-$username = "root";
-$password = "";
+$username = "root"; 
+$password = ""; 
 $dbname = "pms";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -11,28 +11,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pass = $_POST['psw'];
 
     try {
+        // Create connection
         $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
+        // Prepare and execute query to get user by email
         $sql = "SELECT * FROM account WHERE email = :email";
         $stmt = $conn->prepare($sql);
         $stmt->bindParam(':email', $email);
         $stmt->execute();
+        
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ($stmt->rowCount() > 0) {
-            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        // Check if user exists and password is correct
+        if ($user && password_verify($pass, $user['password'])) {
+            // Set session variables and redirect to a protected page
+            $_SESSION['loggedin'] = true;
+            $_SESSION['username'] = $user['username'];
+            $_SESSION['email'] = $user['email'];
 
-            if ($user && password_verify($pass, $user['password'])) {
-                $_SESSION['loggedin'] = true;
-				$_SESSION['email'] = $user['email'];
-				$_SESSION['username'] = $user['username'];
-                header("Location: dashboard.php");
-                exit;
-            } else {
-                echo "Incorrect password.";
-            }
+            header("location: dashboard.php"); // Redirect to the dashboard or home page
         } else {
-            echo "No account found with that e-mail.";
+            // Invalid email or password
+            echo "Invalid email or password.";
         }
     } catch(PDOException $e) {
         echo "Error: " . $e->getMessage();
