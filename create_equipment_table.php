@@ -8,11 +8,11 @@ try {
     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    // SQL to create office equipment table
-    $sql = "CREATE TABLE IF NOT EXISTS office_equipment (
+    // SQL to create equipment table
+    $sql = "CREATE TABLE IF NOT EXISTS equipment (
         equipment_id INT(7) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
         location_id INT(7) NOT NULL,
-        equipment_type ENUM('Office') NOT NULL, -- Locked to 'Office'
+        equipment_type ENUM('ICT', 'Office') NOT NULL,
         equipment_name VARCHAR(15) NOT NULL,
         equipment_serial_num VARCHAR(30) NOT NULL,
         model_name VARCHAR(15) NOT NULL,
@@ -20,7 +20,7 @@ try {
     )";
 
     $conn->exec($sql);
-    echo "Table office_equipment created successfully.";
+    echo "Table equipment created successfully";
 } catch(PDOException $e) {
     echo "Error: " . $e->getMessage();
 }
