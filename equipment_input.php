@@ -1,23 +1,13 @@
-<?php
-session_start();
-if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
-    header("location: login.php");
-    exit;
-}
-?>
-
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Input Equipment</title>
+    <title>Add Equipment</title>
 </head>
 <body>
     <h1>Add Equipment</h1>
-    <form action="equipment_process.php" method="POST">
+    <form action="equipment_input.php" method="POST">
         <label for="location_id">Location ID:</label>
-        <input type="number" name="location_id" id="location_id" required><br>
+        <input type="text" name="location_id" id="location_id" required><br>
 
         <label for="equipment_type">Equipment Type:</label>
         <select name="equipment_type" id="equipment_type" required>
@@ -42,5 +32,124 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
 
         <button type="submit">Submit</button>
     </form>
+
+    <form action="equipment_input.php" method="GET">
+        <button type="submit" name="ict_table">ICT Equipments Table</button>
+        <button type="submit" name="office_table">Office Equipments Table</button>
+    </form>
+
+    <?php
+    // Database connection settings
+    $servername = "localhost";
+    $username = "root";
+    $password = "";
+    $dbname = "pms";
+
+    // Handle POST request to insert data into the equipment table
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        $location_id = $_POST['location_id'];
+        $equipment_type = $_POST['equipment_type'];
+        $equipment_name = $_POST['equipment_name'];
+        $equipment_serial_num = $_POST['equipment_serial_num'];
+        $model_name = $_POST['model_name'];
+        $status = $_POST['status'];
+
+        try {
+            $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+            $sql = "INSERT INTO equipment (location_id, equipment_type, equipment_name, equipment_serial_num, model_name, status)
+                    VALUES (:location_id, :equipment_type, :equipment_name, :equipment_serial_num, :model_name, :status)";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':location_id', $location_id);
+            $stmt->bindParam(':equipment_type', $equipment_type);
+            $stmt->bindParam(':equipment_name', $equipment_name);
+            $stmt->bindParam(':equipment_serial_num', $equipment_serial_num);
+            $stmt->bindParam(':model_name', $model_name);
+            $stmt->bindParam(':status', $status);
+
+            $stmt->execute();
+            echo "Equipment data inserted successfully!";
+        } catch(PDOException $e) {
+            echo "Error: " . $e->getMessage();
+        }
+
+        $conn = null;
+    }
+
+    // Handle GET request to display the ICT equipment table
+    if (isset($_GET['ict_table'])) {
+        try {
+            $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+            $sql = "SELECT * FROM equipment WHERE equipment_type = 'ICT'";
+            $stmt = $conn->prepare($sql);
+            $stmt->execute();
+            $equipments = $stmt->fetchAll();
+
+            if (count($equipments) > 0) {
+                echo "<h2>ICT Equipments Table</h2>";
+                echo "<table border='1'>";
+                echo "<tr><th>ID</th><th>Location ID</th><th>Equipment Type</th><th>Equipment Name</th><th>Serial Number</th><th>Model Name</th><th>Status</th></tr>";
+                foreach ($equipments as $equipment) {
+                    echo "<tr>";
+                    echo "<td>" . $equipment['equipment_id'] . "</td>";
+                    echo "<td>" . $equipment['location_id'] . "</td>";
+                    echo "<td>" . $equipment['equipment_type'] . "</td>";
+                    echo "<td>" . $equipment['equipment_name'] . "</td>";
+                    echo "<td>" . $equipment['equipment_serial_num'] . "</td>";
+                    echo "<td>" . $equipment['model_name'] . "</td>";
+                    echo "<td>" . $equipment['status'] . "</td>";
+                    echo "</tr>";
+                }
+                echo "</table>";
+            } else {
+                echo "No ICT equipment found.";
+            }
+        } catch(PDOException $e) {
+            echo "Error: " . $e->getMessage();
+        }
+
+        $conn = null;
+    }
+
+    // Handle GET request to display the Office equipment table
+    if (isset($_GET['office_table'])) {
+        try {
+            $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+            $sql = "SELECT * FROM equipment WHERE equipment_type = 'Office'";
+            $stmt = $conn->prepare($sql);
+            $stmt->execute();
+            $equipments = $stmt->fetchAll();
+
+            if (count($equipments) > 0) {
+                echo "<h2>Office Equipments Table</h2>";
+                echo "<table border='1'>";
+                echo "<tr><th>ID</th><th>Location ID</th><th>Equipment Type</th><th>Equipment Name</th><th>Serial Number</th><th>Model Name</th><th>Status</th></tr>";
+                foreach ($equipments as $equipment) {
+                    echo "<tr>";
+                    echo "<td>" . $equipment['equipment_id'] . "</td>";
+                    echo "<td>" . $equipment['location_id'] . "</td>";
+                    echo "<td>" . $equipment['equipment_type'] . "</td>";
+                    echo "<td>" . $equipment['equipment_name'] . "</td>";
+                    echo "<td>" . $equipment['equipment_serial_num'] . "</td>";
+                    echo "<td>" . $equipment['model_name'] . "</td>";
+                    echo "<td>" . $equipment['status'] . "</td>";
+                    echo "</tr>";
+                }
+                echo "</table>";
+            } else {
+                echo "No Office equipment found.";
+            }
+        } catch(PDOException $e) {
+            echo "Error: " . $e->getMessage();
+        }
+
+        $conn = null;
+    }
+    ?>
 </body>
 </html>
