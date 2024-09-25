@@ -5,6 +5,14 @@
 </head>
 <body>
     <h1>Add Equipment</h1>
+
+    <?php
+    // To show any error messages
+    if (isset($_GET['error'])) {
+        echo "<p style='color:red;'>" . $_GET['error'] . "</p>";
+    }
+    ?>
+
     <form action="equipment_input.php" method="POST">
         <label for="location_id">Location ID:</label>
         <input type="text" name="location_id" id="location_id" required><br>
@@ -58,6 +66,19 @@
             $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
             $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
+            // Check if the serial number already exists
+            $sql = "SELECT * FROM equipment WHERE equipment_serial_num = :equipment_serial_num";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':equipment_serial_num', $equipment_serial_num);
+            $stmt->execute();
+
+            if ($stmt->rowCount() > 0) {
+                // Redirect to the form with an error message if the serial number exists
+                header("Location: equipment_input.php?error=Equipment+already+exists");
+                exit();
+            }
+
+            // If serial number is unique, insert the new data
             $sql = "INSERT INTO equipment (location_id, equipment_type, equipment_name, equipment_serial_num, model_name, status)
                     VALUES (:location_id, :equipment_type, :equipment_name, :equipment_serial_num, :model_name, :status)";
             $stmt = $conn->prepare($sql);
