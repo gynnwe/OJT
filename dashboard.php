@@ -18,7 +18,7 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
 <h1>Welcome, <?php echo ucfirst(htmlspecialchars($_SESSION['username'])); ?>!</h1>
 
 <!-- Side Bar Menu for Dashboard -->
-    <div class="menu-bar">
+    <div class="menu-bar" style="position:fixed; height: 100%; width: 250px; left:0; background-color: lightgrey;">	<!-- inline css for area checking-->
         <div class="menu">
             <ul class="menu-links">
             
@@ -30,14 +30,14 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
                 </li>
                 
                 <li class="nav-link">
-                    <a href="equipment_input.php">
+                    <a href="equipment_input_ict.php">
                     <i class=""></i> <!-- Add Icon Here -->
                     <span class="text nav-text">ICT Equipment</span>
                     </a>
                 </li>
                 
                 <li class="nav-link">
-                <a href="equipment_input.php">
+                <a href="equipment_input_office.php">
                     <i class=''></i> <!-- Add Icon Here -->
                     <span class="text nav-text">Facility Building</span>
                     </a>
@@ -70,5 +70,12 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
             </ul>
         </div>
     </div>
+	
+	<!-- Right side content part of dashboard-->
+	
+	<main class="" style=" position: absolute;top: 0; left: 250px; height: 100vh; width: calc(100% - 250px); background-color: grey;"> <!-- inline css for area checking-->
+	
+	
+	</main>
 </body>
 </html>

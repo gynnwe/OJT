@@ -1,10 +1,18 @@
+<?php
+session_start();
+if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
+    header("location: login.php");
+    exit;
+}
+?>
+
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Add Equipment</title>
+    <title>ICT Equipment</title>
 </head>
 <body>
-    <h1>Add Equipment</h1>
+    <h1>Add ICT Equipment</h1>
 
     <?php
     // To show any error messages
@@ -13,15 +21,13 @@
     }
     ?>
 
-    <form action="equipment_input.php" method="POST">
+    <form action="equipment_input_ict.php" method="POST">
         <label for="location_id">Location ID:</label>
         <input type="text" name="location_id" id="location_id" required><br>
 
         <label for="equipment_type">Equipment Type:</label>
-        <select name="equipment_type" id="equipment_type" required>
-            <option value="ICT">ICT</option>
-            <option value="Office">Office</option>
-        </select><br>
+        <input type="hidden" name="equipment_type" value="ICT"> 
+		<span>ICT</span><br>
 
         <label for="equipment_name">Equipment Name:</label>
         <input type="text" name="equipment_name" id="equipment_name" required><br>
@@ -39,11 +45,6 @@
         </select><br>
 
         <button type="submit">Submit</button>
-    </form>
-
-    <form action="equipment_input.php" method="GET">
-        <button type="submit" name="ict_table">ICT Equipments Table</button>
-        <button type="submit" name="office_table">Office Equipments Table</button>
     </form>
 
     <?php
@@ -74,7 +75,7 @@
 
             if ($stmt->rowCount() > 0) {
                 // Redirect to the form with an error message if the serial number exists
-                header("Location: equipment_input.php?error=Equipment+already+exists");
+                header("Location: equipment_input_ict.php?error=Equipment+already+exists");
                 exit();
             }
 
@@ -91,16 +92,15 @@
 
             $stmt->execute();
             echo "Equipment data inserted successfully!";
+			header("location: equipment_input_ict.php");
         } catch(PDOException $e) {
             echo "Error: " . $e->getMessage();
         }
 
         $conn = null;
     }
-
-    // Handle GET request to display the ICT equipment table
-    if (isset($_GET['ict_table'])) {
-        try {
+	
+	//Show ICT Table Details when database table has been populated
             $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
             $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
@@ -125,52 +125,7 @@
                     echo "</tr>";
                 }
                 echo "</table>";
-            } else {
-                echo "No ICT equipment found.";
             }
-        } catch(PDOException $e) {
-            echo "Error: " . $e->getMessage();
-        }
-
-        $conn = null;
-    }
-
-    // Handle GET request to display the Office equipment table
-    if (isset($_GET['office_table'])) {
-        try {
-            $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
-            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-            $sql = "SELECT * FROM equipment WHERE equipment_type = 'Office'";
-            $stmt = $conn->prepare($sql);
-            $stmt->execute();
-            $equipments = $stmt->fetchAll();
-
-            if (count($equipments) > 0) {
-                echo "<h2>Office Equipments Table</h2>";
-                echo "<table border='1'>";
-                echo "<tr><th>ID</th><th>Location ID</th><th>Equipment Type</th><th>Equipment Name</th><th>Serial Number</th><th>Model Name</th><th>Status</th></tr>";
-                foreach ($equipments as $equipment) {
-                    echo "<tr>";
-                    echo "<td>" . $equipment['equipment_id'] . "</td>";
-                    echo "<td>" . $equipment['location_id'] . "</td>";
-                    echo "<td>" . $equipment['equipment_type'] . "</td>";
-                    echo "<td>" . $equipment['equipment_name'] . "</td>";
-                    echo "<td>" . $equipment['equipment_serial_num'] . "</td>";
-                    echo "<td>" . $equipment['model_name'] . "</td>";
-                    echo "<td>" . $equipment['status'] . "</td>";
-                    echo "</tr>";
-                }
-                echo "</table>";
-            } else {
-                echo "No Office equipment found.";
-            }
-        } catch(PDOException $e) {
-            echo "Error: " . $e->getMessage();
-        }
-
-        $conn = null;
-    }
     ?>
 </body>
 </html>
