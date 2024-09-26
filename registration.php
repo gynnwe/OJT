@@ -15,7 +15,13 @@
 
             <label for="email"><b>E-mail:</b></label>
             <input type="email" placeholder="Enter e-mail" name="email" id="email" required>
-
+			
+			<label for="firstname"><b>First Name:</b></label>
+            <input type="text" placeholder="Enter your first name" name="firstname" id="firstname" required>
+			
+			<label for="lastname"><b>Last Name:</b></label>
+            <input type="text" placeholder="Enter your last name" name="lastname" id="lastname" required>
+			
             <label for="username"><b>Username:</b></label>
             <input type="text" placeholder="Enter username" name="username" id="username" required>
 

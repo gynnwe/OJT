@@ -32,8 +32,8 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
         <label for="equipment_name">Equipment Name:</label>
         <input type="text" name="equipment_name" id="equipment_name" required><br>
 
-        <label for="equipment_serial_num">Equipment Serial Number:</label>
-        <input type="text" name="equipment_serial_num" id="equipment_serial_num" required><br>
+        <label for="serial_num">Equipment Serial Number:</label>
+        <input type="text" name="serial_num" id="serial_num" required><br>
 
         <label for="model_name">Model Name:</label>
         <input type="text" name="model_name" id="model_name" required><br>
@@ -52,14 +52,14 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
     $servername = "localhost";
     $username = "root";
     $password = "";
-    $dbname = "pms";
+    $dbname = "ictmms";
 
     // Handle POST request to insert data into the equipment table
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $location_id = $_POST['location_id'];
         $equipment_type = $_POST['equipment_type'];
         $equipment_name = $_POST['equipment_name'];
-        $equipment_serial_num = $_POST['equipment_serial_num'];
+        $equipment_serial_num = $_POST['serial_num'];
         $model_name = $_POST['model_name'];
         $status = $_POST['status'];
 
@@ -68,9 +68,9 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
             $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
             // Check if the serial number already exists
-            $sql = "SELECT * FROM equipment WHERE equipment_serial_num = :equipment_serial_num";
+            $sql = "SELECT * FROM equipment WHERE serial_num = :serial_num";
             $stmt = $conn->prepare($sql);
-            $stmt->bindParam(':equipment_serial_num', $equipment_serial_num);
+            $stmt->bindParam(':serial_num', $serial_num);
             $stmt->execute();
 
             if ($stmt->rowCount() > 0) {
@@ -80,8 +80,8 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
             }
 
             // If serial number is unique, insert the new data
-            $sql = "INSERT INTO equipment (location_id, equipment_type, equipment_name, equipment_serial_num, model_name, status)
-                    VALUES (:location_id, :equipment_type, :equipment_name, :equipment_serial_num, :model_name, :status)";
+            $sql = "INSERT INTO equipment (location_id, equipment_type, equipment_name, serial_num, model_name, status)
+                    VALUES (:location_id, :equipment_type, :equipment_name, :serial_num, :model_name, :status)";
             $stmt = $conn->prepare($sql);
             $stmt->bindParam(':location_id', $location_id);
             $stmt->bindParam(':equipment_type', $equipment_type);

@@ -4,7 +4,7 @@ session_start();
 $servername = "localhost";
 $username = "root"; 
 $password = ""; 
-$dbname = "pms";
+$dbname = "ictmms";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST['email'];
@@ -16,7 +16,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         // Prepare and execute query to get user by email
-        $sql = "SELECT * FROM account WHERE email = :email";
+        $sql = "SELECT * FROM user WHERE email = :email";
         $stmt = $conn->prepare($sql);
         $stmt->bindParam(':email', $email);
         $stmt->execute();
@@ -28,6 +28,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Set session variables and redirect to a protected page
             $_SESSION['loggedin'] = true;
             $_SESSION['username'] = $user['username'];
+            $_SESSION['firstname'] = $user['firstname'];
+            $_SESSION['lastname'] = $user['lastname'];
             $_SESSION['email'] = $user['email'];
 
             header("location: dashboard.php"); // Redirect to the dashboard or home page
