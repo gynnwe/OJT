@@ -46,8 +46,8 @@ try {
         location_id INT(7) UNSIGNED NOT NULL,
         equipment_type ENUM('Computer', 'Laptop', 'Printer', 'Projector') NOT NULL,
         equipment_name VARCHAR(15) NOT NULL,
-        serial_num VARCHAR(30) NOT NULL,
-        model_name VARCHAR(50) NOT NULL,
+        serial_num VARCHAR(30) NOT NULL UNIQUE,
+        model_name VARCHAR(15) NOT NULL,
 		status ENUM('Serviceable', 'Non-serviceable') NOT NULL,
 		date_purchased DATE NOT NULL,
 		FOREIGN KEY (location_id) REFERENCES location(location_id)

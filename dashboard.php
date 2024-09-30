@@ -30,7 +30,7 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
                 </li>
                 
                 <li class="nav-link">
-                    <a href="equipment_input_ict.php">
+                    <a href="threebuttons.php">
                     <i class=""></i> <!-- Add Icon Here -->
                     <span class="text nav-text">ICT Equipment</span>
                     </a>
