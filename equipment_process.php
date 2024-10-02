@@ -25,7 +25,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         if ($location_stmt->rowCount() === 0) {
             // Location ID doesn't exist
-            echo "This location doesn't exist. Please enter a valid location ID.";
+            echo "<script>alert('This location doesn\'t exist. Please enter a valid location ID.'); window.location.href='equipment_input_ict.php';</script>";
         } else {
             // Check if serial_num already exists
             $serial_check_sql = "SELECT serial_num FROM equipment WHERE serial_num = :serial_num";
@@ -35,7 +35,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             if ($serial_stmt->rowCount() > 0) {
                 // Serial number already exists
-                echo "Equipment with this serial number already exists.";
+                echo "<script>alert('Equipment with this serial number already exists.'); window.location.href='equipment_input_ict.php';</script>";
             } else {
                 // Insert into equipment if location and serial are valid
                 $sql = "INSERT INTO equipment (location_id, equipment_type, equipment_name, serial_num, model_name, status, date_purchased) 
@@ -51,7 +51,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $stmt->bindParam(':date_purchased', $date_purchased);
         
                 $stmt->execute();
-                echo "Equipment data inserted successfully!";
+                echo "<script>alert('Equipment data inserted successfully!'); window.location.href='equipment_page.php';</script>";
             }
         }
 
