@@ -83,7 +83,7 @@ try {
     // --- ICT Maintenance Logs Table ---
     $sql = "CREATE TABLE IF NOT EXISTS ict_maintenance_logs (
         jo_number VARCHAR(100) PRIMARY KEY,
-		personnel_id INT(7) UNSIGNED NOT NULL,
+		personnel_id INT(7) UNSIGNED NULL,
 		equipment_id INT(7) UNSIGNED NOT NULL,
 		maintenance_date DATE NOT NULL,
 		actions_taken VARCHAR(100) NOT NULL,
