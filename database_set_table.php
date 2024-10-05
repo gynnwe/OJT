@@ -29,6 +29,39 @@ try {
     $conn->exec($sql);
     echo "User Table created successfully<br>";
 
+    // --- Create the Admin Table ---
+    $sql = "CREATE TABLE IF NOT EXISTS admin (
+        admin_id INT(7) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        email VARCHAR(50) NOT NULL,
+        firstname VARCHAR(35) NOT NULL,
+        lastname VARCHAR(35) NOT NULL,
+        username VARCHAR(10) NOT NULL,
+        password VARCHAR(60) NOT NULL
+    )";
+
+    $conn->exec($sql);
+    echo "Admin Table created successfully<br>";
+
+    // Insert default admin values
+    $defaultEmail = 'superadmin@example.com';
+    $defaultFirstname = 'Super';
+    $defaultLastname = 'Admin';
+    $defaultUsername = 'superadmin';
+    $defaultPassword = password_hash('yourdefaultpassword', PASSWORD_DEFAULT); // Change 'yourdefaultpassword' as needed
+
+    $sql = "INSERT INTO admin (email, firstname, lastname, username, password) 
+        VALUES (:email, :firstname, :lastname, :username, :password)";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bindParam(':email', $defaultEmail);
+    $stmt->bindParam(':firstname', $defaultFirstname);
+    $stmt->bindParam(':lastname', $defaultLastname);
+    $stmt->bindParam(':username', $defaultUsername);
+    $stmt->bindParam(':password', $defaultPassword);
+    $stmt->execute();
+
+    echo "Default admin created successfully<br>";
+
 	// --- Create Location Table ---
 		$sql = "CREATE TABLE IF NOT EXISTS location(
 			location_id INT(7) UNSIGNED AUTO_INCREMENT PRIMARY KEY,

@@ -5,8 +5,8 @@ $password = "";
 $dbname = "ictmms";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-	$email = $_POST['email'];
-	$firstname = $_POST['firstname'];
+    $email = $_POST['email'];
+    $firstname = $_POST['firstname'];
     $lastname = $_POST['lastname'];
     $user = $_POST['username'];
     $pass = $_POST['psw'];
@@ -16,7 +16,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         die("Passwords do not match.");
     }
     $hashed_password = password_hash($pass, PASSWORD_DEFAULT);
-
 
     try {
         $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
@@ -34,7 +33,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->execute();
 
         echo "Registration successful! <br>";
-        echo "<p>You can now login <a href='login.php'>here</a>.</p>";
+        echo "<p>You can go back to the <a href='dashboard.php'>dashboard</a>.</p>";
          
     } catch(PDOException $e) {
         echo "Error: " . $e->getMessage();
