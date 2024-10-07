@@ -16,12 +16,12 @@ try {
     // Use the created database
     $conn->exec("USE ictmms");
 
-    // --- Create the Account Table ---
+    // --- Create the User Account Table ---
     $sql = "CREATE TABLE IF NOT EXISTS user (
         admin_id INT(7) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
         email VARCHAR(50) NOT NULL,
-		firstname VARCHAR(35) NOT NULL,
-		lastname VARCHAR(35) NOT NULL,
+		firstname VARCHAR(25) NOT NULL,
+		lastname VARCHAR(25) NOT NULL,
         username VARCHAR(10) NOT NULL,
         password VARCHAR(60) NOT NULL
     )";
@@ -29,12 +29,12 @@ try {
     $conn->exec($sql);
     echo "User Table created successfully<br>";
 
-    // --- Create the Admin Table ---
+    // --- Create the Admin Account Table ---
     $sql = "CREATE TABLE IF NOT EXISTS admin (
         admin_id INT(7) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
         email VARCHAR(50) NOT NULL,
-        firstname VARCHAR(35) NOT NULL,
-        lastname VARCHAR(35) NOT NULL,
+        firstname VARCHAR(25) NOT NULL,
+        lastname VARCHAR(25) NOT NULL,
         username VARCHAR(10) NOT NULL,
         password VARCHAR(60) NOT NULL
     )";
@@ -73,17 +73,36 @@ try {
 		$conn->exec($sql);
 		echo "Table Location created successfully<br>";
 	
+	// --- Create Equipment Type Table ---
+    $sql = "CREATE TABLE IF NOT EXISTS equipment_type (
+        equip_type_id INT(7) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+		equip_type_name VARCHAR(15) NOT NULL
+    )";	
+	
+    $conn->exec($sql);
+    echo "Equipment Type Table created successfully<br>";
+	
+	// --- Create Model Table ---
+    $sql = "CREATE TABLE IF NOT EXISTS model (
+        model_id INT(7) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+		model_name VARCHAR(20) NOT NULL
+    )";	
+	
+    $conn->exec($sql);
+    echo "Model Table created successfully<br>";
+	
     // --- Create Equipment Table ---
     $sql = "CREATE TABLE IF NOT EXISTS equipment (
         equipment_id INT(7) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
         location_id INT(7) UNSIGNED NOT NULL,
-        equipment_type ENUM('Computer', 'Laptop', 'Printer', 'Projector') NOT NULL,
-        equipment_name VARCHAR(15) NOT NULL,
-        serial_num VARCHAR(30) NOT NULL UNIQUE,
-        model_name VARCHAR(15) NOT NULL,
+		equip_type_id INT(7) UNSIGNED NOT NULL,
+		model_id INT(7) UNSIGNED NOT NULL,
+        property_num VARCHAR(30) NOT NULL UNIQUE,
 		status ENUM('Serviceable', 'Non-serviceable') NOT NULL,
 		date_purchased DATE NOT NULL,
-		FOREIGN KEY (location_id) REFERENCES location(location_id)
+		FOREIGN KEY (location_id) REFERENCES location(location_id),
+		FOREIGN KEY (equip_type_id) REFERENCES equipment_type(equip_type_id),
+		FOREIGN KEY (model_id) REFERENCES model(model_id)
 	)";	
 	
     $conn->exec($sql);
@@ -105,14 +124,23 @@ try {
 	// --- Create Personnel Table ---
 	$sql = "CREATE TABLE IF NOT EXISTS personnel (
         personnel_id INT(7) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-        firstname VARCHAR(35) NOT NULL,
-		lastname VARCHAR(35) NOT NULL,
+        firstname VARCHAR(25) NOT NULL,
+		lastname VARCHAR(25) NOT NULL,
 		department VARCHAR(50) NOT NULL
     )";
 	
 	$conn->exec($sql);
     echo "Personnel Table created successfully<br>";
-
+	
+	// --- Create Remarks Table ---
+    $sql = "CREATE TABLE IF NOT EXISTS remarks (
+        remarks_id INT(7) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+		remarks_name VARCHAR(20) NOT NULL
+    )";	
+	
+    $conn->exec($sql);
+    echo "Remarks Table created successfully<br>";
+	
     // --- ICT Maintenance Logs Table ---
     $sql = "CREATE TABLE IF NOT EXISTS ict_maintenance_logs (
         jo_number VARCHAR(100) PRIMARY KEY,
@@ -120,9 +148,10 @@ try {
 		equipment_id INT(7) UNSIGNED NOT NULL,
 		maintenance_date DATE NOT NULL,
 		actions_taken VARCHAR(100) NOT NULL,
-		remarks ENUM('Pending', 'For Transfer', 'Resolved') NOT NULL,
+		remarks_id INT(7) UNSIGNED NOT NULL,
 		FOREIGN KEY (personnel_id) REFERENCES personnel(personnel_id),
-		FOREIGN KEY (equipment_id) REFERENCES equipment(equipment_id)		
+		FOREIGN KEY (equipment_id) REFERENCES equipment(equipment_id),		
+		FOREIGN KEY (remarks_id) REFERENCES remarks(remarks_id)		
     )";
 	
     $conn->exec($sql);

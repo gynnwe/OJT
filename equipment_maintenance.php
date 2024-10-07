@@ -97,17 +97,6 @@ $maintenanceLogs = $stmtLogs->fetchAll(PDO::FETCH_ASSOC);
             selectedEquipmentDiv.appendChild(hiddenInput);
         }
 
-        function addPersonnel() {
-            const personnelContainer = document.getElementById('personnel_container');
-            const newPersonnelDiv = document.createElement('div');
-            newPersonnelDiv.innerHTML = `
-                <input type="text" name="responsible_firstname[]" placeholder="First Name" required>
-                <input type="text" name="responsible_lastname[]" placeholder="Last Name" required>
-                <input type="text" name="responsible_department[]" placeholder="Department" required>
-            `;
-            personnelContainer.appendChild(newPersonnelDiv);
-        }
-
         function filterEquipment() {
             const filterValue = document.getElementById('equipment_type_filter').value;
             const equipmentItems = document.querySelectorAll('.equipment-item'); // Assuming each equipment item has this class
@@ -167,8 +156,6 @@ $maintenanceLogs = $stmtLogs->fetchAll(PDO::FETCH_ASSOC);
             <input type="text" name="responsible_lastname[]" placeholder="Last Name"><br>
             <input type="text" name="responsible_department[]" placeholder="Department"><br>
         </div>
-
-        <button type="button" onclick="addPersonnel()">Add Personnel</button><br>
 
         <label for="maintaindate">Date:</label>
         <input type="date" name="maintaindate" id="maintaindate" required><br>
