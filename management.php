@@ -77,6 +77,21 @@ $conn = null;
                 </tbody>
             </table>
         </div>
+
+        <hr>
+
+        <!-- New buttons added -->
+        <div class="row mt-4">
+            <div class="col-md-4">
+                <button class="btn btn-primary btn-block" onclick="window.location.href='add_equipment_type.php'">Add Equipment Type</button>
+            </div>
+            <div class="col-md-4">
+                <button class="btn btn-primary btn-block" onclick="window.location.href='add_model.php'">Add Model</button>
+            </div>
+            <div class="col-md-4">
+                <button class="btn btn-primary btn-block" onclick="window.location.href='add_location.php'">Add Location</button>
+            </div>
+        </div>
     </div>
 </body>
 </html>

@@ -15,7 +15,13 @@ try {
     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    // Fetch all locations from the database
+    // Fetch all non-deleted equipment types for the dropdown
+    $sql = "SELECT equip_type_id, equip_type_name FROM equip_type WHERE deleted = 0";
+    $stmt = $conn->prepare($sql);
+    $stmt->execute();
+    $equipment_types = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Fetch all locations from the database (if needed)
     $sql = "SELECT location_id, college, office, unit FROM location";
     $stmt = $conn->prepare($sql);
     $stmt->execute();
@@ -74,10 +80,15 @@ try {
 
             <label for="equipment_type">Equipment Type:</label>
             <select name="equipment_type" id="equipment_type" required>
-                <option value="Computer">Computer</option>
-                <option value="Laptop">Laptop</option>
-                <option value="Printer">Printer</option>
-                <option value="Projector">Projector</option>
+                <?php if (!empty($equipment_types)): ?>
+                    <?php foreach ($equipment_types as $type): ?>
+                        <option value="<?php echo htmlspecialchars($type['equip_type_id']); ?>">
+                            <?php echo htmlspecialchars($type['equip_type_name']); ?>
+                        </option>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <option value="">No equipment types available</option>
+                <?php endif; ?>
             </select><br>
 
             <label for="equipment_name">Equipment Name:</label>

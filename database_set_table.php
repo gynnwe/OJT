@@ -81,6 +81,15 @@ try {
 	
     $conn->exec($sql);
     echo "Equipment Type Table created successfully<br>";
+
+        // Create the equip_type table if it doesn't exist
+        $createTableSQL = "
+        CREATE TABLE IF NOT EXISTS equip_type (
+            equip_type_id INT(7) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+            equip_type_name VARCHAR(15) NOT NULL,
+            deleted TINYINT(1) NOT NULL DEFAULT 0
+        )";
+        $conn->exec($createTableSQL);
 	
 	// --- Create Model Table ---
     $sql = "CREATE TABLE IF NOT EXISTS model (
