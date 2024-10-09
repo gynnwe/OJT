@@ -1,0 +1,117 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f3f3f3;
+}
+
+.container {
+    background-color: #fff;
+    border-radius: 32px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 30px 20px;
+    width: 360px;
+    text-align: center;
+}
+
+h1 {
+    font-size: 24px;
+    font-weight: bolder;
+    margin-bottom: 20px;
+    color: #090E1D;
+    text-align: left;
+}
+
+p {
+    font-size: 14px;
+    margin-bottom: 20px;
+    color: #555;
+}
+
+label {
+    display: block;
+    text-align: left;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #090E1D;
+}
+
+input[type="email"],
+input[type="password"] {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+}
+
+button.loginbtn {
+	margin: 10px 0;
+    width: 100%;
+    padding: 12px;
+    background-color: #a50000;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+button.loginbtn:hover {
+    background-color: #8b0000;
+}
+
+a {
+    font-weight: bold;
+    color: #090E1D;
+    text-decoration: underline;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+hr {
+    border: 1px solid #ddd;
+    margin-bottom: 20px;
+}
+
+.signin-image {
+    width: 152px;
+    margin-bottom: 20px;
+}
+
+.forgot-password {
+    margin-top: 10px;
+	text-align: left;
+}
+
+.hr-text {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.hr-text hr {
+    flex: 1;
+    border: none;
+    border-top: 1px solid #ccc;
+    margin: 0 10px;
+}
+
+.hr-text span {
+    font-size: 15px;
+    white-space: nowrap; /* Prevents wrapping of the text */
+}
