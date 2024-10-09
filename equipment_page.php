@@ -40,9 +40,8 @@
                     <th>Equipment ID</th>
                     <th>Location ID</th>
                     <th>Equipment Type</th>
-                    <th>Equipment Name</th>
-                    <th>Serial Number</th>
                     <th>Model Name</th>
+                    <th>Property Number</th>
                     <th>Status</th>
                     <th>Date Purchased</th>
                 </tr>
@@ -59,8 +58,20 @@
                     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
                     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-                    // Fetch all equipment from the database
-                    $sql = "SELECT * FROM equipment";
+                    // Fetch all equipment from the database with joined tables for names
+					$sql = "
+						SELECT 
+							equipment.equipment_id, 
+							equipment.location_id, 
+							equipment_type.equip_type_name AS equipment_type_name, 
+							model.model_name AS model_name, 
+							equipment.property_num, 
+							equipment.status, 
+							equipment.date_purchased 
+						FROM equipment
+						JOIN equipment_type ON equipment.equip_type_id = equipment_type.equip_type_id  
+						JOIN model ON equipment.model_id = model.model_id";
+                    
                     $stmt = $conn->prepare($sql);
                     $stmt->execute();
                     $equipments = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -70,10 +81,9 @@
                         echo "<tr>
                                 <td>{$equipment['equipment_id']}</td>
                                 <td>{$equipment['location_id']}</td>
-                                <td>{$equipment['equipment_type']}</td>
-                                <td>{$equipment['equipment_name']}</td>
-                                <td>{$equipment['serial_num']}</td>
-                                <td>{$equipment['model_name']}</td>
+                                <td>{$equipment['equipment_type_name']}</td>
+                                <td>{$equipment['model_name']}
+                                <td>{$equipment['property_num']}</td>
                                 <td>{$equipment['status']}</td>
                                 <td>{$equipment['date_purchased']}</td>
                               </tr>";

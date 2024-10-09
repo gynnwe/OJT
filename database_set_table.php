@@ -76,25 +76,20 @@ try {
 	// --- Create Equipment Type Table ---
     $sql = "CREATE TABLE IF NOT EXISTS equipment_type (
         equip_type_id INT(7) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-		equip_type_name VARCHAR(15) NOT NULL
+		equip_type_name VARCHAR(15) NOT NULL,
+		deleted_id TINYINT(1) NOT NULL DEFAULT 0
     )";	
 	
     $conn->exec($sql);
     echo "Equipment Type Table created successfully<br>";
-
-        // Create the equip_type table if it doesn't exist
-        $createTableSQL = "
-        CREATE TABLE IF NOT EXISTS equip_type (
-            equip_type_id INT(7) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-            equip_type_name VARCHAR(15) NOT NULL,
-            deleted TINYINT(1) NOT NULL DEFAULT 0
-        )";
-        $conn->exec($createTableSQL);
 	
 	// --- Create Model Table ---
     $sql = "CREATE TABLE IF NOT EXISTS model (
         model_id INT(7) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-		model_name VARCHAR(20) NOT NULL
+		equip_type_id INT(7) UNSIGNED NOT NULL,
+		model_name VARCHAR(20) NOT NULL,
+		deleted_id TINYINT(1) NOT NULL DEFAULT 0,
+		FOREIGN KEY (equip_type_id) REFERENCES equipment_type(equip_type_id)
     )";	
 	
     $conn->exec($sql);

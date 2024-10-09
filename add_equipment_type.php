@@ -21,7 +21,7 @@ try {
 
         if (!empty($equip_type_name)) {
             // Check if the equipment type already exists
-            $checkSQL = "SELECT COUNT(*) FROM equip_type WHERE equip_type_name = :equip_type_name AND deleted = 0";
+            $checkSQL = "SELECT COUNT(*) FROM equipment_type WHERE equip_type_name = :equip_type_name AND deleted_id = 0";
             $stmt = $conn->prepare($checkSQL);
             $stmt->bindParam(':equip_type_name', $equip_type_name);
             $stmt->execute();
@@ -29,7 +29,7 @@ try {
 
             if ($count == 0) {
                 // Insert the new equipment type into the database
-                $insertSQL = "INSERT INTO equip_type (equip_type_name) VALUES (:equip_type_name)";
+                $insertSQL = "INSERT INTO equipment_type (equip_type_name) VALUES (:equip_type_name)";
                 $stmt = $conn->prepare($insertSQL);
                 $stmt->bindParam(':equip_type_name', $equip_type_name);
 
@@ -50,18 +50,18 @@ try {
     }
 
     // Handle soft delete via AJAX
-    if (isset($_POST['delete_id'])) {
-        $delete_id = $_POST['delete_id'];
-        $softDeleteSQL = "UPDATE equip_type SET deleted = 1 WHERE equip_type_id = :delete_id";
+    if (isset($_POST['deleted_id'])) {
+        $delete_id = $_POST['deleted_id'];
+		$softDeleteSQL = "UPDATE equipment_type SET deleted_id = 1 WHERE equip_type_id = :deleted_id";
         $stmt = $conn->prepare($softDeleteSQL);
-        $stmt->bindParam(':delete_id', $delete_id);
+        $stmt->bindParam(':deleted_id', $delete_id);
         $stmt->execute();
         echo "Success";
         exit;
     }
 
     // Fetch all non-deleted equipment types for display purposes
-    $sql = "SELECT equip_type_id, equip_type_name FROM equip_type WHERE deleted = 0";
+    $sql = "SELECT equip_type_id, equip_type_name FROM equipment_type WHERE deleted_id = 0";
     $stmt = $conn->prepare($sql);
     $stmt->execute();
     $equipment_types = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -97,7 +97,7 @@ if (isset($_SESSION['message'])) {
             echo "<div class='alert alert-danger'>$error</div>";
         }
         ?>
-        <form action="add_equipment_type.php" method="post">
+        <form action="add_equipment_type.php" method="POST">
             <div class="form-group">
                 <label for="equip_type_name">New Equipment Type:</label>
                 <input type="text" name="equip_type_name" id="equip_type_name" class="form-control" required>
@@ -140,7 +140,7 @@ if (isset($_SESSION['message'])) {
                 $.ajax({
                     url: 'add_equipment_type.php',
                     type: 'POST',
-                    data: { delete_id: id },
+                    data: { deleted_id: id },
                     success: function(response) {
                         if (response.trim() === "Success") {
                             document.getElementById('row-' + id).style.display = 'none';
