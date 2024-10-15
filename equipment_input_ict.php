@@ -21,20 +21,20 @@ try {
     $stmt->execute();
     $equipment_types = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Fetch all locations from the database (if needed)
-    $sql = "SELECT location_id, college, office, unit FROM location";
+    // Fetch all non-deleted locations for the dropdown
+    $sql = "SELECT location_id, college, office, unit FROM location WHERE deleted = 0";  // Updated query
     $stmt = $conn->prepare($sql);
     $stmt->execute();
     $locations = $stmt->fetchAll(PDO::FETCH_ASSOC);
-	
-	// Handle AJAX request for fetching models based on equipment type
-	if (isset($_GET['equip_type_id'])) {
-		$equip_type_id = $_GET['equip_type_id'];
-		$sqlModels = "SELECT model_id, model_name FROM model WHERE equip_type_id = :equip_type_id AND (deleted_id IS NULL OR deleted_id = 0)";
-		$stmt = $conn->prepare($sqlModels);
-		$stmt->bindParam(':equip_type_id', $equip_type_id);
-		$stmt->execute();
-		$models = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Handle AJAX request for fetching models based on equipment type
+    if (isset($_GET['equip_type_id'])) {
+        $equip_type_id = $_GET['equip_type_id'];
+        $sqlModels = "SELECT model_id, model_name FROM model WHERE equip_type_id = :equip_type_id AND (deleted_id IS NULL OR deleted_id = 0)";
+        $stmt = $conn->prepare($sqlModels);
+        $stmt->bindParam(':equip_type_id', $equip_type_id);
+        $stmt->execute();
+        $models = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
         echo json_encode($models);
         exit;
@@ -88,12 +88,23 @@ try {
         }
         ?>
         <form action="equipment_process.php" method="POST">
-            <label for="location_id">Location ID:</label>
-            <input type="text" name="location_id" id="location_id" required><br>
+            <label for="location_id">Location:</label>
+            <select name="location_id" id="location_id" required>
+                <option value="">Select a location</option>
+                <?php if (!empty($locations)): ?>
+                    <?php foreach ($locations as $location): ?>
+                        <option value="<?php echo htmlspecialchars($location['location_id']); ?>">
+                            <?php echo htmlspecialchars($location['college'] . " - " . $location['office'] . " - " . $location['unit']); ?>
+                        </option>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <option value="">No locations available</option>
+                <?php endif; ?>
+            </select><br>
 
             <label for="equipment_type">Equipment Type:</label>
             <select name="equipment_type" id="equipment_type" required>
-			<option value="">Select an equipment type</option>
+                <option value="">Select an equipment type</option>
                 <?php if (!empty($equipment_types)): ?>
                     <?php foreach ($equipment_types as $type): ?>
                         <option value="<?php echo htmlspecialchars($type['equip_type_id']); ?>">
@@ -108,10 +119,10 @@ try {
             <label for="property_num">Property Number:</label>
             <input type="text" name="property_num" id="property_num" required><br>
 
-			<label for="model_name">Model Name:</label>
-			<select name="model_id" id="model_name" required>
-				<!-- Options will be populated dynamically based on selected equipment type -->
-			</select><br>
+            <label for="model_name">Model Name:</label>
+            <select name="model_id" id="model_name" required>
+                <!-- Options will be populated dynamically based on selected equipment type -->
+            </select><br>
 
             <label for="status">Status:</label>
             <select name="status" id="status" required>
@@ -126,41 +137,42 @@ try {
         </form>
     </div>
 
-	<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-	<script>
-// JavaScript code to handle dynamic model population
-$(document).ready(function() {
-    $('#equipment_type').change(function() {
-        var equipTypeId = $(this).val();
-        
-        // Clear previous models
-        $('#model_name').empty();
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script>
+    // JavaScript code to handle dynamic model population
+    $(document).ready(function() {
+        $('#equipment_type').change(function() {
+            var equipTypeId = $(this).val();
+            
+            // Clear previous models
+            $('#model_name').empty();
 
-        if (equipTypeId) {
-            $.ajax({
-                url: 'equipment_input_ict.php', 
-                type: 'GET',
-                data: { equip_type_id: equipTypeId },
-                success: function(data) {
-                    var models = JSON.parse(data);
-                    if (models.length > 0) {
-                        $.each(models, function(index, model) {
-                            $('#model_name').append('<option value="' + model.model_id + '">' + model.model_name + '</option>');
-                        });
-                    } else {
-                        $('#model_name').append('<option value="">No models available</option>');
+            if (equipTypeId) {
+                $.ajax({
+                    url: 'equipment_input_ict.php', 
+                    type: 'GET',
+                    data: { equip_type_id: equipTypeId },
+                    success: function(data) {
+                        var models = JSON.parse(data);
+                        if (models.length > 0) {
+                            $.each(models, function(index, model) {
+                                $('#model_name').append('<option value="' + model.model_id + '">' + model.model_name + '</option>');
+                            });
+                        } else {
+                            $('#model_name').append('<option value="">No models available</option>');
+                        }
+                    },
+                    error: function() {
+                        alert('Error fetching models.');
                     }
-                },
-                error: function() {
-                    alert('Error fetching models.');
-                }
-            });
-        }
+                });
+            }
+        });
     });
-});
-	</script>
+    </script>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+
