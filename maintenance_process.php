@@ -11,7 +11,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Collect form data
     $jo_number = $_POST['jo_number'];
     $actions_taken = $_POST['actions_taken'];
-    $remarks = $_POST['remarks']; // Capture remarks from dropdown
+    $remarks_id = $_POST['remarks'];
     $maintaindate = $_POST['maintaindate'];
 
     if (isset($_POST['equipment_id'])) {
@@ -22,65 +22,36 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
             $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-            // Insert into maintenance logs table
-            foreach ($_POST['responsible_firstname'] as $index => $firstname) {
-                // Initialize personnel_id as NULL
-                $personnel_id = null;
+            // Check if personnel is selected from dropdown
+            if (isset($_POST['personnel_id']) && !empty($_POST['personnel_id'])) {
+                $personnel_id = intval($_POST['personnel_id']); // Get selected personnel ID
 
-                if (!empty($firstname)) {
-                    // Fetch last name and department
-                    $lastname = $_POST['responsible_lastname'][$index];
-                    $department = $_POST['responsible_department'][$index];
-
-                    // Check if remarks indicate a transfer
-                    if ($remarks === 'For Transfer') {
-                        // Check if personnel already exists
-                        $stmtPersonnelId = $conn->prepare("SELECT personnel_id FROM personnel WHERE firstname = :firstname AND lastname = :lastname");
-                        $stmtPersonnelId->execute(['firstname' => $firstname, 'lastname' => $lastname]);
-                        $personnel_id_row = $stmtPersonnelId->fetch(PDO::FETCH_ASSOC);
-
-                        if ($personnel_id_row) {
-                            // Personnel exists, fetch their ID
-                            $personnel_id = intval($personnel_id_row['personnel_id']);
-                        } else {
-                            // Personnel does not exist, insert new personnel
-                            if (!empty($department)) { // Ensure department is not empty before inserting
-                                $stmtInsertPersonnel = $conn->prepare("INSERT INTO personnel (firstname, lastname, department) VALUES (:firstname, :lastname, :department)");
-                                $stmtInsertPersonnel->execute(['firstname' => $firstname, 'lastname' => $lastname, 'department' => $department]);
-                                // Get the newly inserted personnel ID
-                                $personnel_id = intval($conn->lastInsertId());
-                            }
-                        }
-                    } 
-                    // If remarks are not "For Transfer", personnel_id remains NULL and will be inserted as such in the log.
-                }
-
-                // Insert into maintenance logs table with remarks included
                 try {
-                    // Prepare insert statement with remarks included
-                    // Use NULL for personnel_id if it was not set (i.e., not transferring)
-                    $stmtInsertLog =  $conn->prepare("INSERT INTO ict_maintenance_logs (jo_number, personnel_id, equipment_id, maintenance_date, actions_taken, remarks) VALUES (?, ?, ?, ?, ?, ?)");
-                    if (!$stmtInsertLog->execute([$jo_number,  $personnel_id ?? null,  $equipment_id,  $maintaindate,  $actions_taken,  $remarks])) {
-                        print_r($stmtInsertLog->errorInfo()); // Output any errors during execution
+                    // Insert into maintenance logs table with remarks_id included
+                    $stmtInsertLog = $conn->prepare("INSERT INTO ict_maintenance_logs (jo_number, personnel_id, equipment_id, maintenance_date, actions_taken, remarks_id) VALUES (?, ?, ?, ?, ?, ?)");
+                    if (!$stmtInsertLog->execute([$jo_number, $personnel_id, $equipment_id, $maintaindate, $actions_taken, $remarks_id])) {
+                        print_r($stmtInsertLog->errorInfo()); 
                     } else {
-                        echo "Log created successfully for JO Number: {$jo_number} with Personnel ID: " . ($personnel_id ?? 'NULL') . "<br>";
+                        echo "Log created successfully for JO Number: {$jo_number} with Personnel ID: {$personnel_id}<br>";
                     }
                 } catch (PDOException $e) {
                     echo "Error inserting log: " . $e->getMessage();
                 }
+            } else {
+                echo "No personnel selected.";
             }
 
         } catch (PDOException $e) {
             echo "Error: " . $e->getMessage();
         }
-        
+
     } else {
         echo "No equipment selected.";
     }
 
-    // Close connection
-    if ($conn) {
-        unset($conn); // Close connection properly by unsetting it.
+    // Close connection properly by setting to null
+    if (isset($conn)) {
+        $conn = null; 
     }
 }
 ?>

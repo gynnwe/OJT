@@ -28,7 +28,7 @@ try {
 
         if (!empty($model_name)) {
             // Check if the model already exists for the selected equipment type
-            $checkSQL = "SELECT COUNT(*) FROM model WHERE equip_type_id = :equip_type_id AND model_name = :model_name";
+            $checkSQL = "SELECT COUNT(*) FROM model WHERE equip_type_id = :equip_type_id AND model_name = :model_name AND deleted_id = 0";
             $stmt = $conn->prepare($checkSQL);
             $stmt->bindParam(':equip_type_id', $equipment_type_id);
             $stmt->bindParam(':model_name', $model_name);

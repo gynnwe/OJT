@@ -44,7 +44,7 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
             </li>
 
             <!-- Display management button only for admin -->
-            <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
+            <?php if ($_SESSION['role'] !== 'Assistant'): ?>
                 <li class="nav-link">
                     <a href="management.php">
                         <i class=""></i> <!-- Add Icon Here -->

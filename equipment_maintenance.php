@@ -18,36 +18,70 @@ try {
     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    // Fetch locations
-    $sqlLocations = "SELECT location_id, college, office, unit FROM location";
-    $stmtLocations = $conn->prepare($sqlLocations);
-    $stmtLocations->execute();
-    $locations = $stmtLocations->fetchAll(PDO::FETCH_ASSOC);
+    // Fetch all non-deleted equipment types for the dropdown
+    $sqlTypes = "SELECT equip_type_id, equip_type_name FROM equipment_type WHERE deleted_id = 0";
+    $stmtTypes = $conn->prepare($sqlTypes);
+    $stmtTypes->execute();
+    $equipment_types = $stmtTypes->fetchAll(PDO::FETCH_ASSOC);
 
-    // Fetch equipment types
-    $sqlEquipmentTypes = "SELECT DISTINCT equipment_type FROM equipment";
-    $stmtEquipmentTypes = $conn->prepare($sqlEquipmentTypes);
-    $stmtEquipmentTypes->execute();
-    $equipmentTypes = $stmtEquipmentTypes->fetchAll(PDO::FETCH_COLUMN);
+    // Check if an equipment type is selected
+    $selectedTypeId = isset($_GET['equipment_type']) ? $_GET['equipment_type'] : '';
 
-    // Fetch all equipment based on selected type (optional filtering)
-    $sqlEquipment = "SELECT equipment_id, equipment_name, serial_num, equipment_type FROM equipment"; // Ensure to fetch equipment_type
-    $stmtEquipment = $conn->prepare($sqlEquipment);
-    $stmtEquipment->execute();
-    $equipmentList = $stmtEquipment->fetchAll(PDO::FETCH_ASSOC);
+    // Prepare and execute SQL query to fetch equipment based on the selected type
+    if ($selectedTypeId) {
+        // Fetch equipment for the selected equipment type
+        $sqlEquipment = "SELECT e.equipment_id, e.equip_name, e.property_num, e.status, e.date_purchased
+                         FROM equipment e
+                         WHERE e.equip_type_id = :equip_type_id";
+        $stmtEquipment = $conn->prepare($sqlEquipment);
+        $stmtEquipment->bindParam(':equip_type_id', $selectedTypeId);
+        $stmtEquipment->execute();
+        $equipment = $stmtEquipment->fetchAll(PDO::FETCH_ASSOC);
+    } else {
+        // If no filter is selected, fetch all equipment
+        $sqlEquipment = "SELECT e.equipment_id, e.equip_name, e.property_num, e.status, e.date_purchased 
+                         FROM equipment e";
+        $stmtEquipment = $conn->prepare($sqlEquipment);
+        $stmtEquipment->execute();
+        $equipment = $stmtEquipment->fetchAll(PDO::FETCH_ASSOC);
+    }
+	
+	// Fetch all non-deleted remarks for the dropdown
+	$sqlRemarks = "SELECT remarks_id, remarks_name FROM remarks WHERE deleted_id = 0";
+	$stmtRemarks = $conn->prepare($sqlRemarks);
+	$stmtRemarks->execute();
+	$remarks_options = $stmtRemarks->fetchAll(PDO::FETCH_ASSOC);
+	
+	// Fetch all non-deleted Personnel for the dropdown
+	$sqlRemarks = "SELECT personnel_id, firstname, lastname, department FROM personnel WHERE deleted_id = 0";
+	$stmtRemarks = $conn->prepare($sqlRemarks);
+	$stmtRemarks->execute();
+	$personnel_options = $stmtRemarks->fetchAll(PDO::FETCH_ASSOC);
 
-	// Fetch maintenance logs for table display
-	$sqlLogs = "SELECT ict_maintenance_logs.jo_number, personnel.firstname, personnel.lastname, equipment.equipment_name, 
-            ict_maintenance_logs.maintenance_date, ict_maintenance_logs.actions_taken, ict_maintenance_logs.remarks 
-            FROM ict_maintenance_logs 
-            LEFT JOIN personnel ON ict_maintenance_logs.personnel_id = personnel.personnel_id 
-            JOIN equipment ON ict_maintenance_logs.equipment_id = equipment.equipment_id 
-            ORDER BY ict_maintenance_logs.maintenance_date DESC";
+	// Fetch data from Maintenance Logs with joins
+	$sqlRemarks = "
+		SELECT 
+			ml.jo_number,
+			ml.maintenance_date,
+			ml.actions_taken,
+			r.remarks_name AS remarks,  -- Assuming remarks table has a column named 'remarks_name'
+			e.equip_name AS equipment_name,  -- Assuming equipment table has a column named 'equip_name'
+			p.firstname,
+			p.lastname
+		FROM 
+			ict_maintenance_logs ml
+		LEFT JOIN 
+			equipment e ON ml.equipment_id = e.equipment_id
+		LEFT JOIN 
+			remarks r ON ml.remarks_id = r.remarks_id
+		LEFT JOIN 
+			personnel p ON ml.personnel_id = p.personnel_id
+	";
 
-$stmtLogs = $conn->prepare($sqlLogs);
-$stmtLogs->execute();
-$maintenanceLogs = $stmtLogs->fetchAll(PDO::FETCH_ASSOC);
-
+	$stmtRemarks = $conn->prepare($sqlRemarks);
+	$stmtRemarks->execute();
+	$maintenanceLogs = $stmtRemarks->fetchAll(PDO::FETCH_ASSOC);
+	
 } catch (PDOException $e) {
     echo "Error: " . $e->getMessage();
 }
@@ -58,14 +92,14 @@ $maintenanceLogs = $stmtLogs->fetchAll(PDO::FETCH_ASSOC);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ICT Equipment</title>
+    <title>ICT Equipment Maintenance</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.3/font/bootstrap-icons.min.css" rel="stylesheet">
 </head>
 <body>
     <div class="container mt-5">
-        <h1>ICT Equipment</h1>
+        <h1>ICT Equipment Maintenance</h1>
         <div class="row mt-4">
             <!-- Add Equipment Button -->
             <div class="col-md-4 mb-3">
@@ -86,6 +120,126 @@ $maintenanceLogs = $stmtLogs->fetchAll(PDO::FETCH_ASSOC);
                 </a>
             </div>
         </div>
+
+        <!-- Filter Equipment by Type -->
+        <label for="equipment_type_filter">Filter by Equipment Type:</label>
+        <form method="GET" action="equipment_maintenance.php">
+            <select id="equipment_type_filter" name="equipment_type" class="form-select" onchange="this.form.submit()">
+                <option value="">All</option>
+                <?php foreach ($equipment_types as $type): ?>
+                    <option value="<?php echo htmlspecialchars($type['equip_type_id']); ?>" <?php echo ($type['equip_type_id'] == $selectedTypeId) ? 'selected' : ''; ?>>
+                        <?php echo htmlspecialchars($type['equip_type_name']); ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </form>
+
+        <!-- Display Equipment -->
+        <h3 class="mt-4">List of Equipment</h3>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Equipment Name</th>
+                    <th>Property Number</th>
+                    <th>Status</th>
+                    <th>Date Purchased</th>
+                    <th>Select</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if (!empty($equipment)): ?>
+                    <?php foreach ($equipment as $item): ?>
+                        <tr>
+                            <td><?php echo htmlspecialchars($item['equip_name']); ?></td>
+                            <td><?php echo htmlspecialchars($item['property_num']); ?></td>
+                            <td><?php echo htmlspecialchars($item['status']); ?></td>
+                            <td><?php echo htmlspecialchars($item['date_purchased']); ?></td>
+                            <td>
+                                <button type="button" class="btn btn-primary" onclick="updateSelectedEquipment('<?php echo htmlspecialchars($item['equipment_id']); ?>', '<?php echo htmlspecialchars($item['equip_name']); ?>')">
+                                    Select
+                                </button>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <tr><td colspan="5">No equipment found.</td></tr>
+                <?php endif; ?>
+            </tbody>
+        </table>
+
+        <!-- Maintenance Form -->
+        <h3>Log Maintenance</h3>
+        <form action="maintenance_process.php" method="POST">
+            <label for="jo_number">Job Order:</label>
+            <input type="text" name="jo_number" id="jo_number" class="form-control mb-3" required>
+
+            <div id="selected_equipment">Selected Equipment:</div>
+
+            <label for="actions_taken">Actions Taken:</label>
+            <textarea name="actions_taken" id="actions_taken" class="form-control mb-3" required></textarea>
+
+            <label for="remarks">Remarks:</label>
+            <select name="remarks" id="remarks" class="form-control mb-3" required>
+                <?php foreach ($remarks_options as $remark): ?>
+                    <option value="<?php echo htmlspecialchars($remark['remarks_id']); ?>">
+                        <?php echo htmlspecialchars($remark['remarks_name']); ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+
+			<label for="personnel">Personnel:</label>
+			<select name="personnel_id" id="personnel" class="form-control mb-3" required>
+				<?php if (!empty($personnel_options)): ?>
+					<?php foreach ($personnel_options as $personnel): ?>
+						<option value="<?php echo htmlspecialchars($personnel['personnel_id']); ?>">
+							<?php echo htmlspecialchars($personnel['firstname'] . " " . $personnel['lastname'] . " - " . $personnel['department']); ?>
+						</option>
+					<?php endforeach; ?>
+				<?php else: ?>
+					<option value="">No personnel added.</option>
+				<?php endif; ?>
+			</select>
+			
+            <label for="maintaindate">Date:</label>
+            <input type="date" name="maintaindate" id="maintaindate" class="form-control mb-3" required>
+
+            <button type="submit" class="btn btn-primary">Log Maintenance</button>
+            <button type="button" class="btn btn-secondary" onclick="window.location.href='equipment_maintenance.php'">Cancel</button>
+        </form>
+
+        <!-- Maintenance Logs Section (if any) -->
+        <h3>Maintenance Logs</h3>
+        <table border="1" class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Equipment Name</th>
+                    <th>Maintenance Date</th>
+                    <th>Job Order Number</th>
+                    <th>Actions Taken</th>
+                    <th>Remarks</th>
+                    <th>Responsible Personnel</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if (!empty($maintenanceLogs)): ?>
+                    <?php foreach ($maintenanceLogs as $log): ?>
+                        <tr>
+                            <td><?php echo htmlspecialchars($log['equipment_name']); ?></td>
+                            <td><?php echo htmlspecialchars($log['maintenance_date']); ?></td>
+                            <td><?php echo htmlspecialchars($log['jo_number']); ?></td>
+                            <td><?php echo htmlspecialchars($log['actions_taken']); ?></td>
+                            <td><?php echo htmlspecialchars($log['remarks']); ?></td>
+                            <td><?php echo htmlspecialchars($log['firstname'] . ' ' . $log['lastname']); ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <tr><td colspan="6">No maintenance logs found.</td></tr>
+                <?php endif; ?>
+            </tbody>
+        </table>
+
+    </div>
+    <!-- JavaScript -->
     <script>
         function updateSelectedEquipment(equipmentId, equipmentName) {
             const selectedEquipmentDiv = document.getElementById('selected_equipment');
@@ -96,103 +250,8 @@ $maintenanceLogs = $stmtLogs->fetchAll(PDO::FETCH_ASSOC);
             hiddenInput.value = equipmentId;
             selectedEquipmentDiv.appendChild(hiddenInput);
         }
-
-        function filterEquipment() {
-            const filterValue = document.getElementById('equipment_type_filter').value;
-            const equipmentItems = document.querySelectorAll('.equipment-item'); // Assuming each equipment item has this class
-
-            equipmentItems.forEach(item => {
-                const equipmentType = item.getAttribute('data-type'); // Assuming you have a data-type attribute
-                if (filterValue === "" || equipmentType === filterValue) {
-                    item.style.display = ""; // Show item
-                } else {
-                    item.style.display = "none"; // Hide item
-                }
-            });
-        }
     </script>
-</head>
-<body>
-    <h1>Equipment Maintenance</h1>
-
-	<h3>List of Equipment</h3>
-
-	<label for="equipment_type_filter">Filter by Equipment Type:</label>
-	<select id="equipment_type_filter" onchange="filterEquipment()">
-        <option value="">All</option>
-        <?php foreach ($equipmentTypes as $type): ?>
-            <option value="<?php echo htmlspecialchars($type); ?>"><?php echo htmlspecialchars($type); ?></option>
-        <?php endforeach; ?>
-	</select>
-
-	<!-- Equipment List -->
-	<div id="equipment_list">
-        <?php foreach ($equipmentList as $equipment): ?>
-            <div class="equipment-item" data-type="<?php echo htmlspecialchars($equipment['equipment_type']); ?>" onclick="updateSelectedEquipment(<?php echo htmlspecialchars($equipment['equipment_id']); ?>, '<?php echo htmlspecialchars($equipment['equipment_name']); ?>')">
-                <?php echo htmlspecialchars($equipment['equipment_name']); ?> (Serial: <?php echo htmlspecialchars($equipment['serial_num']); ?>)
-            </div>
-        <?php endforeach; ?>
-	</div>
-
-	<form action="maintenance_process.php" method="POST">
-        <label for="jo_number">Job Order:</label>
-        <input type="text" name="jo_number" id="jo_number" required><br>
-
-        <div id="selected_equipment">Selected Equipment:</div>
-
-        <label for="actions_taken">Actions Taken:</label>
-        <textarea name="actions_taken" id="actions_taken" required></textarea><br>
-
-		<label for="remarks">Remarks:</label>
-		<select name="remarks" id="remarks" required>
-			<option value="Pending">Pending</option>
-			<option value="For Transfer">For Transfer</option>
-			<option value="Resolved">Resolved</option>
-		</select><br>
-
-		<div id="personnel_container">
-            <label>Responsible Personnel:</label><br>
-            <input type="text" name="responsible_firstname[]" placeholder="First Name"><br>
-            <input type="text" name="responsible_lastname[]" placeholder="Last Name"><br>
-            <input type="text" name="responsible_department[]" placeholder="Department"><br>
-        </div>
-
-        <label for="maintaindate">Date:</label>
-        <input type="date" name="maintaindate" id="maintaindate" required><br>
-
-        <button type="submit">Log Maintenance</button>
-        <button type="button" onclick="window.location.href='equipment_maintenance.php'">Cancel</button>
-    </form>
-	
-	<h3>Maintenance Logs</h3>
-	<table border="1">
-	    <thead>
-	        <tr>
-				<th>Equipment Name</th>
-				<th>Maintenance Date</th>
-	            <th>Job Order Number</th>
-				<th>Actions Taken</th>
-				<th>Remarks</th>
-	            <th>Personnel Name</th>
-	        </tr>
-	    </thead>
-	    <tbody>
-	        <?php if (!empty($maintenanceLogs)): ?>
-	            <?php foreach ($maintenanceLogs as $log): ?>
-	                <tr>
-	                    <td><?php echo htmlspecialchars($log['equipment_name']); ?></td>
-						<td><?php echo htmlspecialchars($log['maintenance_date']); ?></td>
-	                    <td><?php echo htmlspecialchars($log['jo_number']); ?></td>
-	                    <td><?php echo htmlspecialchars($log['actions_taken']); ?></td>
-	                    <td><?php echo htmlspecialchars($log['remarks']); ?></td>
-						<td><?php echo htmlspecialchars($log['firstname'] . ' ' . $log['lastname']); ?></td>
-	                </tr>
-	            <?php endforeach; ?>
-	        <?php else: ?>
-	            <tr><td colspan="6">No maintenance logs found.</td></tr>
-	        <?php endif; ?>
-	    </tbody>
-	</table>
-
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

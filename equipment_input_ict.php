@@ -22,7 +22,7 @@ try {
     $equipment_types = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     // Fetch all non-deleted locations for the dropdown
-    $sql = "SELECT location_id, college, office, unit FROM location WHERE deleted = 0";  // Updated query
+    $sql = "SELECT location_id, college, office, unit FROM location WHERE deleted_id = 0";  // Updated query
     $stmt = $conn->prepare($sql);
     $stmt->execute();
     $locations = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -57,7 +57,7 @@ try {
 </head>
 <body>
     <div class="container mt-5">
-        <h1>ICT Equipment</h1>
+        <h1 class="text-center">ICT Equipment</h1>
         <div class="row mt-4">
             <!-- Add Equipment Button -->
             <div class="col-md-4 mb-3">
@@ -81,60 +81,77 @@ try {
 
         <!-- Add Equipment Form -->
         <h2 class="mt-5">Add Equipment</h2>
-        <?php
-        // To show any error messages
-        if (isset($_GET['error'])) {
-            echo "<p style='color:red;'>" . $_GET['error'] . "</p>";
-        }
-        ?>
-        <form action="equipment_process.php" method="POST">
-            <label for="location_id">Location:</label>
-            <select name="location_id" id="location_id" required>
-                <option value="">Select a location</option>
-                <?php if (!empty($locations)): ?>
-                    <?php foreach ($locations as $location): ?>
-                        <option value="<?php echo htmlspecialchars($location['location_id']); ?>">
-                            <?php echo htmlspecialchars($location['college'] . " - " . $location['office'] . " - " . $location['unit']); ?>
-                        </option>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <option value="">No locations available</option>
-                <?php endif; ?>
-            </select><br>
+        <?php if (isset($_GET['error'])): ?>
+            <div class="alert alert-danger"><?php echo htmlspecialchars($_GET['error']); ?></div>
+        <?php endif; ?>
+        
+        <form action="equipment_process.php" method="POST" class="mt-4">
+            <div class="mb-3">
+                <label for="location_id" class="form-label">Location:</label>
+                <select name="location_id" id="location_id" class="form-select" required>
+                    <option value="">Select a location</option>
+                    <?php if (!empty($locations)): ?>
+                        <?php foreach ($locations as $location): ?>
+                            <option value="<?php echo htmlspecialchars($location['location_id']); ?>">
+                                <?php echo htmlspecialchars($location['college'] . " - " . $location['office'] . " - " . $location['unit']); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <option value="">No locations available</option>
+                    <?php endif; ?>
+                </select>
+            </div>
 
-            <label for="equipment_type">Equipment Type:</label>
-            <select name="equipment_type" id="equipment_type" required>
-                <option value="">Select an equipment type</option>
-                <?php if (!empty($equipment_types)): ?>
-                    <?php foreach ($equipment_types as $type): ?>
-                        <option value="<?php echo htmlspecialchars($type['equip_type_id']); ?>">
-                            <?php echo htmlspecialchars($type['equip_type_name']); ?>
-                        </option>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <option value="">No equipment types available</option>
-                <?php endif; ?>
-            </select><br>
+            <div class="mb-3">
+                <label for="equipment_type" class="form-label">Equipment Type:</label>
+                <select name="equipment_type" id="equipment_type" class="form-select" required>
+                    <option value="">Select an equipment type</option>
+                    <?php if (!empty($equipment_types)): ?>
+                        <?php foreach ($equipment_types as $type): ?>
+                            <option value="<?php echo htmlspecialchars($type['equip_type_id']); ?>">
+                                <?php echo htmlspecialchars($type['equip_type_name']); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <option value="">No equipment types available</option>
+                    <?php endif; ?>
+                </select>
+            </div>
 
-            <label for="property_num">Property Number:</label>
-            <input type="text" name="property_num" id="property_num" required><br>
+            <div class="mb-3">
+                <label for="equip_name" class="form-label">Equipment Name:</label>
+                <input type="text" name="equip_name" id="equip_name" class="form-control" required>
+            </div>
 
-            <label for="model_name">Model Name:</label>
-            <select name="model_id" id="model_name" required>
-                <!-- Options will be populated dynamically based on selected equipment type -->
-            </select><br>
+            <div class="mb-3">
+                <label for="property_num" class="form-label">Property Number:</label>
+                <input type="text" name="property_num" id="property_num" class="form-control" required>
+            </div>
 
-            <label for="status">Status:</label>
-            <select name="status" id="status" required>
-                <option value="Serviceable">Serviceable</option>
-                <option value="Non-serviceable">Non-serviceable</option>
-            </select><br>
+            <div class="mb-3">
+                <label for="model_name" class="form-label">Model Name:</label>
+                <select name="model_id" id="model_name" class="form-select" required>
+                    <!-- Options will be populated dynamically based on selected equipment type -->
+                </select>
+            </div>
 
-            <label for="date_purchased">Date Purchased:</label>
-            <input type="date" name="date_purchased" id="date_purchased" required><br>
+            <div class="mb-3">
+                <label for="status" class="form-label">Status:</label>
+                <select name="status" id="status" class="form-select" required>
+                    <option value="Serviceable">Serviceable</option>
+                    <option value="Non-serviceable">Non-serviceable</option>
+                </select>
+            </div>
 
+            <div class="mb-3">
+                <label for="date_purchased" class="form-label">Date Purchased:</label>
+                <input type="date" name="date_purchased" id="date_purchased" class="form-control" required>
+            </div>
+
+            <!-- Submit Button -->
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
+
     </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>

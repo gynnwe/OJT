@@ -15,12 +15,6 @@ try {
     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    // Ensure the 'deleted' column exists, adding it if necessary
-    $alterTableSQL = "
-    ALTER TABLE location
-    ADD COLUMN IF NOT EXISTS deleted TINYINT(1) NOT NULL DEFAULT 0";
-    $conn->exec($alterTableSQL);
-
     // Handle form submission to add a new location
     if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['college'], $_POST['office'], $_POST['unit'])) {
         $college = trim($_POST['college']);
@@ -29,7 +23,7 @@ try {
 
         if (!empty($college) && !empty($office) && !empty($unit)) {
             // Check if the location already exists
-            $checkSQL = "SELECT COUNT(*) FROM location WHERE college = :college AND office = :office AND unit = :unit AND deleted = 0";
+            $checkSQL = "SELECT COUNT(*) FROM location WHERE college = :college AND office = :office AND unit = :unit AND deleted_id = 0";
             $stmt = $conn->prepare($checkSQL);
             $stmt->bindParam(':college', $college);
             $stmt->bindParam(':office', $office);
@@ -64,7 +58,7 @@ try {
     // Handle soft delete via AJAX
     if (isset($_POST['delete_id'])) {
         $delete_id = $_POST['delete_id'];
-        $softDeleteSQL = "UPDATE location SET deleted = 1 WHERE location_id = :delete_id";
+        $softDeleteSQL = "UPDATE location SET deleted_id = 1 WHERE location_id = :delete_id";
         $stmt = $conn->prepare($softDeleteSQL);
         $stmt->bindParam(':delete_id', $delete_id);
         $stmt->execute();
@@ -73,7 +67,7 @@ try {
     }
 
     // Fetch all non-deleted locations for display
-    $sql = "SELECT * FROM location WHERE deleted = 0";
+    $sql = "SELECT * FROM location WHERE deleted_id = 0";
     $stmt = $conn->prepare($sql);
     $stmt->execute();
     $locations = $stmt->fetchAll(PDO::FETCH_ASSOC);

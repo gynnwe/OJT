@@ -23,24 +23,12 @@ try {
 		firstname VARCHAR(25) NOT NULL,
 		lastname VARCHAR(25) NOT NULL,
         username VARCHAR(10) NOT NULL,
-        password VARCHAR(60) NOT NULL
+        password VARCHAR(60) NOT NULL,
+		role ENUM('Admin', 'Assistant') NOT NULL
     )";
 	
     $conn->exec($sql);
     echo "User Table created successfully<br>";
-
-    // --- Create the Admin Account Table ---
-    $sql = "CREATE TABLE IF NOT EXISTS admin (
-        admin_id INT(7) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-        email VARCHAR(50) NOT NULL,
-        firstname VARCHAR(25) NOT NULL,
-        lastname VARCHAR(25) NOT NULL,
-        username VARCHAR(10) NOT NULL,
-        password VARCHAR(60) NOT NULL
-    )";
-
-    $conn->exec($sql);
-    echo "Admin Table created successfully<br>";
 
     // Insert default admin values
     $defaultEmail = 'superadmin@example.com';
@@ -48,9 +36,10 @@ try {
     $defaultLastname = 'Admin';
     $defaultUsername = 'superadmin';
     $defaultPassword = password_hash('yourdefaultpassword', PASSWORD_DEFAULT); // Change 'yourdefaultpassword' as needed
+	$defaultRole = 'Admin';
 
-    $sql = "INSERT INTO admin (email, firstname, lastname, username, password) 
-        VALUES (:email, :firstname, :lastname, :username, :password)";
+    $sql = "INSERT INTO user (email, firstname, lastname, username, password, role) 
+        VALUES (:email, :firstname, :lastname, :username, :password, :role)";
 
     $stmt = $conn->prepare($sql);
     $stmt->bindParam(':email', $defaultEmail);
@@ -58,6 +47,7 @@ try {
     $stmt->bindParam(':lastname', $defaultLastname);
     $stmt->bindParam(':username', $defaultUsername);
     $stmt->bindParam(':password', $defaultPassword);
+    $stmt->bindParam(':role', $defaultRole);
     $stmt->execute();
 
     echo "Default admin created successfully<br>";
@@ -68,7 +58,7 @@ $sql = "CREATE TABLE IF NOT EXISTS location(
     college VARCHAR(50) NOT NULL,
     office VARCHAR(50) NOT NULL,
     unit VARCHAR(50) NOT NULL,
-    deleted TINYINT(1) NOT NULL DEFAULT 0
+    deleted_id TINYINT(1) NOT NULL DEFAULT 0
 )";
 $conn->exec($sql);
 echo "Location Table created successfully<br>";
@@ -102,6 +92,7 @@ echo "Location Table created successfully<br>";
         location_id INT(7) UNSIGNED NOT NULL,
 		equip_type_id INT(7) UNSIGNED NOT NULL,
 		model_id INT(7) UNSIGNED NOT NULL,
+		equip_name VARCHAR(35) NOT NULL,
         property_num VARCHAR(30) NOT NULL UNIQUE,
 		status ENUM('Serviceable', 'Non-serviceable') NOT NULL,
 		date_purchased DATE NOT NULL,
@@ -131,7 +122,8 @@ echo "Location Table created successfully<br>";
         personnel_id INT(7) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
         firstname VARCHAR(25) NOT NULL,
 		lastname VARCHAR(25) NOT NULL,
-		department VARCHAR(50) NOT NULL
+		department VARCHAR(50) NOT NULL,
+		deleted_id TINYINT(1) NOT NULL DEFAULT 0
     )";
 	
 	$conn->exec($sql);
@@ -140,7 +132,8 @@ echo "Location Table created successfully<br>";
 	// --- Create Remarks Table ---
     $sql = "CREATE TABLE IF NOT EXISTS remarks (
         remarks_id INT(7) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-		remarks_name VARCHAR(20) NOT NULL
+		remarks_name VARCHAR(20) NOT NULL,
+		deleted_id TINYINT(1) NOT NULL DEFAULT 0
     )";	
 	
     $conn->exec($sql);

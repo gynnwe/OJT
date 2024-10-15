@@ -8,6 +8,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Collect form data
     $location_id = $_POST['location_id'];
     $equipment_type = $_POST['equipment_type'];
+    $equip_name = $_POST['equip_name'];
     $model_id = $_POST['model_id'];
     $property_num = $_POST['property_num'];
     $status = $_POST['status'];
@@ -39,14 +40,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 echo "<script>alert('Equipment with this property number already exists.'); window.location.href='equipment_input_ict.php';</script>";
             } else {
                 // Insert into equipment if location and property are valid
-                $sql = "INSERT INTO equipment (location_id, equip_type_id, model_id, property_num, status, date_purchased) 
-                        VALUES (:location_id, :equipment_type, :model_id, :property_num, :status, :date_purchased)";
+                $sql = "INSERT INTO equipment (location_id, equip_type_id, model_id, equip_name, property_num, status, date_purchased) 
+                        VALUES (:location_id, :equipment_type, :model_id, :equip_name, :property_num, :status, :date_purchased)";
                 
                 $stmt = $conn->prepare($sql);
                 // Bind parameters to prevent SQL injection
                 $stmt->bindParam(':location_id', $location_id);
                 $stmt->bindParam(':equipment_type', $equipment_type);
                 $stmt->bindParam(':model_id', $model_id);
+                $stmt->bindParam(':equip_name', $equip_name);
                 $stmt->bindParam(':property_num', $property_num);
                 $stmt->bindParam(':status', $status);
                 $stmt->bindParam(':date_purchased', $date_purchased);

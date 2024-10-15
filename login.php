@@ -7,7 +7,7 @@
     <title>Login</title>
     <link rel="stylesheet" href="styles.css">
 </head>
-<body>
+<body id="login">
     <form action="login_process.php" method="POST">
         <div class="container">
             <img src="usep-logo.png" alt="USeP Logo" class="signin-image">

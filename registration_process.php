@@ -11,6 +11,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $user = $_POST['username'];
     $pass = $_POST['psw'];
     $pass_repeat = $_POST['psw-repeat'];
+	$role = 'Assistant';
 
     if ($pass !== $pass_repeat) {
         die("Passwords do not match.");
@@ -21,7 +22,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        $sql = "INSERT INTO user (email, firstname, lastname, username, password) VALUES (:email, :firstname, :lastname, :username, :password)";
+        $sql = "INSERT INTO user (email, firstname, lastname, username, password, role) VALUES (:email, :firstname, :lastname, :username, :password, :role)";
         $stmt = $conn->prepare($sql);
 
         $stmt->bindParam(':email', $email);
@@ -29,6 +30,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->bindParam(':lastname', $lastname);
         $stmt->bindParam(':username', $user);
         $stmt->bindParam(':password', $hashed_password);
+        $stmt->bindParam(':role', $role);
 
         $stmt->execute();
 

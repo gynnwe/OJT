@@ -1,6 +1,6 @@
 <?php
 session_start();
-if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true || $_SESSION['role'] !== 'admin') {
+if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true || $_SESSION['role'] !== 'Admin') {
     header("location: login.php");
     exit;
 }
@@ -90,6 +90,12 @@ $conn = null;
             </div>
             <div class="col-md-4">
                 <button class="btn btn-primary btn-block" onclick="window.location.href='add_location.php'">Add Location</button>
+            </div>        
+			<div class="col-md-4">
+                <br> <button class="btn btn-primary btn-block" onclick="window.location.href='add_remarks.php'">Add Remarks</button>
+            </div>
+			<div class="col-md-4">
+                <br> <button class="btn btn-primary btn-block" onclick="window.location.href='add_personnel.php'">Add Personnel</button>
             </div>
         </div>
     </div>

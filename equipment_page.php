@@ -38,6 +38,7 @@
             <thead>
                 <tr>
                     <th>Equipment ID</th>
+                    <th>Equipment Name</th>
                     <th>Location ID</th>
                     <th>Equipment Type</th>
                     <th>Model Name</th>
@@ -61,7 +62,8 @@
                     // Fetch all equipment from the database with joined tables for names
 					$sql = "
 						SELECT 
-							equipment.equipment_id, 
+							equipment.equipment_id,
+							equipment.equip_name,
 							equipment.location_id, 
 							equipment_type.equip_type_name AS equipment_type_name, 
 							model.model_name AS model_name, 
@@ -80,6 +82,7 @@
                     foreach ($equipments as $equipment) {
                         echo "<tr>
                                 <td>{$equipment['equipment_id']}</td>
+                                <td>{$equipment['equip_name']}</td>
                                 <td>{$equipment['location_id']}</td>
                                 <td>{$equipment['equipment_type_name']}</td>
                                 <td>{$equipment['model_name']}
