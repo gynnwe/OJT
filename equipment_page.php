@@ -26,7 +26,7 @@
             </div>
             <!-- Plan Maintenance Button -->
             <div class="col-md-4 mb-3">
-                <a href="#" class="btn btn-warning w-100 py-4">
+                <a href="plan_maintenance.php" class="btn btn-warning w-100 py-4">
                     <i class="bi bi-calendar"></i> Plan Maintenance
                 </a>
             </div>

@@ -57,7 +57,7 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
                 <p>Account Settings</p>
                 
                 <li class="Profile-btn">
-                    <a href="#">
+                    <a href="profile.php">
                         <i class=""></i> <!-- Add Icon Here -->
                         <span class="text nav-text">Profile</span>
                     </a>
