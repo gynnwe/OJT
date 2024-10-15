@@ -15,7 +15,7 @@ try {
     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    // Ensure the 'deleted' column exists
+    // Ensure the 'deleted' column exists, adding it if necessary
     $alterTableSQL = "
     ALTER TABLE location
     ADD COLUMN IF NOT EXISTS deleted TINYINT(1) NOT NULL DEFAULT 0";
@@ -28,20 +28,33 @@ try {
         $unit = trim($_POST['unit']);
 
         if (!empty($college) && !empty($office) && !empty($unit)) {
-            // Insert the new location into the database
-            $insertSQL = "INSERT INTO location (college, office, unit) VALUES (:college, :office, :unit)";
-            $stmt = $conn->prepare($insertSQL);
+            // Check if the location already exists
+            $checkSQL = "SELECT COUNT(*) FROM location WHERE college = :college AND office = :office AND unit = :unit AND deleted = 0";
+            $stmt = $conn->prepare($checkSQL);
             $stmt->bindParam(':college', $college);
             $stmt->bindParam(':office', $office);
             $stmt->bindParam(':unit', $unit);
+            $stmt->execute();
+            $count = $stmt->fetchColumn();
 
-            if ($stmt->execute()) {
-                $_SESSION['message'] = "New location added successfully.";
-                // Redirect to avoid form resubmission
-                header("Location: add_location.php");
-                exit;
+            if ($count == 0) {
+                // Insert the new location into the database
+                $insertSQL = "INSERT INTO location (college, office, unit) VALUES (:college, :office, :unit)";
+                $stmt = $conn->prepare($insertSQL);
+                $stmt->bindParam(':college', $college);
+                $stmt->bindParam(':office', $office);
+                $stmt->bindParam(':unit', $unit);
+
+                if ($stmt->execute()) {
+                    $_SESSION['message'] = "New location added successfully.";
+                    // Redirect to avoid form resubmission
+                    header("Location: add_location.php");
+                    exit;
+                } else {
+                    $error = "Failed to add the location.";
+                }
             } else {
-                $error = "Failed to add the location.";
+                $error = "Location type already exists.";
             }
         } else {
             $error = "All fields are required.";

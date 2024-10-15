@@ -62,16 +62,17 @@ try {
 
     echo "Default admin created successfully<br>";
 
-	// --- Create Location Table ---
-		$sql = "CREATE TABLE IF NOT EXISTS location(
-			location_id INT(7) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-			college VARCHAR(50) NOT NULL,
-			office VARCHAR(50) NOT NULL,
-			unit VARCHAR(50) NOT NULL
-		)";
-		
-		$conn->exec($sql);
-		echo "Table Location created successfully<br>";
+// --- Create Location Table ---
+$sql = "CREATE TABLE IF NOT EXISTS location(
+    location_id INT(7) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    college VARCHAR(50) NOT NULL,
+    office VARCHAR(50) NOT NULL,
+    unit VARCHAR(50) NOT NULL,
+    deleted TINYINT(1) NOT NULL DEFAULT 0
+)";
+$conn->exec($sql);
+echo "Location Table created successfully<br>";
+
 	
 	// --- Create Equipment Type Table ---
     $sql = "CREATE TABLE IF NOT EXISTS equipment_type (
