@@ -87,22 +87,24 @@ echo "Location Table created successfully<br>";
     echo "Model Table created successfully<br>";
 	
     // --- Create Equipment Table ---
-    $sql = "CREATE TABLE IF NOT EXISTS equipment (
-        equipment_id INT(7) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-        location_id INT(7) UNSIGNED NOT NULL,
-		equip_type_id INT(7) UNSIGNED NOT NULL,
-		model_id INT(7) UNSIGNED NOT NULL,
-		equip_name VARCHAR(35) NOT NULL,
-        property_num VARCHAR(30) NOT NULL UNIQUE,
-		status ENUM('Serviceable', 'Non-serviceable') NOT NULL,
-		date_purchased DATE NOT NULL,
-		FOREIGN KEY (location_id) REFERENCES location(location_id),
-		FOREIGN KEY (equip_type_id) REFERENCES equipment_type(equip_type_id),
-		FOREIGN KEY (model_id) REFERENCES model(model_id)
-	)";	
-	
-    $conn->exec($sql);
-    echo "Equipment Table created successfully<br>";
+$sql = "CREATE TABLE IF NOT EXISTS equipment (
+    equipment_id INT(7) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    location_id INT(7) UNSIGNED NOT NULL,
+    equip_type_id INT(7) UNSIGNED NOT NULL,
+    model_id INT(7) UNSIGNED NOT NULL,
+    equip_name VARCHAR(35) NOT NULL,
+    property_num VARCHAR(30) NOT NULL UNIQUE,
+    status ENUM('Serviceable', 'Non-serviceable') NOT NULL,
+    date_purchased DATE NOT NULL,
+    date_added DATE NOT NULL DEFAULT CURRENT_DATE,
+    FOREIGN KEY (location_id) REFERENCES location(location_id),
+    FOREIGN KEY (equip_type_id) REFERENCES equipment_type(equip_type_id),
+    FOREIGN KEY (model_id) REFERENCES model(model_id)
+)";
+
+$conn->exec($sql);
+echo "Equipment Table created successfully<br>";
+
 
 	// --- Create Location Details Table ---
     $sql = "CREATE TABLE IF NOT EXISTS location_details (

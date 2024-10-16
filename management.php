@@ -24,6 +24,19 @@ try {
     echo "Error: " . $e->getMessage();
 }
 
+// Fetch non-serviceable equipment
+try {
+    $sql = "SELECT e.equipment_id, e.property_num, e.status, l.college, l.office, l.unit 
+            FROM equipment e 
+            JOIN location l ON e.location_id = l.location_id 
+            WHERE e.status = 'Non-serviceable'";
+    $stmt = $conn->prepare($sql);
+    $stmt->execute();
+    $nonServiceableEquipment = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch(PDOException $e) {
+    echo "Error: " . $e->getMessage();
+}
+
 $conn = null;
 ?>
 
@@ -80,6 +93,42 @@ $conn = null;
 
         <hr>
 
+        <!-- Archive Section -->
+        <button type="button" class="btn btn-warning" data-toggle="collapse" data-target="#archiveSection">View Non-Serviceable Equipment</button>
+        <div id="archiveSection" class="collapse mt-3">
+            <h5>Non-Serviceable Equipment:</h5>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Equipment ID</th>
+                        <th>Property Number</th>
+                        <th>Status</th>
+                        <th>College</th>
+                        <th>Office</th>
+                        <th>Unit</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if (!empty($nonServiceableEquipment)): ?>
+                        <?php foreach ($nonServiceableEquipment as $equipment): ?>
+                            <tr>
+                                <td><?php echo htmlspecialchars($equipment['equipment_id']); ?></td>
+                                <td><?php echo htmlspecialchars($equipment['property_num']); ?></td>
+                                <td><?php echo htmlspecialchars($equipment['status']); ?></td>
+                                <td><?php echo htmlspecialchars($equipment['college']); ?></td>
+                                <td><?php echo htmlspecialchars($equipment['office']); ?></td>
+                                <td><?php echo htmlspecialchars($equipment['unit']); ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <tr>
+                            <td colspan="6">No non-serviceable equipment found.</td>
+                        </tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+
         <!-- New buttons added -->
         <div class="row mt-4">
             <div class="col-md-4">
@@ -91,10 +140,10 @@ $conn = null;
             <div class="col-md-4">
                 <button class="btn btn-primary btn-block" onclick="window.location.href='add_location.php'">Add Location</button>
             </div>        
-			<div class="col-md-4">
+            <div class="col-md-4">
                 <br> <button class="btn btn-primary btn-block" onclick="window.location.href='add_remarks.php'">Add Remarks</button>
             </div>
-			<div class="col-md-4">
+            <div class="col-md-4">
                 <br> <button class="btn btn-primary btn-block" onclick="window.location.href='add_personnel.php'">Add Personnel</button>
             </div>
         </div>

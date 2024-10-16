@@ -36,6 +36,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($user && password_verify($pass, $user['password'])) {
             // Set session variables for user
             $_SESSION['loggedin'] = true;
+            $_SESSION['user_id'] = $user['admin_id'];
             $_SESSION['username'] = $user['username'];
             $_SESSION['firstname'] = $user['firstname'];
             $_SESSION['lastname'] = $user['lastname'];
