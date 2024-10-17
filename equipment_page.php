@@ -122,17 +122,25 @@ try {
 
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script>
-        $(document).ready(function() {
-            // Search filter logic
-            $('#search-input').on('input', function() {
-                var input = $(this).val().toLowerCase();
-                var column = $('#filter-column').val();
+$(document).ready(function() {
+    // Search filter logic with exact matching
+    $('#search-input').on('input', function() {
+        var input = $(this).val().toLowerCase().trim();
+        var column = $('#filter-column').val();
 
-                $('#equipment-table tbody tr').filter(function() {
-                    $(this).toggle($(this).find('td').eq(column).text().toLowerCase().indexOf(input) > -1);
-                });
-            });
+        $('#equipment-table tbody tr').each(function() {
+            var cellText = $(this).find('td').eq(column).text().toLowerCase().trim();
+
+            // Toggle row visibility based on exact match
+            if (input === "" || cellText === input) {
+                $(this).show();
+            } else {
+                $(this).hide();
+            }
         });
+    });
+});
+
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
