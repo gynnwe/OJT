@@ -20,32 +20,43 @@ try {
         $model_id = isset($_POST['model_id']) && !empty($_POST['model_id']) ? $_POST['model_id'] : null;
 
         if (!empty($model_name)) {
-            if ($model_id) {
-                $updateSQL = "UPDATE model SET model_name = :model_name, equip_type_id = :equip_type_id WHERE model_id = :model_id";
-                $stmt = $conn->prepare($updateSQL);
-                $stmt->bindParam(':model_name', $model_name);
-                $stmt->bindParam(':equip_type_id', $equip_type_id);
-                $stmt->bindParam(':model_id', $model_id);
+            // Check for duplicate model names
+            $duplicateCheckSQL = "SELECT COUNT(*) FROM model WHERE model_name = :model_name";
+            $stmt = $conn->prepare($duplicateCheckSQL);
+            $stmt->bindParam(':model_name', $model_name);
+            $stmt->execute();
+            $count = $stmt->fetchColumn();
 
-                if ($stmt->execute()) {
-                    $_SESSION['message'] = "Model updated successfully.";
-                    header("Location: add_model.php");
-                    exit;
-                } else {
-                    $error = "Failed to update the model.";
-                }
+            if ($count > 0) {
+                $error = "Model name already exists. Please enter a unique model name.";
             } else {
-                $insertSQL = "INSERT INTO model (model_name, equip_type_id) VALUES (:model_name, :equip_type_id)";
-                $stmt = $conn->prepare($insertSQL);
-                $stmt->bindParam(':model_name', $model_name);
-                $stmt->bindParam(':equip_type_id', $equip_type_id);
+                if ($model_id) {
+                    $updateSQL = "UPDATE model SET model_name = :model_name, equip_type_id = :equip_type_id WHERE model_id = :model_id";
+                    $stmt = $conn->prepare($updateSQL);
+                    $stmt->bindParam(':model_name', $model_name);
+                    $stmt->bindParam(':equip_type_id', $equip_type_id);
+                    $stmt->bindParam(':model_id', $model_id);
 
-                if ($stmt->execute()) {
-                    $_SESSION['message'] = "New model added successfully.";
-                    header("Location: add_model.php");
-                    exit;
+                    if ($stmt->execute()) {
+                        $_SESSION['message'] = "Model updated successfully.";
+                        header("Location: add_model.php");
+                        exit;
+                    } else {
+                        $error = "Failed to update the model.";
+                    }
                 } else {
-                    $error = "Failed to add the model.";
+                    $insertSQL = "INSERT INTO model (model_name, equip_type_id) VALUES (:model_name, :equip_type_id)";
+                    $stmt = $conn->prepare($insertSQL);
+                    $stmt->bindParam(':model_name', $model_name);
+                    $stmt->bindParam(':equip_type_id', $equip_type_id);
+
+                    if ($stmt->execute()) {
+                        $_SESSION['message'] = "New model added successfully.";
+                        header("Location: add_model.php");
+                        exit;
+                    } else {
+                        $error = "Failed to add the model.";
+                    }
                 }
             }
         } else {
