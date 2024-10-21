@@ -1,8 +1,6 @@
 <?php
-session_start();
-if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
-    header("location: login.php");
-    exit;
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
 }
 
 $servername = "localhost";
@@ -11,57 +9,57 @@ $password = "";
 $dbname = "ictmms";
 
 try {
-    // Connect to the database
     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    // Handle form submission to add a new equipment type
     if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['remarks_name'])) {
         $remarks_name = trim($_POST['remarks_name']);
+        $remarks_id = isset($_POST['remarks_id']) ? $_POST['remarks_id'] : null;
 
         if (!empty($remarks_name)) {
-            // Check if the equipment type already exists
-            $checkSQL = "SELECT COUNT(*) FROM remarks WHERE remarks_name = :remarks_name AND deleted_id = 0";
+            $checkSQL = "SELECT COUNT(*) FROM remarks WHERE remarks_name = :remarks_name AND remarks_id != :remarks_id";
             $stmt = $conn->prepare($checkSQL);
-            $stmt->bindParam(':remarks_name', $remarks_name);
+            $stmt->bindValue(':remarks_name', $remarks_name);
+            $stmt->bindValue(':remarks_id', $remarks_id ?? 0);
             $stmt->execute();
             $count = $stmt->fetchColumn();
 
-            if ($count == 0) {
-                // Insert the new equipment type into the database
-                $insertSQL = "INSERT INTO remarks (remarks_name) VALUES (:remarks_name)";
-                $stmt = $conn->prepare($insertSQL);
-                $stmt->bindParam(':remarks_name', $remarks_name);
-
-                if ($stmt->execute()) {
-                    $_SESSION['message'] = "New remark added successfully.";
-                    // Redirect to avoid form resubmission on page refresh
-                    header("Location: add_remarks.php");
-                    exit;
-                } else {
-                    $error = "Failed to add the remark.";
-                }
-            } else {
+            if ($count > 0) {
                 $error = "Remark already exists.";
+            } else {
+                if ($remarks_id) {
+                    $updateSQL = "UPDATE remarks SET remarks_name = :remarks_name WHERE remarks_id = :remarks_id";
+                    $stmt = $conn->prepare($updateSQL);
+                    $stmt->bindValue(':remarks_name', $remarks_name);
+                    $stmt->bindValue(':remarks_id', $remarks_id);
+                    $stmt->execute();
+                    $_SESSION['message'] = "Remark updated successfully.";
+                } else {
+                    $insertSQL = "INSERT INTO remarks (remarks_name) VALUES (:remarks_name)";
+                    $stmt = $conn->prepare($insertSQL);
+                    $stmt->bindValue(':remarks_name', $remarks_name);
+                    $stmt->execute();
+                    $_SESSION['message'] = "New remark added successfully.";
+                }
+                header("Location: add_remarks.php");
+                exit;
             }
         } else {
             $error = "Remark cannot be empty.";
         }
     }
 
-    // Handle soft delete via AJAX
     if (isset($_POST['deleted_id'])) {
         $delete_id = $_POST['deleted_id'];
-		$softDeleteSQL = "UPDATE remarks SET deleted_id = 1 WHERE remarks_id = :deleted_id";
-        $stmt = $conn->prepare($softDeleteSQL);
-        $stmt->bindParam(':deleted_id', $delete_id);
+        $deleteSQL = "DELETE FROM remarks WHERE remarks_id = :remarks_id";
+        $stmt = $conn->prepare($deleteSQL);
+        $stmt->bindValue(':remarks_id', $delete_id);
         $stmt->execute();
         echo "Success";
         exit;
     }
 
-    // Fetch all non-deleted remarks for display purposes
-    $sql = "SELECT remarks_id, remarks_name FROM remarks WHERE deleted_id = 0";
+    $sql = "SELECT remarks_id, remarks_name FROM remarks";
     $stmt = $conn->prepare($sql);
     $stmt->execute();
     $remarks = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -70,7 +68,6 @@ try {
     echo "Error: " . $e->getMessage();
 }
 
-// Display any messages and then clear them
 if (isset($_SESSION['message'])) {
     $message = $_SESSION['message'];
     unset($_SESSION['message']);
@@ -82,22 +79,18 @@ if (isset($_SESSION['message'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Equipment Type</title>
+    <title>Add Remarks</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 </head>
 <body>
     <div class="container mt-5">
         <h1>Add Remarks</h1>
-        <?php
-        if (isset($message)) {
-            echo "<div class='alert alert-success'>$message</div>";
-        }
-        if (isset($error)) {
-            echo "<div class='alert alert-danger'>$error</div>";
-        }
-        ?>
+        <?php if (isset($message)) echo "<div class='alert alert-success'>$message</div>"; ?>
+        <?php if (isset($error)) echo "<div class='alert alert-danger'>$error</div>"; ?>
+
         <form action="add_remarks.php" method="POST">
+            <input type="hidden" name="remarks_id" id="remarks_id">
             <div class="form-group">
                 <label for="remarks_name">New Remark:</label>
                 <input type="text" name="remarks_name" id="remarks_name" class="form-control" required>
@@ -105,7 +98,20 @@ if (isset($_SESSION['message'])) {
             <button type="submit" class="btn btn-primary mt-3">Add Remark</button>
         </form>
 
-        <h2 class="mt-5">Existing remarks_name</h2>
+        <h2 class="mt-5">Filter Remarks</h2>
+        <div class="form-inline mb-3">
+            <select id="filterBy" class="form-control mr-2">
+                <option value="id">ID</option>
+                <option value="remarks_name">Remarks</option>
+            </select>
+            <input type="text" id="searchInput" class="form-control" placeholder="Search...">
+        </div>
+
+        <div id="noResultsMessage" class="alert alert-warning" style="display: none;">
+            Remarks doesn't exist.
+        </div>
+
+        <h2>Existing Remarks</h2>
         <table class="table table-striped">
             <thead>
                 <tr>
@@ -114,14 +120,19 @@ if (isset($_SESSION['message'])) {
                     <th>Actions</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="remarksTableBody">
                 <?php if (!empty($remarks)): ?>
-                    <?php foreach ($remarks as $type): ?>
-                        <tr id="row-<?php echo $type['remarks_id']; ?>">
-                            <td><?php echo htmlspecialchars($type['remarks_id']); ?></td>
-                            <td><?php echo htmlspecialchars($type['remarks_name']); ?></td>
+                    <?php foreach ($remarks as $remark): ?>
+                        <tr id="row-<?php echo htmlspecialchars($remark['remarks_id']); ?>">
+                            <td><?php echo htmlspecialchars($remark['remarks_id']); ?></td>
+                            <td><?php echo htmlspecialchars($remark['remarks_name']); ?></td>
                             <td>
-                                <button class="btn btn-danger" onclick="softDelete(<?php echo $type['remarks_id']; ?>)">Delete</button>
+                                <a href="#" onclick="editRemark(<?php echo htmlspecialchars($remark['remarks_id']); ?>)">
+                                    <img src="edit.png" alt="Edit" style="width:20px; cursor: pointer;">
+                                </a>
+                                <a href="#" onclick="softDelete(<?php echo htmlspecialchars($remark['remarks_id']); ?>)">
+                                    <img src="delete.png" alt="Delete" style="width:20px; cursor: pointer;">
+                                </a>
                             </td>
                         </tr>
                     <?php endforeach; ?>
@@ -135,13 +146,21 @@ if (isset($_SESSION['message'])) {
     </div>
 
     <script>
+        function editRemark(id) {
+            const row = document.getElementById('row-' + id);
+            const remarkName = row.cells[1].innerText;
+
+            document.getElementById('remarks_id').value = id;
+            document.getElementById('remarks_name').value = remarkName;
+        }
+
         function softDelete(id) {
-            if (confirm('Are you sure you want to delete this remark')) {
+            if (confirm('Are you sure you want to delete this remark?')) {
                 $.ajax({
                     url: 'add_remarks.php',
                     type: 'POST',
                     data: { deleted_id: id },
-                    success: function(response) {
+                    success: function (response) {
                         if (response.trim() === "Success") {
                             document.getElementById('row-' + id).style.display = 'none';
                         } else {
@@ -151,8 +170,21 @@ if (isset($_SESSION['message'])) {
                 });
             }
         }
-    </script>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        // Filter and search functionality with no results prompt
+        $('#searchInput').on('input', function () {
+            const filterBy = $('#filterBy').val();
+            const searchValue = $(this).val().toLowerCase();
+            let found = false;
+
+            $('#remarksTableBody tr').filter(function () {
+                const match = $(this).find('td').eq(filterBy === 'id' ? 0 : 1).text().toLowerCase().includes(searchValue);
+                $(this).toggle(match);
+                if (match) found = true;
+            });
+
+            $('#noResultsMessage').toggle(!found);
+        });
+    </script>
 </body>
 </html>
