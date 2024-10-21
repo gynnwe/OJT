@@ -11,36 +11,34 @@ $password = "";
 $dbname = "ictmms";
 
 try {
-    // Connect to the database
     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    // Fetch all non-deleted equipment types for the dropdown
-    $sql = "SELECT equip_type_id, equip_type_name FROM equipment_type WHERE deleted_id = 0";
-    $stmt = $conn->prepare($sql);
-    $stmt->execute();
-    $equipment_types = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    // Handle form submission to add a new model
-    if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['equipment_type'], $_POST['model_name'])) {
-        $equipment_type_id = $_POST['equipment_type'];
+    if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['model_name'])) {
         $model_name = trim($_POST['model_name']);
+        $equip_type_id = $_POST['equip_type_id'];
+        $model_id = isset($_POST['model_id']) && !empty($_POST['model_id']) ? $_POST['model_id'] : null;
 
         if (!empty($model_name)) {
-            // Check if the model already exists for the selected equipment type
-            $checkSQL = "SELECT COUNT(*) FROM model WHERE equip_type_id = :equip_type_id AND model_name = :model_name AND deleted_id = 0";
-            $stmt = $conn->prepare($checkSQL);
-            $stmt->bindParam(':equip_type_id', $equipment_type_id);
-            $stmt->bindParam(':model_name', $model_name);
-            $stmt->execute();
-            $count = $stmt->fetchColumn();
-
-            if ($count == 0) {
-                // Insert the new model into the database
-                $insertSQL = "INSERT INTO model (equip_type_id, model_name) VALUES (:equip_type_id, :model_name)";
-                $stmt = $conn->prepare($insertSQL);
-                $stmt->bindParam(':equip_type_id', $equipment_type_id);
+            if ($model_id) {
+                $updateSQL = "UPDATE model SET model_name = :model_name, equip_type_id = :equip_type_id WHERE model_id = :model_id";
+                $stmt = $conn->prepare($updateSQL);
                 $stmt->bindParam(':model_name', $model_name);
+                $stmt->bindParam(':equip_type_id', $equip_type_id);
+                $stmt->bindParam(':model_id', $model_id);
+
+                if ($stmt->execute()) {
+                    $_SESSION['message'] = "Model updated successfully.";
+                    header("Location: add_model.php");
+                    exit;
+                } else {
+                    $error = "Failed to update the model.";
+                }
+            } else {
+                $insertSQL = "INSERT INTO model (model_name, equip_type_id) VALUES (:model_name, :equip_type_id)";
+                $stmt = $conn->prepare($insertSQL);
+                $stmt->bindParam(':model_name', $model_name);
+                $stmt->bindParam(':equip_type_id', $equip_type_id);
 
                 if ($stmt->execute()) {
                     $_SESSION['message'] = "New model added successfully.";
@@ -49,41 +47,42 @@ try {
                 } else {
                     $error = "Failed to add the model.";
                 }
-            } else {
-                $error = "Model already exists for this equipment type.";
             }
         } else {
             $error = "Model name cannot be empty.";
         }
     }
 
-    // Handles soft delete via AJAX
     if (isset($_POST['deleted_id'])) {
         $delete_id = $_POST['deleted_id'];
         $softDeleteSQL = "UPDATE model SET deleted_id = 1 WHERE model_id = :deleted_id";
         $stmt = $conn->prepare($softDeleteSQL);
         $stmt->bindParam(':deleted_id', $delete_id);
-        if ($stmt->execute()) {
-            echo "Success";
-        } else {
-            echo "Failed to delete.";
-        }
+        $stmt->execute();
+        echo "Success";
         exit;
     }
 
-	// Fetch all models along with their equipment types for display
-	$sqlModels = "
-		SELECT model.model_id, model.model_name, equipment_type.equip_type_name 
-		FROM model 
-		JOIN equipment_type ON model.equip_type_id = equipment_type.equip_type_id 
-		WHERE equipment_type.deleted_id = 0 AND (model.deleted_id IS NULL OR model.deleted_id = 0)"; //filter out deleted models
-    
-    $stmtModels = $conn->prepare($sqlModels);
-    $stmtModels->execute();
-    $models = $stmtModels->fetchAll(PDO::FETCH_ASSOC);
+    $sql = "SELECT model.model_id, model.model_name, equipment_type.equip_type_name 
+            FROM model 
+            JOIN equipment_type ON model.equip_type_id = equipment_type.equip_type_id 
+            WHERE model.deleted_id = 0";
+    $stmt = $conn->prepare($sql);
+    $stmt->execute();
+    $models = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    $equipSQL = "SELECT equip_type_id, equip_type_name FROM equipment_type WHERE deleted_id = 0";
+    $stmt = $conn->prepare($equipSQL);
+    $stmt->execute();
+    $equipment_types = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 } catch (PDOException $e) {
     echo "Error: " . $e->getMessage();
+}
+
+if (isset($_SESSION['message'])) {
+    $message = $_SESSION['message'];
+    unset($_SESSION['message']);
 }
 ?>
 
@@ -92,52 +91,54 @@ try {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Model</title>
+    <title>Add Model for Equipment Type</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 </head>
 <body>
-	<div class="container mt-5">
+    <div class="container mt-5">
         <h1>Add Model for Equipment Type</h1>
-        <?php
-        if (isset($message)) {
-            echo "<div class='alert alert-success'>$message</div>";
-        }
-        if (isset($error)) {
-            echo "<div class='alert alert-danger'>$error</div>";
-        }
-        ?>
-		
-		<form action="add_model.php" method="post">
+        <?php if (isset($message)) echo "<div class='alert alert-success'>$message</div>"; ?>
+        <?php if (isset($error)) echo "<div class='alert alert-danger'>$error</div>"; ?>
+
+        <form action="add_model.php" method="POST">
+            <input type="hidden" name="model_id" id="model_id">
             <div class="form-group">
-				<label for="equipment_type">Equipment Type:</label>
-				<select name="equipment_type" id="equipment_type" required>
-                <?php if (!empty($equipment_types)): ?>
+                <label for="equip_type_id">Equipment Type:</label>
+                <select name="equip_type_id" id="equip_type_id" class="form-control" required>
                     <?php foreach ($equipment_types as $type): ?>
-                        <option value="<?php echo htmlspecialchars($type['equip_type_id']); ?>">
-                            <?php echo htmlspecialchars($type['equip_type_name']); ?>
-                        </option>
+                        <option value="<?php echo $type['equip_type_id']; ?>"><?php echo htmlspecialchars($type['equip_type_name']); ?></option>
                     <?php endforeach; ?>
-                <?php else: ?>
-                    <option value="">No equipment types available</option>
-                <?php endif; ?>
-            </select><br>
+                </select>
+            </div>
+            <div class="form-group">
                 <label for="model_name">New Model for Chosen Equipment Type:</label>
                 <input type="text" name="model_name" id="model_name" class="form-control" required>
             </div>
-            <button type="submit" class="btn btn-primary mt-3">Add Model</button>
+            <button type="submit" class="btn btn-primary mt-3">Save Model</button>
         </form>
-		
-		<h2 class="mt-5">Existing Models</h2>
+
+        <h2 class="mt-5">Filter Models</h2>
+        <div class="form-inline mb-3">
+            <select id="filterBy" class="form-control mr-2">
+                <option value="id">ID</option>
+                <option value="type">Equipment Type</option>
+                <option value="name">Model Name</option>
+            </select>
+            <input type="text" id="searchInput" class="form-control" placeholder="Search...">
+        </div>
+
+        <h2>Existing Models</h2>
         <table class="table table-striped">
             <thead>
                 <tr>
                     <th>ID</th>
                     <th>Equipment Type</th>
                     <th>Model Name</th>
-                    <th>Actions</th> <!-- Added Actions column -->
+                    <th>Actions</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="modelTableBody">
                 <?php if (!empty($models)): ?>
                     <?php foreach ($models as $model): ?>
                         <tr id="row-<?php echo htmlspecialchars($model['model_id']); ?>">
@@ -145,30 +146,52 @@ try {
                             <td><?php echo htmlspecialchars($model['equip_type_name']); ?></td>
                             <td><?php echo htmlspecialchars($model['model_name']); ?></td>
                             <td>
-                                <button class="btn btn-danger" onclick="softDelete(<?php echo htmlspecialchars($model['model_id']); ?>)">Delete</button> <!-- Delete button -->
+                                <button class="btn btn-danger" onclick="softDelete(<?php echo htmlspecialchars($model['model_id']); ?>)">Delete</button>
                             </td>
                         </tr>
                     <?php endforeach; ?>
                 <?php else: ?>
                     <tr>
-                        <td colspan="4">No Models available.</td> <!-- Adjusted colspan -->
+                        <td colspan="4">No Models available.</td>
                     </tr>
                 <?php endif; ?>
             </tbody>
         </table>
-	</div>
-
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script> <!-- Ensure jQuery is included -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    </div>
 
     <script>
+        $('#searchInput').on('input', function () {
+            let filter = $('#filterBy').val();
+            let query = $(this).val().trim().toLowerCase();
+            let matchFound = false;
+
+            $('#modelTableBody tr').each(function () {
+                let text = filter === 'id'
+                    ? $(this).find('td:first').text().trim().toLowerCase()
+                    : filter === 'type'
+                    ? $(this).find('td:nth-child(2)').text().trim().toLowerCase()
+                    : $(this).find('td:nth-child(3)').text().trim().toLowerCase();
+
+                if (text.includes(query)) {
+                    $(this).show();
+                    matchFound = true;
+                } else {
+                    $(this).hide();
+                }
+            });
+
+            if (!matchFound && query !== '') {
+                alert('Model doesn\'t exist');
+            }
+        });
+
         function softDelete(id) {
             if (confirm('Are you sure you want to delete this model?')) {
                 $.ajax({
                     url: 'add_model.php',
                     type: 'POST',
                     data: { deleted_id: id },
-                    success: function(response) {
+                    success: function (response) {
                         if (response.trim() === "Success") {
                             document.getElementById('row-' + id).style.display = 'none';
                         } else {
@@ -179,6 +202,5 @@ try {
             }
         }
     </script>
-
 </body>
 </html>
