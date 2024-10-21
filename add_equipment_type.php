@@ -15,13 +15,12 @@ try {
     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    // Handle form submission to add or edit an equipment type
+    // Handle form submission to add or edit equipment types
     if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['equip_type_name'])) {
         $equip_type_name = trim($_POST['equip_type_name']);
         $equip_type_id = isset($_POST['equip_type_id']) ? $_POST['equip_type_id'] : null;
 
         if (!empty($equip_type_name)) {
-            // Check if the equipment type already exists (excluding itself during edit)
             $checkSQL = "SELECT COUNT(*) FROM equipment_type 
                          WHERE equip_type_name = :equip_type_name 
                          AND deleted_id = 0 
@@ -34,7 +33,6 @@ try {
 
             if ($count == 0) {
                 if ($equip_type_id) {
-                    // Update existing equipment type
                     $updateSQL = "UPDATE equipment_type 
                                   SET equip_type_name = :equip_type_name 
                                   WHERE equip_type_id = :equip_type_id";
@@ -42,7 +40,6 @@ try {
                     $stmt->bindParam(':equip_type_name', $equip_type_name);
                     $stmt->bindParam(':equip_type_id', $equip_type_id);
                 } else {
-                    // Insert new equipment type
                     $insertSQL = "INSERT INTO equipment_type (equip_type_name) 
                                   VALUES (:equip_type_name)";
                     $stmt = $conn->prepare($insertSQL);
@@ -64,7 +61,6 @@ try {
         }
     }
 
-    // Handle soft delete via AJAX
     if (isset($_POST['deleted_id'])) {
         $delete_id = $_POST['deleted_id'];
         $softDeleteSQL = "UPDATE equipment_type SET deleted_id = 1 WHERE equip_type_id = :deleted_id";
@@ -75,7 +71,6 @@ try {
         exit;
     }
 
-    // Fetch all non-deleted equipment types
     $sql = "SELECT equip_type_id, equip_type_name FROM equipment_type WHERE deleted_id = 0";
     $stmt = $conn->prepare($sql);
     $stmt->execute();
@@ -120,7 +115,16 @@ if (isset($_SESSION['message'])) {
             <button type="submit" class="btn btn-primary mt-3">Save Equipment Type</button>
         </form>
 
-        <h2 class="mt-5">Existing Equipment Types</h2>
+        <h2 class="mt-5">Search Equipment Type</h2>
+        <div class="form-inline mb-3">
+            <select id="filterBy" class="form-control mr-2">
+                <option value="id">ID</option>
+                <option value="name">Equipment Type Name</option>
+            </select>
+            <input type="text" id="searchInput" class="form-control" placeholder="Search...">
+        </div>
+
+        <h2>Existing Equipment Types</h2>
         <table class="table table-striped">
             <thead>
                 <tr>
@@ -129,7 +133,7 @@ if (isset($_SESSION['message'])) {
                     <th>Actions</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="equipmentTableBody">
                 <?php if (!empty($equipment_types)): ?>
                     <?php foreach ($equipment_types as $type): ?>
                         <tr id="row-<?php echo $type['equip_type_id']; ?>">
@@ -176,6 +180,27 @@ if (isset($_SESSION['message'])) {
                 });
             }
         }
+
+        $('#searchInput').on('input', function() {
+            let filter = $('#filterBy').val();
+            let query = $(this).val().toLowerCase();
+            let found = false;
+
+            $('#equipmentTableBody tr').each(function() {
+                let text = filter === 'id' 
+                    ? $(this).find('td:first').text() 
+                    : $(this).find('td:nth-child(2)').text().toLowerCase();
+
+                if (text.includes(query)) {
+                    $(this).show();
+                    found = true;
+                } else {
+                    $(this).hide();
+                }
+            });
+
+            if (!found) alert('Equipment doesn\'t exist');
+        });
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
