@@ -1,8 +1,8 @@
 <?php
 // Database connection parameters
 $servername = "localhost";
-$username = "root"; 
-$password = ""; 
+$username = "root";
+$password = "";
 $dbname = "ictmms"; // Specify your database name here
 
 try {
@@ -12,135 +12,125 @@ try {
 
     // Get the current year
     $currentYear = date('Y');
-    echo "Current Year: " . $currentYear . "<br>";
-
-    // Initialize progress variable
-    $progress = null;
-    $selectedEquipmentType = isset($_POST['equipment_type']) ? $_POST['equipment_type'] : null;
-
-    // Ensure that the selected equipment type is provided before executing the queries
-    if ($selectedEquipmentType) {
-        // SQL to count serviceable equipment with history based on selected equipment type
-        $sqlCount = "
-            SELECT COUNT(DISTINCT e.equipment_id) as total_serviceable_with_history 
-            FROM equipment e
-            JOIN ict_maintenance_logs ml ON e.equipment_id = ml.equipment_id
-            WHERE e.status = 'Serviceable' 
-            AND YEAR(e.date_added) = :currentYear
-            AND MONTH(ml.maintenance_date) = :selectedMonth
-            AND e.equip_type_id = :selectedEquipmentType"; // Assuming equip_type_id is the foreign key in equipment table
-    
-        // Prepare SQL to fetch the list of serviceable equipment with date added based on selected equipment type
-        $sqlList = "
-            SELECT e.equip_name, e.date_added 
-            FROM equipment e 
-            WHERE e.status = 'Serviceable' 
-            AND YEAR(e.date_added) = :currentYear
-            AND e.equip_type_id = :selectedEquipmentType"; // Include equipment type filtering
-    
-    
-    $stmtList = $conn->prepare($sqlList);
-    $stmtList->bindParam(':currentYear', $currentYear, PDO::PARAM_INT);
-    $stmtList->bindParam(':selectedEquipmentType', $selectedEquipmentType); // Bind equipment type ID
-    $stmtList->execute();
-
-    // Fetch all serviceable equipment
-    $serviceableEquipment = $stmtList->fetchAll(PDO::FETCH_ASSOC);
-
-    
-    // Handle form submission
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        $selectedMonth = intval($_POST['month']); // Ensure selected month is an integer
-        $percentage = $_POST['percentage'];
-
-        // Validate input (basic validation)
-        if (!empty($selectedMonth) && is_numeric($percentage) && $percentage >= 0 && $percentage <= 100) {
-            // Prepare the count query with selected month
-            $stmtCount = $conn->prepare($sqlCount);
-            $stmtCount->bindParam(':currentYear', $currentYear, PDO::PARAM_INT);
-            $stmtCount->bindParam(':selectedMonth', $selectedMonth, PDO::PARAM_INT);
-            $stmtCount->bindParam(':selectedEquipmentType', $selectedEquipmentType); // Bind equipment type ID
-            $stmtCount->execute();
-
-            // Fetch the result
-            $resultCount = $stmtCount->fetch(PDO::FETCH_ASSOC);
-            $totalServiceableWithHistory = $resultCount['total_serviceable_with_history'];
-
-            // Compute progress
-            $progress = (count($serviceableEquipment) * $percentage) / 100;
-
-            // Display the computed progress
-            echo "Selected Month: " . htmlspecialchars($selectedMonth) . "<br>";
-            echo "Plan: " . htmlspecialchars($percentage) . "%<br>";
-            echo "Actual: " . htmlspecialchars($progress) . " out of " . htmlspecialchars(count($serviceableEquipment)) . " serviceable equipment.<br>";
-            echo "Actual: " . htmlspecialchars($totalServiceableWithHistory) . " - number of equipment maintained."; 
-        } else {
-            echo "Please select a valid month and enter a percentage between 0 and 100.<br>";
-        }
-    }
-
-    // Display the list of serviceable equipment
-    echo "<h3>List of Serviceable Equipment for " . $currentYear . ":</h3>";
-    echo "<table border='1'>
-            <tr>
-                <th>Equipment Name</th>
-                <th>Date Added</th>
-            </tr>";
-    foreach ($serviceableEquipment as $equipment) {
-        echo "<tr>
-                <td>" . htmlspecialchars($equipment['equip_name']) . "</td>
-                <td>" . htmlspecialchars($equipment['date_added']) . "</td>
-              </tr>";
-    }
-    echo "</table>";
-}
 
     // Fetch equipment types for the dropdown
-$query = "SELECT equip_type_id, equip_type_name FROM equipment_type WHERE deleted_id = 0";
-$stmt = $conn->prepare($query);
-$stmt->execute();
-$equipmentTypes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $query = "SELECT equip_type_id, equip_type_name FROM equipment_type WHERE deleted_id = 0";
+    $stmt = $conn->prepare($query);
+    $stmt->execute();
+    $equipmentTypes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Dropdown for month selection, equipment type selection, and input field for percentage
-echo '<form method="post" action="">
-        <label for="month">Select Month:</label>
-        <select name="month" id="month" required>
-            <option value="">--Select Month--</option>
-            <option value="1">January</option>
-            <option value="2">February</option>
-            <option value="3">March</option>
-            <option value="4">April</option>
-            <option value="5">May</option>
-            <option value="6">June</option>
-            <option value="7">July</option>
-            <option value="8">August</option>
-            <option value="9">September</option>
-            <option value="10">October</option>
-            <option value="11">November</option>
-            <option value="12">December</option>
-        </select>
-        <br><br>
-        
-        <label for="equipment_type">Select Equipment Type:</label>
-        <select name="equipment_type" id="equipment_type" required>
-            <option value="">--Select Equipment Type--</option>';
+    // Handle form submission
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        $selectedEquipmentType = $_POST['equipment_type'];
+        $percentages = $_POST['percentages']; // Array of percentages for each month
+
+        if ($selectedEquipmentType && !empty($percentages)) {
+            echo '<div class="container mt-5"><div class="row"><div class="col-md-12">';
+            echo '<div class="card">';
+            echo '<div class="card-header bg-primary text-white"><h4>Maintenance Plan Progress</h4></div>';
+            echo '<div class="card-body">';
+
+            // Loop through each month and calculate progress
+            for ($month = 1; $month <= 12; $month++) {
+                $percentage = intval($percentages[$month]);
+
+                if ($percentage >= 0 && $percentage <= 100) {
+                    // SQL to count serviceable equipment with history based on selected equipment type and month
+                    $sqlCount = "
+                        SELECT COUNT(DISTINCT e.equipment_id) as total_serviceable_with_history 
+                        FROM equipment e
+                        JOIN ict_maintenance_logs ml ON e.equipment_id = ml.equipment_id
+                        WHERE e.status = 'Serviceable' 
+                        AND YEAR(e.date_added) = :currentYear
+                        AND MONTH(ml.maintenance_date) = :selectedMonth
+                        AND e.equip_type_id = :selectedEquipmentType";
+                    
+                    // Prepare the count query
+                    $stmtCount = $conn->prepare($sqlCount);
+                    $stmtCount->bindParam(':currentYear', $currentYear, PDO::PARAM_INT);
+                    $stmtCount->bindParam(':selectedMonth', $month, PDO::PARAM_INT);
+                    $stmtCount->bindParam(':selectedEquipmentType', $selectedEquipmentType);
+                    $stmtCount->execute();
+
+                    // Fetch result
+                    $resultCount = $stmtCount->fetch(PDO::FETCH_ASSOC);
+                    $totalServiceableWithHistory = $resultCount['total_serviceable_with_history'];
+
+                    // Fetch serviceable equipment count for progress calculation
+                    $sqlList = "
+                        SELECT COUNT(*) as total_serviceable 
+                        FROM equipment e 
+                        WHERE e.status = 'Serviceable' 
+                        AND YEAR(e.date_added) = :currentYear
+                        AND e.equip_type_id = :selectedEquipmentType";
+                    
+                    $stmtList = $conn->prepare($sqlList);
+                    $stmtList->bindParam(':currentYear', $currentYear, PDO::PARAM_INT);
+                    $stmtList->bindParam(':selectedEquipmentType', $selectedEquipmentType);
+                    $stmtList->execute();
+
+                    $serviceableEquipment = $stmtList->fetch(PDO::FETCH_ASSOC);
+                    $totalServiceable = $serviceableEquipment['total_serviceable'];
+
+                    // Compute progress
+                    $progress = ($totalServiceable * $percentage) / 100;
+
+                    // Display the computed progress for the month
+                    echo "<h5>Month: " . date('F', mktime(0, 0, 0, $month, 1)) . "</h5>";
+                    echo "<p>Plan: " . htmlspecialchars($percentage) . "%</p>";
+                    echo "<p>Actual: " . htmlspecialchars($progress) . " out of " . htmlspecialchars($totalServiceable) . " serviceable equipment.</p>";
+                    echo "<p>Actual: " . htmlspecialchars($totalServiceableWithHistory) . " - number of equipment maintained.</p><hr>";
+                } else {
+                    echo "Invalid percentage for month " . $month . ".<br>";
+                }
+            }
             
-foreach ($equipmentTypes as $type) {
-    echo '<option value="' . htmlspecialchars($type['equip_type_id']) . '">' . htmlspecialchars($type['equip_type_name']) . '</option>';
-}
+            echo '</div></div></div></div></div>';
+        } else {
+            echo '<div class="alert alert-danger" role="alert">Please select an equipment type and enter percentages for all months.</div>';
+        }
+    } else {
+        // Form for entering percentages for each month
+        echo '<div class="container mt-5">
+                <div class="row justify-content-center">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header bg-primary text-white">
+                                <h4>Equipment Maintenance Plan</h4>
+                            </div>
+                            <div class="card-body">
+                                <form method="post" action="">
+                                    <div class="form-group">
+                                        <label for="equipment_type">Select Equipment Type:</label>
+                                        <select name="equipment_type" id="equipment_type" class="form-control" required>
+                                            <option value="">--Select Equipment Type--</option>';
+        
+        foreach ($equipmentTypes as $type) {
+            echo '<option value="' . htmlspecialchars($type['equip_type_id']) . '">' . htmlspecialchars($type['equip_type_name']) . '</option>';
+        }
 
-echo '      </select>
-        <br><br>
-        
-        <label for="percentage">Enter Percentage (0-100):</label>
-        <input type="number" name="percentage" id="percentage" min="0" max="100" required>
-        <br><br>
-        
-        <input type="submit" value="Submit">
-      </form>';
+        echo '                      </select>
+                                    </div><br>';
+
+        // Generate input fields for each month
+        for ($month = 1; $month <= 12; $month++) {
+            echo '<div class="form-group">
+                    <label for="percentage' . $month . '">' . date('F', mktime(0, 0, 0, $month, 1)) . ' Percentage (0-100):</label>
+                    <input type="number" name="percentages[' . $month . ']" id="percentage' . $month . '" class="form-control" min="0" max="100" required>
+                  </div><br>';
+        }
+
+        echo '              <button type="submit" class="btn btn-primary btn-block">Submit</button>
+                          </form>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>';
+    }
 
 } catch (PDOException $e) {
-    echo "Connection failed: " . $e->getMessage();
+    echo '<div class="alert alert-danger" role="alert">Connection failed: ' . $e->getMessage() . '</div>';
 }
 
 // Close the connection
