@@ -11,72 +11,45 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+	<!-- MATERIAL CDN  -->
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" />
+	<link rel="stylesheet" href="styles.css">
+	<script src="scripts.js" defer ></script>
+    <title>ICTEMMS</title>
 </head>
-<body>
-
-<h3>Welcome, <?php echo ucfirst(htmlspecialchars($_SESSION['firstname'])) . ' ' . ucfirst(htmlspecialchars($_SESSION['lastname']));?>!</h3>
-
-<!-- Side Bar Menu for Dashboard -->
-<div class="menu-bar" style="position:fixed; height: 100%; width: 250px; left:0; background-color: lightgrey;">	<!-- inline css for area checking-->
-    <div class="menu">
-        <ul class="menu-links">
-        
-            <li class="nav-link">
-                <a href="dashboard.php">
-                    <i class=""></i> <!-- Add Icon Here -->
-                    <span class="text nav-text">Dashboard</span>
-                </a>
-            </li>
-            
-            <li class="nav-link">
-                <a href="equipment_page.php">
-                    <i class=""></i> <!-- Add Icon Here -->
-                    <span class="text nav-text">ICT Equipment</span>
-                </a>
-            </li>
-           
-            <li class="nav-link">
-                <a href="#">
-                    <i class=""></i> <!-- Add Icon Here -->
-                    <span class="text nav-text">Reports</span>
-                </a>
-            </li>
-
-            <!-- Display management button only for admin -->
-            <?php if ($_SESSION['role'] !== 'Assistant'): ?>
-                <li class="nav-link">
-                    <a href="management.php">
-                        <i class=""></i> <!-- Add Icon Here -->
-                        <span class="text nav-text">Management</span>
-                    </a>
-                </li>
-            <?php endif; ?>
-            
-            <div class="account-settings">
-                <p>Account Settings</p>
-                
-                <li class="Profile-btn">
-                    <a href="profile.php">
-                        <i class=""></i> <!-- Add Icon Here -->
-                        <span class="text nav-text">Profile</span>
-                    </a>
-                </li>
-                
-                <li class="logout-btn">
-                    <a href="logout.php">
-                        <i class=""></i> <!-- Add Icon Here -->
-                        <span class="text nav-text">Logout</span>
-                    </a>
-                </li>
-            </div>
+<body class="dashboard">
+	<!-- Header-->
+    <div class="header">
+        <span id="current-page">Dashboard</span>
+		<div class="user-info">
+			<span class="material-symbols-rounded">account_box</span>
+			<div class="text-info">
+				<span class="username"><?php echo ucfirst(htmlspecialchars($_SESSION['firstname'])) . ' ' . ucfirst(htmlspecialchars($_SESSION['lastname']));?></span>
+				<span class="role"><?php echo ucfirst(htmlspecialchars($_SESSION['role']));?></span>
+			</div>
+		</div>
+    </div>
+	
+	<!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <img src="assets/usep-logo.png" alt="Logo" class="logo">
+        </div>
+        <ul class="nav-links">
+            <li><a href="#" class="active"onclick="loadPage('dashboard-content.php', 'Dashboard')"><span class="material-symbols-rounded">home</span>Dashboard</a></li>
+            <li><a href="#" onclick="loadPage('equipment_input_ict.php', 'Equipment Registration')"><span class="material-symbols-rounded">add_box</span>Equipment Registration</a></li>
+            <li><a href="#" onclick="loadPage('equipment_maintenance.php', 'Equipment Maintenance')"><span class="material-symbols-rounded">build</span>Equipment Maintenance </a></li>
+            <li><a href="#" onclick="loadPage('plan_maintenance.php', 'Plan Maintenance')"><span class="material-symbols-rounded">contract_edit</span>Plan Maintenance</a></li>
+            <li><a href="#" onclick="loadPage('reports.php', 'Reports')"><span class="material-symbols-rounded">report</span>Reports</a></li>
+			<li><a href="#" onclick="logout()"><span class="material-symbols-rounded">logout</span>Logout</a></li>
         </ul>
     </div>
-</div>
 
-<!-- Right side content part of dashboard -->
-<main class="" style=" position: absolute;top: 0; left: 250px; height: 100vh; width: calc(100% - 250px); background-color: grey;"> <!-- inline css for area checking-->
-
-</main>
+    <!-- Main Content Area -->
+    <div class="main-content">
+        <div id="content-area">
+		<!-- -->
+        </div>
+    </div>
 </body>
 </html>

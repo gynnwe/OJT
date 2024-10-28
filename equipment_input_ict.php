@@ -54,31 +54,10 @@ try {
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.3/font/bootstrap-icons.min.css" rel="stylesheet">
+	<script src="scripts.js" defer ></script>
 </head>
 <body>
     <div class="container mt-5">
-        <h1 class="text-center">ICT Equipment</h1>
-        <div class="row mt-4">
-            <!-- Add Equipment Button -->
-            <div class="col-md-4 mb-3">
-                <a href="equipment_input_ict.php" class="btn btn-primary w-100 py-4">
-                    <i class="bi bi-plus-circle"></i> Add Equipment
-                </a>
-            </div>
-            <!-- Equipment Maintenance Button -->
-            <div class="col-md-4 mb-3">
-                <a href="equipment_maintenance.php" class="btn btn-success w-100 py-4">
-                    <i class="bi bi-wrench"></i> Equipment Maintenance
-                </a>
-            </div>
-            <!-- Plan Maintenance Button -->
-            <div class="col-md-4 mb-3">
-                <a href="plan_maintenance.php" class="btn btn-warning w-100 py-4">
-                    <i class="bi bi-calendar"></i> Plan Maintenance
-                </a>
-            </div>
-        </div>
-
         <!-- Add Equipment Form -->
         <h2 class="mt-5">Add Equipment</h2>
         <?php if (isset($_GET['error'])): ?>
@@ -153,41 +132,6 @@ try {
         </form>
 
     </div>
-
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script>
-    // JavaScript code to handle dynamic model population
-    $(document).ready(function() {
-        $('#equipment_type').change(function() {
-            var equipTypeId = $(this).val();
-            
-            // Clear previous models
-            $('#model_name').empty();
-
-            if (equipTypeId) {
-                $.ajax({
-                    url: 'equipment_input_ict.php', 
-                    type: 'GET',
-                    data: { equip_type_id: equipTypeId },
-                    success: function(data) {
-                        var models = JSON.parse(data);
-                        if (models.length > 0) {
-                            $.each(models, function(index, model) {
-                                $('#model_name').append('<option value="' + model.model_id + '">' + model.model_name + '</option>');
-                            });
-                        } else {
-                            $('#model_name').append('<option value="">No models available</option>');
-                        }
-                    },
-                    error: function() {
-                        alert('Error fetching models.');
-                    }
-                });
-            }
-        });
-    });
-    </script>
-
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

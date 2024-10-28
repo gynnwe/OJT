@@ -99,28 +99,6 @@ try {
 </head>
 <body>
     <div class="container mt-5">
-        <h1>ICT Equipment Maintenance</h1>
-        <div class="row mt-4">
-            <!-- Add Equipment Button -->
-            <div class="col-md-4 mb-3">
-                <a href="equipment_input_ict.php" class="btn btn-primary w-100 py-4">
-                    <i class="bi bi-plus-circle"></i> Add Equipment
-                </a>
-            </div>
-            <!-- Equipment Maintenance Button -->
-            <div class="col-md-4 mb-3">
-                <a href="equipment_maintenance.php" class="btn btn-success w-100 py-4">
-                    <i class="bi bi-wrench"></i> Equipment Maintenance
-                </a>
-            </div>
-            <!-- Plan Maintenance Button -->
-            <div class="col-md-4 mb-3">
-                <a href="plan_maintenance.php" class="btn btn-warning w-100 py-4">
-                    <i class="bi bi-calendar"></i> Plan Maintenance
-                </a>
-            </div>
-        </div>
-
         <!-- Filter Equipment by Type -->
         <label for="equipment_type_filter">Filter by Equipment Type:</label>
         <form method="GET" action="equipment_maintenance.php">
