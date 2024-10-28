@@ -17,7 +17,11 @@ try {
         $remarks_id = isset($_POST['remarks_id']) ? $_POST['remarks_id'] : null;
 
         if (!empty($remarks_name)) {
-            $checkSQL = "SELECT COUNT(*) FROM remarks WHERE remarks_name = :remarks_name AND remarks_id != :remarks_id";
+            // Check for duplicate remarks, ignoring soft-deleted ones
+            $checkSQL = "SELECT COUNT(*) FROM remarks 
+                         WHERE remarks_name = :remarks_name 
+                         AND remarks_id != :remarks_id 
+                         AND deleted_id = 0";
             $stmt = $conn->prepare($checkSQL);
             $stmt->bindValue(':remarks_name', $remarks_name);
             $stmt->bindValue(':remarks_id', $remarks_id ?? 0);
@@ -28,6 +32,7 @@ try {
                 $error = "Remark already exists.";
             } else {
                 if ($remarks_id) {
+                    // Update existing remark
                     $updateSQL = "UPDATE remarks SET remarks_name = :remarks_name WHERE remarks_id = :remarks_id";
                     $stmt = $conn->prepare($updateSQL);
                     $stmt->bindValue(':remarks_name', $remarks_name);
@@ -35,6 +40,7 @@ try {
                     $stmt->execute();
                     $_SESSION['message'] = "Remark updated successfully.";
                 } else {
+                    // Insert new remark
                     $insertSQL = "INSERT INTO remarks (remarks_name) VALUES (:remarks_name)";
                     $stmt = $conn->prepare($insertSQL);
                     $stmt->bindValue(':remarks_name', $remarks_name);
@@ -51,15 +57,17 @@ try {
 
     if (isset($_POST['deleted_id'])) {
         $delete_id = $_POST['deleted_id'];
-        $deleteSQL = "DELETE FROM remarks WHERE remarks_id = :remarks_id";
-        $stmt = $conn->prepare($deleteSQL);
+        // Soft delete by updating deleted_id
+        $softDeleteSQL = "UPDATE remarks SET deleted_id = 1 WHERE remarks_id = :remarks_id";
+        $stmt = $conn->prepare($softDeleteSQL);
         $stmt->bindValue(':remarks_id', $delete_id);
         $stmt->execute();
         echo "Success";
         exit;
     }
 
-    $sql = "SELECT remarks_id, remarks_name FROM remarks";
+    // Fetch only non-deleted remarks
+    $sql = "SELECT remarks_id, remarks_name FROM remarks WHERE deleted_id = 0";
     $stmt = $conn->prepare($sql);
     $stmt->execute();
     $remarks = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -108,7 +116,7 @@ if (isset($_SESSION['message'])) {
         </div>
 
         <div id="noResultsMessage" class="alert alert-warning" style="display: none;">
-            Remarks doesn't exist.
+            Remarks don't exist.
         </div>
 
         <h2>Existing Remarks</h2>
@@ -171,7 +179,6 @@ if (isset($_SESSION['message'])) {
             }
         }
 
-        // Filter and search functionality with no results prompt
         $('#searchInput').on('input', function () {
             const filterBy = $('#filterBy').val();
             const searchValue = $(this).val().toLowerCase();

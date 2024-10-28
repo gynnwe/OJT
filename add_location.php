@@ -21,10 +21,10 @@ try {
         $location_id = isset($_POST['location_id']) ? $_POST['location_id'] : null;
 
         if (!empty($college) && !empty($office) && !empty($unit)) {
-            // Check for duplicate entries
+            // Check for duplicate entries, ignoring soft-deleted locations
             $checkSQL = "SELECT COUNT(*) FROM location 
                          WHERE college = :college AND office = :office AND unit = :unit 
-                         AND location_id != :location_id";
+                         AND location_id != :location_id AND deleted_id = 0";
             $stmt = $conn->prepare($checkSQL);
             $stmt->bindValue(':college', $college);
             $stmt->bindValue(':office', $office);
@@ -68,15 +68,17 @@ try {
 
     if (isset($_POST['deleted_id'])) {
         $delete_id = $_POST['deleted_id'];
-        $deleteSQL = "DELETE FROM location WHERE location_id = :location_id";
-        $stmt = $conn->prepare($deleteSQL);
+        // Soft delete instead of actual delete
+        $softDeleteSQL = "UPDATE location SET deleted_id = 1 WHERE location_id = :location_id";
+        $stmt = $conn->prepare($softDeleteSQL);
         $stmt->bindValue(':location_id', $delete_id);
         $stmt->execute();
         echo "Success";
         exit;
     }
 
-    $sql = "SELECT * FROM location";
+    // Fetch only non-deleted locations
+    $sql = "SELECT * FROM location WHERE deleted_id = 0";
     $stmt = $conn->prepare($sql);
     $stmt->execute();
     $locations = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -146,28 +148,22 @@ if (isset($_SESSION['message'])) {
                 </tr>
             </thead>
             <tbody id="locationTableBody">
-                <?php if (!empty($locations)): ?>
-                    <?php foreach ($locations as $location): ?>
-                        <tr id="row-<?php echo htmlspecialchars($location['location_id']); ?>">
-                            <td><?php echo htmlspecialchars($location['location_id']); ?></td>
-                            <td><?php echo htmlspecialchars($location['college']); ?></td>
-                            <td><?php echo htmlspecialchars($location['office']); ?></td>
-                            <td><?php echo htmlspecialchars($location['unit']); ?></td>
-                            <td>
-                                <a href="#" onclick="editLocation(<?php echo htmlspecialchars($location['location_id']); ?>)">
-                                    <img src="edit.png" alt="Edit" style="width:20px; cursor: pointer;">
-                                </a>
-                                <a href="#" onclick="softDelete(<?php echo htmlspecialchars($location['location_id']); ?>)">
-                                    <img src="delete.png" alt="Delete" style="width:20px; cursor: pointer;">
-                                </a>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <tr>
-                        <td colspan="5">No Locations available.</td>
+                <?php foreach ($locations as $location): ?>
+                    <tr id="row-<?php echo htmlspecialchars($location['location_id']); ?>">
+                        <td><?php echo htmlspecialchars($location['location_id']); ?></td>
+                        <td><?php echo htmlspecialchars($location['college']); ?></td>
+                        <td><?php echo htmlspecialchars($location['office']); ?></td>
+                        <td><?php echo htmlspecialchars($location['unit']); ?></td>
+                        <td>
+                            <a href="#" onclick="editLocation(<?php echo htmlspecialchars($location['location_id']); ?>)">
+                                <img src="edit.png" alt="Edit" style="width:20px; cursor: pointer;">
+                            </a>
+                            <a href="#" onclick="softDelete(<?php echo htmlspecialchars($location['location_id']); ?>)">
+                                <img src="delete.png" alt="Delete" style="width:20px; cursor: pointer;">
+                            </a>
+                        </td>
                     </tr>
-                <?php endif; ?>
+                <?php endforeach; ?>
             </tbody>
         </table>
     </div>
@@ -187,16 +183,11 @@ if (isset($_SESSION['message'])) {
 
         function softDelete(id) {
             if (confirm('Are you sure you want to delete this location?')) {
-                $.ajax({
-                    url: 'add_location.php',
-                    type: 'POST',
-                    data: { deleted_id: id },
-                    success: function (response) {
-                        if (response.trim() === "Success") {
-                            document.getElementById('row-' + id).style.display = 'none';
-                        } else {
-                            alert('Failed to delete the location.');
-                        }
+                $.post('add_location.php', { deleted_id: id }, function(response) {
+                    if (response.trim() === "Success") {
+                        document.getElementById('row-' + id).style.display = 'none';
+                    } else {
+                        alert('Failed to delete the location.');
                     }
                 });
             }
@@ -220,8 +211,7 @@ if (isset($_SESSION['message'])) {
             if (!matchFound && query !== '') {
                 alert('Location not found.');
             }
-    });
-</script>
-
-</body> 
+        });
+    </script>
+</body>
 </html>

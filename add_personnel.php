@@ -21,9 +21,10 @@ try {
         $personnel_id = isset($_POST['personnel_id']) ? $_POST['personnel_id'] : null;
 
         if (!empty($firstname) && !empty($lastname) && !empty($department)) {
+            // Check for duplicate personnel, ignoring soft-deleted ones
             $checkSQL = "SELECT COUNT(*) FROM personnel 
                          WHERE firstname = :firstname AND lastname = :lastname 
-                         AND personnel_id != :personnel_id";
+                         AND personnel_id != :personnel_id AND deleted_id = 0";
             $stmt = $conn->prepare($checkSQL);
             $stmt->bindValue(':firstname', $firstname);
             $stmt->bindValue(':lastname', $lastname);
@@ -35,6 +36,7 @@ try {
                 $error = "Personnel with the same name already exists.";
             } else {
                 if ($personnel_id) {
+                    // Update existing personnel
                     $updateSQL = "UPDATE personnel SET firstname = :firstname, lastname = :lastname, 
                                   department = :department WHERE personnel_id = :personnel_id";
                     $stmt = $conn->prepare($updateSQL);
@@ -45,6 +47,7 @@ try {
                     $stmt->execute();
                     $_SESSION['message'] = "Personnel updated successfully.";
                 } else {
+                    // Insert new personnel
                     $insertSQL = "INSERT INTO personnel (firstname, lastname, department) 
                                   VALUES (:firstname, :lastname, :department)";
                     $stmt = $conn->prepare($insertSQL);
@@ -64,15 +67,17 @@ try {
 
     if (isset($_POST['deleted_id'])) {
         $delete_id = $_POST['deleted_id'];
-        $deleteSQL = "DELETE FROM personnel WHERE personnel_id = :personnel_id";
-        $stmt = $conn->prepare($deleteSQL);
+        // Soft delete by setting deleted_id to 1
+        $softDeleteSQL = "UPDATE personnel SET deleted_id = 1 WHERE personnel_id = :personnel_id";
+        $stmt = $conn->prepare($softDeleteSQL);
         $stmt->bindValue(':personnel_id', $delete_id);
         $stmt->execute();
         echo "Success";
         exit;
     }
 
-    $sql = "SELECT * FROM personnel";
+    // Fetch only non-deleted personnel
+    $sql = "SELECT * FROM personnel WHERE deleted_id = 0";
     $stmt = $conn->prepare($sql);
     $stmt->execute();
     $personnel = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -205,17 +210,6 @@ if (isset($_SESSION['message'])) {
                 $.ajax({
                     url: 'add_personnel.php',
                     type: 'POST',
-                    data: { deleted_id: id },
-                    success: function(response) {
-                        if (response.trim() === "Success") {
-                            document.getElementById('row-' + id).style.display = 'none';
-                        } else {
-                            alert('Failed to delete the personnel.');
-                        }
-                    }
-                });
-            }
-        }
-    </script>
-</body>
-</html>
+                    data: { deleted_id: id}, success: function(response) { if (response.trim() === "Success") { document.getElementById('row-' + id).style.display = 'none'; } else { alert('Failed to delete the personnel.'); } } }); } } </script>
+
+</body> </html> 

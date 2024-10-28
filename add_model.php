@@ -20,10 +20,13 @@ try {
         $model_id = isset($_POST['model_id']) && !empty($_POST['model_id']) ? $_POST['model_id'] : null;
 
         if (!empty($model_name)) {
-            // Check for duplicate model names
-            $duplicateCheckSQL = "SELECT COUNT(*) FROM model WHERE model_name = :model_name";
+            $duplicateCheckSQL = "SELECT COUNT(*) FROM model 
+                                  WHERE model_name = :model_name 
+                                  AND (model_id != :model_id OR :model_id IS NULL)
+                                  AND deleted_id = 0";
             $stmt = $conn->prepare($duplicateCheckSQL);
             $stmt->bindParam(':model_name', $model_name);
+            $stmt->bindParam(':model_id', $model_id);
             $stmt->execute();
             $count = $stmt->fetchColumn();
 
@@ -39,8 +42,6 @@ try {
 
                     if ($stmt->execute()) {
                         $_SESSION['message'] = "Model updated successfully.";
-                        header("Location: add_model.php");
-                        exit;
                     } else {
                         $error = "Failed to update the model.";
                     }
@@ -52,8 +53,6 @@ try {
 
                     if ($stmt->execute()) {
                         $_SESSION['message'] = "New model added successfully.";
-                        header("Location: add_model.php");
-                        exit;
                     } else {
                         $error = "Failed to add the model.";
                     }
@@ -74,7 +73,7 @@ try {
         exit;
     }
 
-    $sql = "SELECT model.model_id, model.model_name, equipment_type.equip_type_name 
+    $sql = "SELECT model.model_id, model.model_name, equipment_type.equip_type_name, model.equip_type_id
             FROM model 
             JOIN equipment_type ON model.equip_type_id = equipment_type.equip_type_id 
             WHERE model.deleted_id = 0";
@@ -150,64 +149,58 @@ if (isset($_SESSION['message'])) {
                 </tr>
             </thead>
             <tbody id="modelTableBody">
-                <?php if (!empty($models)): ?>
-                    <?php foreach ($models as $model): ?>
-                        <tr id="row-<?php echo htmlspecialchars($model['model_id']); ?>">
-                            <td><?php echo htmlspecialchars($model['model_id']); ?></td>
-                            <td><?php echo htmlspecialchars($model['equip_type_name']); ?></td>
-                            <td><?php echo htmlspecialchars($model['model_name']); ?></td>
-                            <td>
-                                <button class="btn btn-danger" onclick="softDelete(<?php echo htmlspecialchars($model['model_id']); ?>)">Delete</button>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                <?php else: ?>
+                <?php foreach ($models as $model): ?>
                     <tr>
-                        <td colspan="4">No Models available.</td>
+                        <td><?php echo htmlspecialchars($model['model_id']); ?></td>
+                        <td><?php echo htmlspecialchars($model['equip_type_name']); ?></td>
+                        <td><?php echo htmlspecialchars($model['model_name']); ?></td>
+                        <td>
+                            <a href="#" class="edit-btn" data-id="<?php echo $model['model_id']; ?>" data-name="<?php echo htmlspecialchars($model['model_name']); ?>" data-type="<?php echo $model['equip_type_id']; ?>">
+                                <img src="edit.png" alt="Edit" style="width: 20px;">
+                            </a>
+                            <a href="#" onclick="softDelete(<?php echo $model['model_id']; ?>)">
+                                <img src="delete.png" alt="Delete" style="width: 20px;">
+                            </a>
+                        </td>
                     </tr>
-                <?php endif; ?>
+                <?php endforeach; ?>
             </tbody>
         </table>
     </div>
 
     <script>
-        $('#searchInput').on('input', function () {
+        $(document).on('click', '.edit-btn', function() {
+            let modelId = $(this).data('id');
+            let modelName = $(this).data('name');
+            let equipTypeId = $(this).data('type');
+
+            $('#model_id').val(modelId);
+            $('#model_name').val(modelName);
+            $('#equip_type_id').val(equipTypeId);
+        });
+
+        $('#searchInput').on('input', function() {
             let filter = $('#filterBy').val();
-            let query = $(this).val().trim().toLowerCase();
-            let matchFound = false;
+            let query = $(this).val().toLowerCase();
 
-            $('#modelTableBody tr').each(function () {
+            $('#modelTableBody tr').each(function() {
                 let text = filter === 'id'
-                    ? $(this).find('td:first').text().trim().toLowerCase()
+                    ? $(this).find('td:first').text().toLowerCase()
                     : filter === 'type'
-                    ? $(this).find('td:nth-child(2)').text().trim().toLowerCase()
-                    : $(this).find('td:nth-child(3)').text().trim().toLowerCase();
+                    ? $(this).find('td:nth-child(2)').text().toLowerCase()
+                    : $(this).find('td:nth-child(3)').text().toLowerCase();
 
-                if (text.includes(query)) {
-                    $(this).show();
-                    matchFound = true;
-                } else {
-                    $(this).hide();
-                }
+                $(this).toggle(text.includes(query));
             });
-
-            if (!matchFound && query !== '') {
-                alert('Model doesn\'t exist');
-            }
         });
 
         function softDelete(id) {
             if (confirm('Are you sure you want to delete this model?')) {
-                $.ajax({
-                    url: 'add_model.php',
-                    type: 'POST',
-                    data: { deleted_id: id },
-                    success: function (response) {
-                        if (response.trim() === "Success") {
-                            document.getElementById('row-' + id).style.display = 'none';
-                        } else {
-                            alert('Failed to delete the model.');
-                        }
+                $.post('add_model.php', { deleted_id: id }, function(response) {
+                    if (response.trim() === "Success") {
+                        location.reload();
+                    } else {
+                        alert('Failed to delete the model.');
                     }
                 });
             }
