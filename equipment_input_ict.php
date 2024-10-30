@@ -55,16 +55,166 @@ try {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.3/font/bootstrap-icons.min.css" rel="stylesheet">
 	<script src="scripts.js" defer ></script>
+    <style>
+ /* General Styling for Add Equipment Form */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 600px;
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 10px; 
+    box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.1);
+    margin: 20px auto; 
+}
+
+label {
+    font-weight: bold;
+    margin-bottom: 3px;
+}
+
+.form-label {
+    display: block;
+    font-size: 0.85rem; 
+    margin-top: 4px; 
+    color: #444;
+}
+
+.form-select, .form-control {
+    display: block;
+    width: 100%;
+    padding: 5px; 
+    font-size: 0.8rem; 
+    line-height: 1.2; 
+    color: #495057;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    box-shadow: inset 0px 1px 1px rgba(0, 0, 0, 0.1);
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-select:focus, .form-control:focus {
+    border-color: #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+button[type="submit"], .btn-primary {
+    display: inline-block;
+    font-weight: 600;
+    color: #fff;
+    text-align: center;
+    vertical-align: middle;
+    cursor: pointer;
+    background-color: #b51d29;
+    border: 1px solid #b51d29;
+    padding: 6px 10px; 
+    font-size: 0.8rem; 
+    border-radius: 4px;
+    transition: background-color 0.15s ease-in-out;
+    margin-top: 8px; 
+}
+
+button[type="submit"]:hover, .btn-primary:hover {
+    background-color: #a31723;
+    border-color: #a31723;
+}
+
+button[type="submit"]:focus, .btn-primary:focus {
+    box-shadow: 0 0 0 0.2rem rgba(181, 29, 41, 0.25);
+    outline: 0;
+}
+
+button[type="button"], .btn-secondary {
+    background-color: #6c757d;
+    color: #fff;
+    border: 1px solid #6c757d;
+    padding: 6px 10px; 
+    font-size: 0.8rem; 
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.15s ease-in-out;
+    margin-top: 8px; 
+}
+
+button[type="button"]:hover, .btn-secondary:hover {
+    background-color: #5a6268;
+    border-color: #545b62;
+}
+
+.mb-3 {
+    margin-bottom: 8px; 
+}
+
+input[type="text"], input[type="date"] {
+    padding: 6px; 
+    font-size: 0.8rem; 
+    border-radius: 4px;
+    border: 1px solid #ced4da;
+    width: calc(100% - 12px); 
+}
+
+select {
+    padding: 6px; 
+    font-size: 0.8rem; 
+    border-radius: 4px;
+    border: 1px solid #ced4da;
+    width: calc(100% - 12px); 
+}
+
+/* Rounded Corners for Cards */
+.card {
+    border-radius: 8px;
+    box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Styling for Add/Cancel buttons */
+.btn {
+    border-radius: 6px;
+    padding: 6px 10px; 
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.btn-add {
+    background-color: #b51d29;
+    color: #fff;
+}
+
+.btn-cancel {
+    background-color: #6c757d;
+    color: #fff;
+}
+
+.btn-add:hover {
+    background-color: #a31723;
+}
+
+.btn-cancel:hover {
+    background-color: #5a6268;
+}
+
+.btn-add:focus, .btn-cancel:focus {
+    box-shadow: 0 0 0 0.2rem rgba(108, 117, 125, 0.5);
+}
+    </style>
 </head>
 <body>
     <div class="container mt-5">
         <!-- Add Equipment Form -->
-        <h2 class="mt-5">Add Equipment</h2>
         <?php if (isset($_GET['error'])): ?>
             <div class="alert alert-danger"><?php echo htmlspecialchars($_GET['error']); ?></div>
         <?php endif; ?>
         
-        <form action="equipment_process.php" method="POST" class="mt-4">
+        <form action="equipment_process.php" method="POST">
             <div class="mb-3">
                 <label for="location_id" class="form-label">Location:</label>
                 <select name="location_id" id="location_id" class="form-select" required>
@@ -130,10 +280,8 @@ try {
             <!-- Submit Button -->
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
-
     </div>
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-
