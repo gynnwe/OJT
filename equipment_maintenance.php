@@ -97,6 +97,122 @@ try {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.3/font/bootstrap-icons.min.css" rel="stylesheet">
 </head>
+<style>
+/* Styles for Equipment Maintenance Form */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 10px auto;
+    padding: 8px;
+    background-color: #fff;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+h3 {
+    font-size: 1.1em;
+    color: #343a40;
+    margin-top: 8px;
+    margin-bottom: 8px;
+}
+
+label {
+    font-weight: bold;
+    margin-top: 4px;
+    font-size: 0.85em;
+}
+
+.form-control, .form-select {
+    margin-bottom: 4px;
+    padding: 5px;
+    border-radius: 4px;
+    border: 1px solid #ced4da;
+    font-size: 0.85em;
+}
+
+.btn {
+    padding: 5px 12px;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 0.85em;
+}
+
+.btn-primary {
+    background-color: #b53236;
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: #a12c30;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    border: none;
+}
+
+.btn-secondary:hover {
+    background-color: #5c636a;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 6px;
+    font-size: 0.8em;
+}
+
+.table th, .table td {
+    border: 1px solid #dee2e6;
+    padding: 5px;
+    text-align: left;
+}
+
+.table th {
+    background-color: #e9ecef;
+    font-weight: bold;
+}
+
+#selected_equipment {
+    margin-top: 6px;
+    font-weight: bold;
+    color: #495057;
+    font-size: 0.85em;
+}
+
+button {
+    cursor: pointer;
+}
+
+/* Dropdown and input field styling */
+input[type="text"], input[type="date"], select {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* For responsiveness */
+@media (max-width: 768px) {
+    .container {
+        padding: 6px;
+    }
+
+    .btn {
+        width: 100%;
+        margin-bottom: 4px;
+    }
+
+    .table th, .table td {
+        padding: 4px;
+    }
+}
+     </style>
 <body>
     <div class="container mt-5">
         <!-- Filter Equipment by Type -->
