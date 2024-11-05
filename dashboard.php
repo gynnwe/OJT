@@ -37,6 +37,17 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
         </div>
         <ul class="nav-links">
             <li><a href="#" class="active"onclick="loadPage('dashboard-content.php', 'Dashboard')"><span class="material-symbols-rounded">home</span>Dashboard</a></li>
+			<?php if ($_SESSION['role'] !== 'Assistant'): ?>
+			<hr>
+			<p style="color: #343a40"> Management</p>
+			<li><a href="#" onclick="loadPage('management.php', 'User Management')"><span class="material-symbols-rounded">person_add</span>Users</a></li>
+			<li><a href="#" onclick="loadPage('add_equipment_type.php', 'Equipment Type Management')"><span class="material-symbols-rounded">devices</span>Equipment Type</a></li>
+			<li><a href="#" onclick="loadPage('add_model.php', 'Equipment Model Management')"><span class="material-symbols-rounded">dvr</span>Model</a></li>
+			<li><a href="#" onclick="loadPage('add_location.php', 'Location Management')"><span class="material-symbols-rounded">add_location_alt</span>Location</a></li>
+			<li><a href="#" onclick="loadPage('add_remarks.php', 'Remarks Management')"><span class="material-symbols-rounded">edit_square</span>Remarks</a></li>
+			<li><a href="#" onclick="loadPage('add_personnel.php', 'Personnel Info Management')"><span class="material-symbols-rounded">groups_2</span>Personnel</a></li>
+			<hr>
+			<?php endif; ?>
             <li><a href="#" onclick="loadPage('equipment_input_ict.php', 'Equipment Registration')"><span class="material-symbols-rounded">add_box</span>Equipment Registration</a></li>
             <li><a href="#" onclick="loadPage('equipment_maintenance.php', 'Equipment Maintenance')"><span class="material-symbols-rounded">build</span>Equipment Maintenance </a></li>
             <li><a href="#" onclick="loadPage('plan_maintenance.php', 'Plan Maintenance')"><span class="material-symbols-rounded">contract_edit</span>Plan Maintenance</a></li>
