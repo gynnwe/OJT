@@ -83,18 +83,15 @@ $html = '
                 Website: <a href="http://www.usep.edu.ph">www.usep.edu.ph</a><br> 
                 Email: <a href="mailto:president@usep.edu.ph">president@usep.edu.ph</a>
             </td>
-<td width="25%" align="center" style="padding-left: 20px;">
-    <table border="0.5" cellpadding="2" cellspacing="0" style="font-size:7px; width: 120%;">
-        <tr><td style="text-align: left;">Form No.</td><td style="text-align: left;">FM-USeP-ICT-04</td></tr>
-        <tr><td style="text-align: left;">Issue Status</td><td style="text-align: left;">01</td></tr>
-        <tr><td style="text-align: left;">Revision No.</td><td style="text-align: left;">00</td></tr>
-        <tr><td style="text-align: left;">Date Effective</td><td style="text-align: left;">23 December 2022</td></tr>
-        <tr><td style="text-align: left;">Approved by</td><td style="text-align: left;">President</td></tr>
-    </table>
-</td>
-
-
-
+            <td width="25%" align="left">
+                <table border="0.5" cellpadding="2" cellspacing="0" style="font-size:7px; width: 100%;">
+                    <tr><td>Form No.</td><td>FM-USeP-ICT-04</td></tr>
+                    <tr><td>Issue Status</td><td>01</td></tr>
+                    <tr><td>Revision No.</td><td>00</td></tr>
+                    <tr><td>Date Effective</td><td>23 December 2022</td></tr>
+                    <tr><td>Approved by</td><td>President</td></tr>
+                </table>
+            </td>
         </tr>
     </table>
     <hr>
@@ -121,21 +118,21 @@ $html .= '
     <br>
 ';
 
-// Start the Maintenance Logs table
+// Maintenance Logs table
 $html .= '
     <table border="0.5" cellpadding="4" cellspacing="0" width="100%">
         <thead>
             <tr>
-                <th>Date</th>
-                <th>JO Number</th>
-                <th>Actions Taken</th>
-                <th>Remarks</th>
-                <th>Responsible SDMD Personnel</th>
+                <th width="15%">Date</th>
+                <th width="15%">JO Number</th>
+                <th width="30%">Actions Taken</th>
+                <th width="20%">Remarks</th>
+                <th width="20%">Responsible SDMD Personnel</th>
             </tr>
         </thead>
-        <tbody>
-';
+        <tbody>';
 
+// Loop through the logs to populate the rows
 foreach ($logs as $log) {
     $html .= '
         <tr>
@@ -144,8 +141,7 @@ foreach ($logs as $log) {
             <td>' . htmlspecialchars($log['actions_taken']) . '</td>
             <td>' . htmlspecialchars($log['remarks']) . '</td>
             <td>' . htmlspecialchars($log['firstname'] . ' ' . $log['lastname']) . '</td>
-        </tr>
-    ';
+        </tr>';
 }
 
 $html .= '
@@ -154,12 +150,11 @@ $html .= '
     <br>
     <div style="text-align: center; font-size: 10px;">
         Systems and Data Management Division (SDMD) - Page 1 of 1
-    </div>
-';
+    </div>';
 
-// Output the HTML content to the PDF
+// Write the HTML content to the PDF
 $pdf->writeHTML($html, true, false, true, false, '');
 
-// Close and output the PDF
+// Output the PDF document
 $pdf->Output($firstLog['equipment_name'] . '-' . $firstLog['property_num'] . '.pdf', 'I');
 ?>
