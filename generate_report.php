@@ -1,5 +1,5 @@
 <?php
-require_once 'vendor/autoload.php'; // Ensure TCPDF is autoloaded
+require_once 'vendor/autoload.php';
 
 // Database connection
 $servername = "localhost";
@@ -54,47 +54,76 @@ if (!$logs) {
     die('No records found for this property number.');
 }
 
-// Create a new PDF document instance
-$pdf = new TCPDF('P', PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+// Create a new PDF document instance with A4 size
+$pdf = new TCPDF('P', PDF_UNIT, 'A4', true, 'UTF-8', false);
 $pdf->SetCreator(PDF_CREATOR);
 $pdf->SetAuthor('University of Southeastern Philippines');
 $pdf->SetTitle('ICT Equipment History Sheet');
 $pdf->SetSubject('Equipment Report');
 
-// Set default margins and auto page break
-$pdf->SetMargins(15, 20, 15);
+// Set 1cm margins on all sides
+$pdf->SetMargins(10, 10, 10); // left, top, right margins set to 1cm (10mm)
 $pdf->SetHeaderMargin(10);
 $pdf->SetFooterMargin(10);
-$pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
+$pdf->SetAutoPageBreak(TRUE, 10); // bottom margin also set to 1cm
 
-// Add a new page
 $pdf->AddPage();
 
-// University header
+// Logo and Header Section
+$logoPath = 'assets/usep-logo.jpg';
 $html = '
-    <div style="text-align: center; font-size: 14px;">
-        <strong>Republic of the Philippines</strong><br>
-        <strong>University of Southeastern Philippines</strong><br>
-        Iñigo St., Bo. Obrero, Davao City 8000<br>
-        Telephone: (082) 227-8192<br>
-        Website: www.usep.edu.ph &nbsp; Email: president@usep.edu.ph<br>
-    </div>
+    <table border="0" cellpadding="5" cellspacing="0" width="100%">
+        <tr>
+            <td width="20%" align="center"><img src="' . $logoPath . '" width="70" height="70" /></td>
+            <td width="60%" align="center" style="font-size: 9px;">
+                <strong>Republic of the Philippines</strong><br>
+                <strong>University of Southeastern Philippines</strong><br>
+                Iñigo St., Bo. Obrero, Davao City 8000<br>
+                Telephone: (082) 227-8192<br>
+                Website: <a href="http://www.usep.edu.ph">www.usep.edu.ph</a><br> 
+                Email: <a href="mailto:president@usep.edu.ph">president@usep.edu.ph</a>
+            </td>
+<td width="25%" align="center" style="padding-left: 20px;">
+    <table border="0.5" cellpadding="2" cellspacing="0" style="font-size:7px; width: 120%;">
+        <tr><td style="text-align: left;">Form No.</td><td style="text-align: left;">FM-USeP-ICT-04</td></tr>
+        <tr><td style="text-align: left;">Issue Status</td><td style="text-align: left;">01</td></tr>
+        <tr><td style="text-align: left;">Revision No.</td><td style="text-align: left;">00</td></tr>
+        <tr><td style="text-align: left;">Date Effective</td><td style="text-align: left;">23 December 2022</td></tr>
+        <tr><td style="text-align: left;">Approved by</td><td style="text-align: left;">President</td></tr>
+    </table>
+</td>
+
+
+
+        </tr>
+    </table>
     <hr>
-    <h2 style="text-align: center;">ICT EQUIPMENT HISTORY SHEET</h2>
+    <h2 align="center">ICT EQUIPMENT HISTORY SHEET</h2>
 ';
 
 // Equipment details
-$firstLog = $logs[0]; // Use the first record for general equipment details
+$firstLog = $logs[0];
 $html .= '
-    <p><strong>Equipment:</strong> ' . htmlspecialchars($firstLog['equipment_name']) . '</p>
-    <p><strong>Property/Serial Number:</strong> ' . htmlspecialchars($firstLog['property_num']) . '</p>
-    <p><strong>Location:</strong> ' . htmlspecialchars($firstLog['location_id']) . '</p>
+    <table border="0.5" cellpadding="4" cellspacing="0" width="100%">
+        <tr>
+            <td width="30%"><strong>Equipment:</strong></td>
+            <td width="70%">' . htmlspecialchars($firstLog['equipment_name']) . '</td>
+        </tr>
+        <tr>
+            <td><strong>Property/Serial Number:</strong></td>
+            <td>' . htmlspecialchars($firstLog['property_num']) . '</td>
+        </tr>
+        <tr>
+            <td><strong>Location:</strong></td>
+            <td>' . htmlspecialchars($firstLog['location_id']) . '</td>
+        </tr>
+    </table>
     <br>
 ';
 
-// Start table with headers
+// Start the Maintenance Logs table
 $html .= '
-    <table border="1" cellspacing="0" cellpadding="5">
+    <table border="0.5" cellpadding="4" cellspacing="0" width="100%">
         <thead>
             <tr>
                 <th>Date</th>
@@ -107,7 +136,6 @@ $html .= '
         <tbody>
 ';
 
-// Loop through each log and add a row in the table
 foreach ($logs as $log) {
     $html .= '
         <tr>
