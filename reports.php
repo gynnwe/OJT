@@ -15,16 +15,15 @@ try {
     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    // Fetch all maintenance logs
+    // Fetch all maintenance logs, grouped by property number to avoid redundancy
     $sql = "
         SELECT 
-            ml.jo_number,
-            ml.maintenance_date,
-            ml.actions_taken,
-            r.remarks_name AS remarks,
             e.equip_name AS equipment_name,
             e.property_num,
-            e.location_id,
+            MAX(ml.maintenance_date) AS last_maintenance_date,
+            ml.jo_number,
+            ml.actions_taken,
+            r.remarks_name AS remarks,
             p.firstname,
             p.lastname
         FROM 
@@ -35,6 +34,8 @@ try {
             remarks r ON ml.remarks_id = r.remarks_id
         LEFT JOIN 
             personnel p ON ml.personnel_id = p.personnel_id
+        GROUP BY e.property_num
+        ORDER BY e.property_num, last_maintenance_date DESC
     ";
     $stmt = $conn->prepare($sql);
     $stmt->execute();
@@ -60,9 +61,8 @@ try {
             <thead>
                 <tr>
                     <th>Equipment Name</th>
-                    <th>Maintenance Date</th>
-                    <th>Job Order Number</th>
-                    <th>Actions Taken</th>
+                    <th>Property Number</th>
+                    <th>Last Maintenance Date</th>
                     <th>Remarks</th>
                     <th>Responsible Personnel</th>
                     <th>Action</th>
@@ -73,18 +73,17 @@ try {
                     <?php foreach ($maintenanceLogs as $log): ?>
                         <tr>
                             <td><?php echo htmlspecialchars($log['equipment_name']); ?></td>
-                            <td><?php echo htmlspecialchars($log['maintenance_date']); ?></td>
-                            <td><?php echo htmlspecialchars($log['jo_number']); ?></td>
-                            <td><?php echo htmlspecialchars($log['actions_taken']); ?></td>
+                            <td><?php echo htmlspecialchars($log['property_num']); ?></td>
+                            <td><?php echo htmlspecialchars($log['last_maintenance_date']); ?></td>
                             <td><?php echo htmlspecialchars($log['remarks']); ?></td>
                             <td><?php echo htmlspecialchars($log['firstname'] . ' ' . $log['lastname']); ?></td>
                             <td>
-                                <a href="generate_report.php?view_report=1&equipment_name=<?php echo urlencode($log['equipment_name']); ?>&property_num=<?php echo urlencode($log['property_num']); ?>&location_id=<?php echo urlencode($log['location_id']); ?>&maintenance_date=<?php echo urlencode($log['maintenance_date']); ?>&jo_number=<?php echo urlencode($log['jo_number']); ?>&actions_taken=<?php echo urlencode($log['actions_taken']); ?>&remarks=<?php echo urlencode($log['remarks']); ?>&personnel=<?php echo urlencode($log['firstname'] . ' ' . $log['lastname']); ?>" class="btn btn-primary">View & Print</a>
+                                <a href="generate_report.php?property_num=<?php echo urlencode($log['property_num']); ?>" class="btn btn-primary">View & Print</a>
                             </td>
                         </tr>
                     <?php endforeach; ?>
                 <?php else: ?>
-                    <tr><td colspan="7">No maintenance logs found.</td></tr>
+                    <tr><td colspan="6">No maintenance logs found.</td></tr>
                 <?php endif; ?>
             </tbody>
         </table>
