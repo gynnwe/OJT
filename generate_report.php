@@ -74,10 +74,10 @@ $logoPath = 'assets/usep-logo.jpg';
 $html = '
     <table border="0" cellpadding="5" cellspacing="0" width="100%">
         <tr>
-            <td width="20%" align="center"><img src="' . $logoPath . '" width="70" height="70" /></td>
-            <td width="60%" align="center" style="font-size: 9px;">
+            <td width="15%" align="center"><img src="' . $logoPath . '" width="70" height="70" /></td>
+            <td width="60%" align="center" style="font-size: 9px; padding-left: 5px;">
                 <strong>Republic of the Philippines</strong><br>
-                <strong>University of Southeastern Philippines</strong><br>
+                <strong style="font-size: 11px;">University of Southeastern Philippines</strong><br>
                 Iñigo St., Bo. Obrero, Davao City 8000<br>
                 Telephone: (082) 227-8192<br>
                 Website: <a href="http://www.usep.edu.ph">www.usep.edu.ph</a><br> 
@@ -85,26 +85,28 @@ $html = '
             </td>
             <td width="25%" align="left">
                 <table border="0.5" cellpadding="2" cellspacing="0" style="font-size:7px; width: 100%;">
-                    <tr><td>Form No.</td><td>FM-USeP-ICT-04</td></tr>
-                    <tr><td>Issue Status</td><td>01</td></tr>
-                    <tr><td>Revision No.</td><td>00</td></tr>
-                    <tr><td>Date Effective</td><td>23 December 2022</td></tr>
-                    <tr><td>Approved by</td><td>President</td></tr>
+                    <tr><td style="text-align: left; padding-left: 5px;">Form No.</td><td>FM-USeP-ICT-04</td></tr>
+                    <tr><td style="text-align: left; padding-left: 5px;">Issue Status</td><td>01</td></tr>
+                    <tr><td style="text-align: left; padding-left: 5px;">Revision No.</td><td>00</td></tr>
+                    <tr><td style="text-align: left; padding-left: 5px;">Date Effective</td><td>23 December 2022</td></tr>
+                    <tr><td style="text-align: left; padding-left: 5px;">Approved by</td><td>President</td></tr>
                 </table>
             </td>
         </tr>
     </table>
     <hr>
-    <h2 align="center">ICT EQUIPMENT HISTORY SHEET</h2>
+    <h2 align="center" style="font-size: 12px;">ICT EQUIPMENT HISTORY SHEET</h2>
 ';
 
-// Equipment details
+
+
+// Equipment details table
 $firstLog = $logs[0];
 $html .= '
     <table border="0.5" cellpadding="4" cellspacing="0" width="100%">
         <tr>
-            <td width="30%"><strong>Equipment:</strong></td>
-            <td width="70%">' . htmlspecialchars($firstLog['equipment_name']) . '</td>
+            <td width="35%"><strong>Equipment:</strong></td>
+            <td width="65%">' . htmlspecialchars($firstLog['equipment_name']) . '</td>
         </tr>
         <tr>
             <td><strong>Property/Serial Number:</strong></td>
@@ -118,7 +120,7 @@ $html .= '
     <br>
 ';
 
-// Maintenance Logs table
+// Maintenance Logs table with precise column widths
 $html .= '
     <table border="0.5" cellpadding="4" cellspacing="0" width="100%">
         <thead>
