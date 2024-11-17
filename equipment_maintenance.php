@@ -26,26 +26,20 @@ try {
 
     // Check if an equipment type is selected
     $selectedTypeId = isset($_GET['equipment_type']) ? $_GET['equipment_type'] : '';
+    $searchTerm = isset($_GET['search_term']) ? $_GET['search_term'] : '';
 
-    // Prepare and execute SQL query to fetch equipment based on the selected type
-    if ($selectedTypeId) {
-        // Fetch equipment for the selected equipment type
-        $sqlEquipment = "SELECT e.equipment_id, e.equip_name, e.property_num, e.status, e.date_purchased
-                         FROM equipment e
-                         WHERE e.equip_type_id = :equip_type_id";
-        $stmtEquipment = $conn->prepare($sqlEquipment);
-        $stmtEquipment->bindParam(':equip_type_id', $selectedTypeId);
-        $stmtEquipment->execute();
-        $equipment = $stmtEquipment->fetchAll(PDO::FETCH_ASSOC);
-    } else {
-        // If no filter is selected, fetch all equipment
-        $sqlEquipment = "SELECT e.equipment_id, e.equip_name, e.property_num, e.status, e.date_purchased 
-                         FROM equipment e";
-        $stmtEquipment = $conn->prepare($sqlEquipment);
-        $stmtEquipment->execute();
-        $equipment = $stmtEquipment->fetchAll(PDO::FETCH_ASSOC);
-    }
-    
+    // Prepare and execute SQL query to fetch equipment based on the selected type and search term
+    $sqlEquipment = "SELECT e.equipment_id, e.equip_name, e.property_num, e.status, e.date_purchased
+                     FROM equipment e
+                     WHERE (:equip_type_id = '' OR e.equip_type_id = :equip_type_id)
+                     AND (e.equip_name LIKE :search_term OR e.property_num LIKE :search_term)";
+    $stmtEquipment = $conn->prepare($sqlEquipment);
+    $stmtEquipment->bindParam(':equip_type_id', $selectedTypeId);
+    $searchWildcard = "%$searchTerm%";
+    $stmtEquipment->bindParam(':search_term', $searchWildcard);
+    $stmtEquipment->execute();
+    $equipment = $stmtEquipment->fetchAll(PDO::FETCH_ASSOC);
+
     // Fetch all non-deleted remarks for the dropdown
     $sqlRemarks = "SELECT remarks_id, remarks_name FROM remarks WHERE deleted_id = 0";
     $stmtRemarks = $conn->prepare($sqlRemarks);
@@ -53,19 +47,19 @@ try {
     $remarks_options = $stmtRemarks->fetchAll(PDO::FETCH_ASSOC);
     
     // Fetch all non-deleted Personnel for the dropdown
-    $sqlRemarks = "SELECT personnel_id, firstname, lastname, office FROM personnel WHERE deleted_id = 0";
-    $stmtRemarks = $conn->prepare($sqlRemarks);
-    $stmtRemarks->execute();
-    $personnel_options = $stmtRemarks->fetchAll(PDO::FETCH_ASSOC);
+    $sqlPersonnel = "SELECT personnel_id, firstname, lastname, office FROM personnel WHERE deleted_id = 0";
+    $stmtPersonnel = $conn->prepare($sqlPersonnel);
+    $stmtPersonnel->execute();
+    $personnel_options = $stmtPersonnel->fetchAll(PDO::FETCH_ASSOC);
 
     // Fetch data from Maintenance Logs with joins
-    $sqlRemarks = "
+    $sqlLogs = "
         SELECT 
             ml.jo_number,
             ml.maintenance_date,
             ml.actions_taken,
-            r.remarks_name AS remarks,  -- Assuming remarks table has a column named 'remarks_name'
-            e.equip_name AS equipment_name,  -- Assuming equipment table has a column named 'equip_name'
+            r.remarks_name AS remarks,
+            e.equip_name AS equipment_name,
             p.firstname,
             p.lastname
         FROM 
@@ -77,10 +71,9 @@ try {
         LEFT JOIN 
             personnel p ON ml.personnel_id = p.personnel_id
     ";
-
-    $stmtRemarks = $conn->prepare($sqlRemarks);
-    $stmtRemarks->execute();
-    $maintenanceLogs = $stmtRemarks->fetchAll(PDO::FETCH_ASSOC);
+    $stmtLogs = $conn->prepare($sqlLogs);
+    $stmtLogs->execute();
+    $maintenanceLogs = $stmtLogs->fetchAll(PDO::FETCH_ASSOC);
     
 } catch (PDOException $e) {
     echo "Error: " . $e->getMessage();
@@ -212,12 +205,12 @@ input[type="text"], input[type="date"], select {
         padding: 4px;
     }
 }
-     </style>
+</style>
 <body>
     <div class="container mt-5">
         <!-- Filter Equipment by Type -->
-        <label for="equipment_type_filter">Filter by Equipment Type:</label>
         <form method="GET" action="equipment_maintenance.php">
+            <label for="equipment_type_filter">Filter by Equipment Type:</label>
             <select id="equipment_type_filter" name="equipment_type" class="form-select" onchange="this.form.submit()">
                 <option value="">All</option>
                 <?php foreach ($equipment_types as $type): ?>
@@ -226,6 +219,13 @@ input[type="text"], input[type="date"], select {
                     </option>
                 <?php endforeach; ?>
             </select>
+
+            <!-- Search Filter -->
+            <label for="search_term" class="mt-3">Search by Equipment Name or Property Number:</label>
+            <div class="input-group mb-3">
+                <input type="text" id="search_term" name="search_term" class="form-control" placeholder="Enter keyword" value="<?php echo htmlspecialchars($searchTerm); ?>">
+                <button type="submit" class="btn btn-danger">Search</button>
+            </div>
         </form>
 
         <!-- Display Equipment -->
@@ -301,7 +301,7 @@ input[type="text"], input[type="date"], select {
             <button type="button" class="btn btn-secondary" onclick="window.location.href='equipment_maintenance.php'">Cancel</button>
         </form>
 
-        <!-- Maintenance Logs Section (if any) -->
+        <!-- Maintenance Logs Section -->
         <h3>Maintenance Logs</h3>
         <table border="1" class="table table-bordered">
             <thead>
@@ -333,13 +333,13 @@ input[type="text"], input[type="date"], select {
         </table>
 
     </div>
+
     <!-- JavaScript -->
     <script>
         function generateJobOrderAndUpdate(equipmentId, equipmentName) {
             const selectedEquipmentDiv = document.getElementById('selected_equipment');
             selectedEquipmentDiv.innerHTML = `Selected Equipment: ${equipmentName} (ID: ${equipmentId})`;
 
-            // Generate Job Order number in the required format
             const date = new Date();
             const year = date.getFullYear();
             const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -356,7 +356,6 @@ input[type="text"], input[type="date"], select {
         }
 
         function incrementJobOrder() {
-            // Increment and store the next job order number for the current month/year
             const date = new Date();
             const year = date.getFullYear();
             const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -365,24 +364,17 @@ input[type="text"], input[type="date"], select {
             localStorage.setItem(`jobOrderNum_${year}_${month}`, jobOrderNum);
         }
     </script>
-    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
     <script>
-    window.onload = function() {
-        const dateInput = document.getElementById("maintaindate");
-
-        function setMaxDate() {
-            const today = new Date().toISOString().split("T")[0];
-            dateInput.setAttribute("max", today);
-        }
-
-        // Set the max date initially on page load
-        setMaxDate();
-
-        // Update the max date whenever the date input is focused
-        dateInput.addEventListener("focus", setMaxDate);
-    };
-</script>
+        window.onload = function() {
+            const dateInput = document.getElementById("maintaindate");
+            function setMaxDate() {
+                const today = new Date().toISOString().split("T")[0];
+                dateInput.setAttribute("max", today);
+            }
+            setMaxDate();
+            dateInput.addEventListener("focus", setMaxDate);
+        };
+    </script>
 </body>
 </html>
