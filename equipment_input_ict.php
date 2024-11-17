@@ -22,7 +22,7 @@ try {
     $equipment_types = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     // Fetch all non-deleted locations for the dropdown
-    $sql = "SELECT location_id, college, office, unit FROM location WHERE deleted_id = 0";  // Updated query
+    $sql = "SELECT location_id, building, office, room FROM location WHERE deleted_id = 0";  // Updated query
     $stmt = $conn->prepare($sql);
     $stmt->execute();
     $locations = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -222,7 +222,7 @@ select {
                     <?php if (!empty($locations)): ?>
                         <?php foreach ($locations as $location): ?>
                             <option value="<?php echo htmlspecialchars($location['location_id']); ?>">
-                                <?php echo htmlspecialchars($location['college'] . " - " . $location['office'] . " - " . $location['unit']); ?>
+                                <?php echo htmlspecialchars($location['building'] . " - " . $location['office'] . " - " . $location['room']); ?>
                             </option>
                         <?php endforeach; ?>
                     <?php else: ?>
@@ -274,7 +274,7 @@ select {
 
             <div class="mb-3">
                 <label for="date_purchased" class="form-label">Date Purchased:</label>
-                <input type="date" name="date_purchased" id="date_purchased" class="form-control" required>
+                <input type="date" name="date_purchased" id="date_purchased" class="form-control" required max="<?php echo date('Y-m-d'); ?>">
             </div>
 
             <!-- Submit Button -->

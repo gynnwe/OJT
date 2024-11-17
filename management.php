@@ -26,7 +26,7 @@ try {
 
 // Fetch non-serviceable equipment
 try {
-    $sql = "SELECT e.equipment_id, e.property_num, e.status, l.college, l.office, l.unit 
+    $sql = "SELECT e.equipment_id, e.property_num, e.status, l.building, l.office, l.room 
             FROM equipment e 
             JOIN location l ON e.location_id = l.location_id 
             WHERE e.status = 'Non-serviceable'";
@@ -103,9 +103,9 @@ $conn = null;
                         <th>Equipment ID</th>
                         <th>Property Number</th>
                         <th>Status</th>
-                        <th>College</th>
+                        <th>Building</th>
                         <th>Office</th>
-                        <th>Unit</th>
+                        <th>Room</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -115,9 +115,9 @@ $conn = null;
                                 <td><?php echo htmlspecialchars($equipment['equipment_id']); ?></td>
                                 <td><?php echo htmlspecialchars($equipment['property_num']); ?></td>
                                 <td><?php echo htmlspecialchars($equipment['status']); ?></td>
-                                <td><?php echo htmlspecialchars($equipment['college']); ?></td>
+                                <td><?php echo htmlspecialchars($equipment['building']); ?></td>
                                 <td><?php echo htmlspecialchars($equipment['office']); ?></td>
-                                <td><?php echo htmlspecialchars($equipment['unit']); ?></td>
+                                <td><?php echo htmlspecialchars($equipment['room']); ?></td>
                             </tr>
                         <?php endforeach; ?>
                     <?php else: ?>

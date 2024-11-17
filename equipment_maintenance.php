@@ -53,7 +53,7 @@ try {
 	$remarks_options = $stmtRemarks->fetchAll(PDO::FETCH_ASSOC);
 	
 	// Fetch all non-deleted Personnel for the dropdown
-	$sqlRemarks = "SELECT personnel_id, firstname, lastname, department FROM personnel WHERE deleted_id = 0";
+	$sqlRemarks = "SELECT personnel_id, firstname, lastname, office FROM personnel WHERE deleted_id = 0";
 	$stmtRemarks = $conn->prepare($sqlRemarks);
 	$stmtRemarks->execute();
 	$personnel_options = $stmtRemarks->fetchAll(PDO::FETCH_ASSOC);
@@ -286,7 +286,7 @@ input[type="text"], input[type="date"], select {
 				<?php if (!empty($personnel_options)): ?>
 					<?php foreach ($personnel_options as $personnel): ?>
 						<option value="<?php echo htmlspecialchars($personnel['personnel_id']); ?>">
-							<?php echo htmlspecialchars($personnel['firstname'] . " " . $personnel['lastname'] . " - " . $personnel['department']); ?>
+							<?php echo htmlspecialchars($personnel['firstname'] . " " . $personnel['lastname'] . " - " . $personnel['office']); ?>
 						</option>
 					<?php endforeach; ?>
 				<?php else: ?>

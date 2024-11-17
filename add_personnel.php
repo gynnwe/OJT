@@ -17,10 +17,10 @@ try {
     if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['firstname'])) {
         $firstname = trim($_POST['firstname']);
         $lastname = trim($_POST['lastname']);
-        $department = trim($_POST['department']);
+        $office = trim($_POST['office']);
         $personnel_id = isset($_POST['personnel_id']) ? $_POST['personnel_id'] : null;
 
-        if (!empty($firstname) && !empty($lastname) && !empty($department)) {
+        if (!empty($firstname) && !empty($lastname) && !empty($office)) {
             // Check for duplicate personnel, ignoring soft-deleted ones
             $checkSQL = "SELECT COUNT(*) FROM personnel 
                          WHERE firstname = :firstname AND lastname = :lastname 
@@ -38,22 +38,22 @@ try {
                 if ($personnel_id) {
                     // Update existing personnel
                     $updateSQL = "UPDATE personnel SET firstname = :firstname, lastname = :lastname, 
-                                  department = :department WHERE personnel_id = :personnel_id";
+                                  office = :office WHERE personnel_id = :personnel_id";
                     $stmt = $conn->prepare($updateSQL);
                     $stmt->bindValue(':firstname', $firstname);
                     $stmt->bindValue(':lastname', $lastname);
-                    $stmt->bindValue(':department', $department);
+                    $stmt->bindValue(':office', $office);
                     $stmt->bindValue(':personnel_id', $personnel_id);
                     $stmt->execute();
                     $_SESSION['message'] = "Personnel updated successfully.";
                 } else {
                     // Insert new personnel
-                    $insertSQL = "INSERT INTO personnel (firstname, lastname, department) 
-                                  VALUES (:firstname, :lastname, :department)";
+                    $insertSQL = "INSERT INTO personnel (firstname, lastname, office) 
+                                  VALUES (:firstname, :lastname, :office)";
                     $stmt = $conn->prepare($insertSQL);
                     $stmt->bindValue(':firstname', $firstname);
                     $stmt->bindValue(':lastname', $lastname);
-                    $stmt->bindValue(':department', $department);
+                    $stmt->bindValue(':office', $office);
                     $stmt->execute();
                     $_SESSION['message'] = "New personnel added successfully.";
                 }
@@ -251,10 +251,10 @@ if (isset($_SESSION['message'])) {
                     <input type="text" name="lastname" id="lastname" class="form-control" required>
                 </div>
 
-                <!-- Department Field with Button Next to It -->
+                <!-- Office Field with Button Next to It -->
                 <div class="form-group">
-                    <label for="department">Department:</label>
-                    <input type="text" name="department" id="department" class="form-control" required>
+                    <label for="office">Office:</label>
+                    <input type="text" name="office" id="office" class="form-control" required>
                     <button type="submit" class="btn-save">Add Personnel</button>
                 </div>
             </form>
@@ -268,7 +268,7 @@ if (isset($_SESSION['message'])) {
                     <option value="id">ID</option>
                     <option value="firstname">First Name</option>
                     <option value="lastname">Last Name</option>
-                    <option value="department">Department</option>
+                    <option value="office">Office</option>
                 </select>
                 <input type="text" id="searchInput" class="form-control" placeholder="Search...">
             </div>
@@ -281,7 +281,7 @@ if (isset($_SESSION['message'])) {
                             <th>ID</th>
                             <th>First Name</th>
                             <th>Last Name</th>
-                            <th>Department</th>
+                            <th>Office</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -292,7 +292,7 @@ if (isset($_SESSION['message'])) {
                                     <td><?php echo htmlspecialchars($person['personnel_id']); ?></td>
                                     <td><?php echo htmlspecialchars($person['firstname']); ?></td>
                                     <td><?php echo htmlspecialchars($person['lastname']); ?></td>
-                                    <td><?php echo htmlspecialchars($person['department']); ?></td>
+                                    <td><?php echo htmlspecialchars($person['office']); ?></td>
                                     <td>
                                         <a href="#" onclick="editPersonnel(<?php echo htmlspecialchars($person['personnel_id']); ?>)">
                                             <img src="edit.png" alt="Edit" style="width:20px; cursor: pointer;">
@@ -357,12 +357,12 @@ if (isset($_SESSION['message'])) {
             const row = document.getElementById('row-' + id);
             const firstname = row.cells[1].innerText;
             const lastname = row.cells[2].innerText;
-            const department = row.cells[3].innerText;
+            const office = row.cells[3].innerText;
 
             document.getElementById('personnel_id').value = id;
             document.getElementById('firstname').value = firstname;
             document.getElementById('lastname').value = lastname;
-            document.getElementById('department').value = department;
+            document.getElementById('office').value = office;
         }
 
         function softDelete(id) {

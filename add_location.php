@@ -14,21 +14,21 @@ try {
     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['college'])) {
-        $college = trim($_POST['college']);
+    if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['building'])) {
+        $building = trim($_POST['building']);
         $office = trim($_POST['office']);
-        $unit = trim($_POST['unit']);
+        $room = trim($_POST['room']);
         $location_id = isset($_POST['location_id']) ? $_POST['location_id'] : null;
 
-        if (!empty($college) && !empty($office) && !empty($unit)) {
+        if (!empty($building) && !empty($office) && !empty($room)) {
             // Check for duplicate entries, ignoring soft-deleted locations
             $checkSQL = "SELECT COUNT(*) FROM location 
-                         WHERE college = :college AND office = :office AND unit = :unit 
+                         WHERE building = :building AND office = :office AND room = :room 
                          AND location_id != :location_id AND deleted_id = 0";
             $stmt = $conn->prepare($checkSQL);
-            $stmt->bindValue(':college', $college);
+            $stmt->bindValue(':building', $building);
             $stmt->bindValue(':office', $office);
-            $stmt->bindValue(':unit', $unit);
+            $stmt->bindValue(':room', $room);
             $stmt->bindValue(':location_id', $location_id ?? 0);
             $stmt->execute();
             $count = $stmt->fetchColumn();
@@ -38,23 +38,23 @@ try {
             } else {
                 if ($location_id) {
                     // Update existing location
-                    $updateSQL = "UPDATE location SET college = :college, office = :office, unit = :unit 
+                    $updateSQL = "UPDATE location SET building = :building, office = :office, room = :room 
                                   WHERE location_id = :location_id";
                     $stmt = $conn->prepare($updateSQL);
-                    $stmt->bindValue(':college', $college);
+                    $stmt->bindValue(':building', $building);
                     $stmt->bindValue(':office', $office);
-                    $stmt->bindValue(':unit', $unit);
+                    $stmt->bindValue(':room', $room);
                     $stmt->bindValue(':location_id', $location_id);
                     $stmt->execute();
                     $_SESSION['message'] = "Location updated successfully.";
                 } else {
                     // Insert new location
-                    $insertSQL = "INSERT INTO location (college, office, unit) 
-                                  VALUES (:college, :office, :unit)";
+                    $insertSQL = "INSERT INTO location (building, office, room) 
+                                  VALUES (:building, :office, :room)";
                     $stmt = $conn->prepare($insertSQL);
-                    $stmt->bindValue(':college', $college);
+                    $stmt->bindValue(':building', $building);
                     $stmt->bindValue(':office', $office);
-                    $stmt->bindValue(':unit', $unit);
+                    $stmt->bindValue(':room', $room);
                     $stmt->execute();
                     $_SESSION['message'] = "New location added successfully.";
                 }
@@ -240,10 +240,10 @@ if (isset($_SESSION['message'])) {
             <form action="add_location.php" method="POST">
                 <input type="hidden" name="location_id" id="location_id">
 
-                <!-- College Field -->
+                <!-- Building Field -->
                 <div class="form-group">
-                    <label for="college">College:</label>
-                    <input type="text" name="college" id="college" class="form-control" required>
+                    <label for="building">Building:</label>
+                    <input type="text" name="building" id="building" class="form-control" required>
                 </div>
 
                 <!-- Office Field -->
@@ -252,10 +252,10 @@ if (isset($_SESSION['message'])) {
                     <input type="text" name="office" id="office" class="form-control" required>
                 </div>
 
-                <!-- Unit Field with Button Next to It -->
+                <!-- Room Field with Button Next to It -->
                 <div class="form-group">
-                    <label for="unit">Unit:</label>
-                    <input type="text" name="unit" id="unit" class="form-control" required>
+                    <label for="room">Room:</label>
+                    <input type="text" name="room" id="room" class="form-control" required>
                     <button type="submit" class="btn-save">Add Location</button>
                 </div>
             </form>
@@ -267,9 +267,9 @@ if (isset($_SESSION['message'])) {
             <div class="form-inline">
                 <select id="filterBy" class="form-control mr-2">
                     <option value="id">ID</option>
-                    <option value="college">College</option>
+                    <option value="building">Building</option>
                     <option value="office">Office</option>
-                    <option value="unit">Unit</option>
+                    <option value="room">Room</option>
                 </select>
                 <input type="text" id="searchInput" class="form-control" placeholder="Search...">
             </div>
@@ -280,9 +280,9 @@ if (isset($_SESSION['message'])) {
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>College</th>
+                            <th>Building</th>
                             <th>Office</th>
-                            <th>Unit</th>
+                            <th>Room</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -290,9 +290,9 @@ if (isset($_SESSION['message'])) {
                         <?php foreach ($locations as $location): ?>
                             <tr id="row-<?php echo htmlspecialchars($location['location_id']); ?>">
                                 <td><?php echo htmlspecialchars($location['location_id']); ?></td>
-                                <td><?php echo htmlspecialchars($location['college']); ?></td>
+                                <td><?php echo htmlspecialchars($location['building']); ?></td>
                                 <td><?php echo htmlspecialchars($location['office']); ?></td>
-                                <td><?php echo htmlspecialchars($location['unit']); ?></td>
+                                <td><?php echo htmlspecialchars($location['room']); ?></td>
                                 <td>
                                     <a href="#" onclick="editLocation(<?php echo htmlspecialchars($location['location_id']); ?>)">
                                         <img src="edit.png" alt="Edit" style="width:20px; cursor: pointer;">
@@ -333,14 +333,14 @@ if (isset($_SESSION['message'])) {
 
         function editLocation(id) {
             const row = document.getElementById('row-' + id);
-            const college = row.cells[1].innerText;
+            const building = row.cells[1].innerText;
             const office = row.cells[2].innerText;
-            const unit = row.cells[3].innerText;
+            const room = row.cells[3].innerText;
 
             document.getElementById('location_id').value = id;
-            document.getElementById('college').value = college;
+            document.getElementById('building').value = building;
             document.getElementById('office').value = office;
-            document.getElementById('unit').value = unit;
+            document.getElementById('room').value = room;
         }
 
         function softDelete(id) {
@@ -360,7 +360,7 @@ if (isset($_SESSION['message'])) {
             let query = $(this).val().trim().toLowerCase();
 
             $('#locationTableBody tr').each(function () {
-                let text = $(this).find(`td:nth-child(${filter === 'id' ? 1 : filter === 'college' ? 2 : filter === 'office' ? 3 : 4})`).text().trim().toLowerCase();
+                let text = $(this).find(`td:nth-child(${filter === 'id' ? 1 : filter === 'building' ? 2 : filter === 'office' ? 3 : 4})`).text().trim().toLowerCase();
                 $(this).toggle(text.includes(query));
             });
         });

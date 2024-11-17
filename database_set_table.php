@@ -55,9 +55,9 @@ try {
 // --- Create Location Table ---
 $sql = "CREATE TABLE IF NOT EXISTS location(
     location_id INT(7) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    college VARCHAR(50) NOT NULL,
+    building VARCHAR(50) NOT NULL,
     office VARCHAR(50) NOT NULL,
-    unit VARCHAR(50) NOT NULL,
+    room VARCHAR(50) NOT NULL,
     deleted_id TINYINT(1) NOT NULL DEFAULT 0
 )";
 $conn->exec($sql);
@@ -124,7 +124,7 @@ echo "Equipment Table created successfully<br>";
         personnel_id INT(7) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
         firstname VARCHAR(25) NOT NULL,
 		lastname VARCHAR(25) NOT NULL,
-		department VARCHAR(50) NOT NULL,
+		office VARCHAR(50) NOT NULL,
 		deleted_id TINYINT(1) NOT NULL DEFAULT 0
     )";
 	
