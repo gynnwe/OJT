@@ -22,7 +22,7 @@ if (!$property_num) {
     die('Property number is required');
 }
 
-// Fetch all maintenance logs for the specific property number
+// Fetch all maintenance logs for the specific property number, including the concatenated location name with dashes
 $sql = "
     SELECT 
         ml.maintenance_date,
@@ -31,7 +31,7 @@ $sql = "
         r.remarks_name AS remarks,
         e.equip_name AS equipment_name,
         e.property_num,
-        e.location_id,
+        CONCAT(l.building, ' - ', l.office, ' - ', l.room) AS location_name,  -- Concatenate location fields with dashes
         p.firstname,
         p.lastname
     FROM 
@@ -42,6 +42,8 @@ $sql = "
         remarks r ON ml.remarks_id = r.remarks_id
     LEFT JOIN 
         personnel p ON ml.personnel_id = p.personnel_id
+    LEFT JOIN 
+        location l ON e.location_id = l.location_id
     WHERE 
         e.property_num = :property_num
 ";
@@ -122,7 +124,7 @@ $html .= '
         </tr>
         <tr>
             <td style="font-family: Arial;"><strong>Location:</strong></td>
-            <td style="font-family: Arial;">' . htmlspecialchars($firstLog['location_id']) . '</td>
+            <td style="font-family: Arial;">' . htmlspecialchars($firstLog['location_name']) . '</td>
         </tr>
     </table>
     <br>

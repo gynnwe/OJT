@@ -92,43 +92,6 @@ $conn = null;
         </div>
 
         <hr>
-
-        <!-- Archive Section -->
-        <button type="button" class="btn btn-warning" data-toggle="collapse" data-target="#archiveSection">View Non-Serviceable Equipment</button>
-        <div id="archiveSection" class="collapse mt-3">
-            <h5>Non-Serviceable Equipment:</h5>
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>Equipment ID</th>
-                        <th>Property Number</th>
-                        <th>Status</th>
-                        <th>Building</th>
-                        <th>Office</th>
-                        <th>Room</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php if (!empty($nonServiceableEquipment)): ?>
-                        <?php foreach ($nonServiceableEquipment as $equipment): ?>
-                            <tr>
-                                <td><?php echo htmlspecialchars($equipment['equipment_id']); ?></td>
-                                <td><?php echo htmlspecialchars($equipment['property_num']); ?></td>
-                                <td><?php echo htmlspecialchars($equipment['status']); ?></td>
-                                <td><?php echo htmlspecialchars($equipment['building']); ?></td>
-                                <td><?php echo htmlspecialchars($equipment['office']); ?></td>
-                                <td><?php echo htmlspecialchars($equipment['room']); ?></td>
-                            </tr>
-                        <?php endforeach; ?>
-                    <?php else: ?>
-                        <tr>
-                            <td colspan="6">No non-serviceable equipment found.</td>
-                        </tr>
-                    <?php endif; ?>
-                </tbody>
-            </table>
-        </div>
-
         <!-- New buttons added -->
         <div class="row mt-4">
             <div class="col-md-4">

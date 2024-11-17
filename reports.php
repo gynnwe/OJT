@@ -40,6 +40,27 @@ try {
     $stmt = $conn->prepare($sql);
     $stmt->execute();
     $maintenanceLogs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Fetch all non-serviceable equipment
+    $sqlNonServiceable = "
+        SELECT 
+            equipment.equipment_id,
+            equipment.equip_name,
+            equipment.location_id, 
+            equipment_type.equip_type_name AS equipment_type_name, 
+            model.model_name AS model_name, 
+            equipment.property_num, 
+            equipment.status, 
+            equipment.date_purchased 
+        FROM equipment
+        JOIN equipment_type ON equipment.equip_type_id = equipment_type.equip_type_id  
+        JOIN model ON equipment.model_id = model.model_id
+        WHERE equipment.status = 'Non-serviceable'
+    ";
+    $stmtNonServiceable = $conn->prepare($sqlNonServiceable);
+    $stmtNonServiceable->execute();
+    $nonServiceableEquipments = $stmtNonServiceable->fetchAll(PDO::FETCH_ASSOC);
+    
 } catch (PDOException $e) {
     echo "Error: " . $e->getMessage();
     exit;
@@ -53,10 +74,55 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reports</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 </head>
 <body>
     <div class="container mt-5">
         <h3>Reports</h3>
+
+        <!-- Button to Expand Non-serviceable Equipments Section -->
+        <div class="mb-4">
+            <button id="toggle-non-serviceable" class="btn btn-danger">View Non-serviceable Equipments</button>
+        </div>
+
+        <!-- Non-serviceable Equipments Section -->
+        <div id="non-serviceable-section" class="mb-4" style="display: none;">
+            <h4>Non-serviceable Equipments</h4>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Equipment ID</th>
+                        <th>Equipment Name</th>
+                        <th>Location ID</th>
+                        <th>Equipment Type</th>
+                        <th>Model Name</th>
+                        <th>Property Number</th>
+                        <th>Status</th>
+                        <th>Date Purchased</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if (!empty($nonServiceableEquipments)): ?>
+                        <?php foreach ($nonServiceableEquipments as $equipment): ?>
+                            <tr>
+                                <td><?= htmlspecialchars($equipment['equipment_id']); ?></td>
+                                <td><?= htmlspecialchars($equipment['equip_name']); ?></td>
+                                <td><?= htmlspecialchars($equipment['location_id']); ?></td>
+                                <td><?= htmlspecialchars($equipment['equipment_type_name']); ?></td>
+                                <td><?= htmlspecialchars($equipment['model_name']); ?></td>
+                                <td><?= htmlspecialchars($equipment['property_num']); ?></td>
+                                <td><?= htmlspecialchars($equipment['status']); ?></td>
+                                <td><?= htmlspecialchars($equipment['date_purchased']); ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <tr><td colspan="8">No non-serviceable equipment found.</td></tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Maintenance Logs Table -->
         <table class="table table-bordered">
             <thead>
                 <tr>
@@ -88,6 +154,16 @@ try {
             </tbody>
         </table>
     </div>
+    <script>
+        $(document).ready(function() {
+            $('#toggle-non-serviceable').on('click', function() {
+                $('#non-serviceable-section').toggle();
+                $(this).text(function(i, text) {
+                    return text === "View Non-serviceable Equipments" ? "Hide Non-serviceable Equipments" : "View Non-serviceable Equipments";
+                });
+            });
+        });
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
