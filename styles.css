@@ -113,7 +113,7 @@ button.loginbtn:hover {
 /* Sidebar styles */
 
 .sidebar {
-    width: 220px;
+    width: 249px;
     background-color: #fff;
     padding: 15px;
     color: white;
@@ -127,7 +127,7 @@ button.loginbtn:hover {
 
 .sidebar-header {
     text-align: center;
-    margin-bottom: 30px;
+    margin: 25px 0;
 }
 
 .sidebar-header .logo {
@@ -136,24 +136,29 @@ button.loginbtn:hover {
     width: 60px;
 }
 
+.sidebar p {
+	margin: 8.5px 0;
+}
+
 .sidebar .nav-links {
     list-style-type: none;
 	display: flex;
     flex-direction: column;
     flex-grow: 1;
-	padding-left: 15px;
+	padding: 0 17px;
 }
 
 .sidebar .nav-links li {
-    margin: 10px 0;
+    margin: 0px 0;
 }
 
 .sidebar .nav-links a {
-    color: #343a40;
+    color: #646464;
     text-decoration: none;
     font-size: 13px;
     display: flex;
     align-items: center;
+	padding: 8.5px 0;
 }
 
 .sidebar .nav-links a span.material-symbols-rounded {
@@ -169,8 +174,18 @@ button.loginbtn:hover {
     color: #991B1E;
 }
 
+.sidebar hr {
+	border: 0.01px solid #ccc;
+    width: 100%;
+    margin: 8.5px 0;
+}
+
 .nav-links li:last-child {
 	margin-top: auto;
+}
+
+.sidebar .nav-links .management-title {
+	color: #646464;
 }
 
 #admin-management {
@@ -218,6 +233,8 @@ button.loginbtn:hover {
 #current-page {
     font-size: 22px;
     font-weight: bold;
+	margin-left: 30px;
+	margin-top: 2.5px;
 }
 
 .user-info {
@@ -243,7 +260,7 @@ button.loginbtn:hover {
 
 .role {
     font-size: 12px;
-    color: #666; /
+    color: #666; 
 }
 
 /* Content area */
