@@ -109,7 +109,6 @@ if (isset($_SESSION['message'])) {
 			font-family: Arial, sans-serif;
 			background-color: #f8f9fa;
 		}
-
 		.container {
 			margin-top: -1.1rem !important;
 			margin-left: 1.3rem !important;
@@ -122,18 +121,15 @@ if (isset($_SESSION['message'])) {
 			padding: 15px;
 			border: none;
 		}
-
 		.add-edit-card {
 			width: 800px;
 			height: 145px;
 			padding: 15px;
 			position: relative;
 		}
-
 		.search-card {
 			height: 480px;
 		}
-
 		.floating-alert {
 			position: absolute;
 			top: 0;
@@ -148,41 +144,39 @@ if (isset($_SESSION['message'])) {
 			font-weight: bold;
 			font-size: 13px;
 		}
-		
-		
-        h3 {
-    font-size: 13px;
-} {
-            color: #3A3A3A;
-    font-weight: regular;
-    font-size: 13px;
-        }
-			
-        .section-divider {
-           margin-top: 5px;
-	margin-bottom: 15px;
-    border: 0;
-    height: 1px;
-    background-color: rgba(0, 0, 0, 0.2);
-        }
-        .form-group {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 5px;
-        }
-        .form-group label {
-            font-size: 0.9rem;
-            width: 300px;
-        }
+		h3 {
+			color: #3A3A3A;
+			font-weight: regular;
+			font-size: 13px;
+		}	
+		.section-divider {
+			margin-top: 5px;
+			margin-bottom: 15px;
+			border: 0;
+			height: 1px;
+			background-color: rgba(0, 0, 0, 0.2);
+		}
+		.form-group {
+			display: flex;
+			align-items: center;
+			gap: 15px;
+			margin-bottom: 5px;
+		}
+		.form-group label {
+			font-size: 0.9rem;
+			width: 300px;
+		}
 		.form-control {
 			width: 257px;
-    height: 33px;
-    border: 2px solid #646464; 
-    border-radius: 14px; 
-    color: #646464; 
-    font-size: 12px;
-			
+			height: 33px;
+			border: 2px solid #646464; 
+			border-radius: 14px; 
+			color: #646464; 
+			font-size: 12px;	
+		}
+
+		#searchInput {
+			width: 257px;
 		}
 		
 		#model_name {
@@ -213,12 +207,12 @@ if (isset($_SESSION['message'])) {
 			margin-top: -6px;
 			margin-left: 82px;
 		}
-        .btn-save:hover {
+		.btn-save:hover {
 			background-color: #E3595C; 
-        }
-        #filterBy {
+		}
+		#filterBy {
 			padding-left: 15px;
-            width: 257px; 
+            		width: 257px; 
 			height: 33px; 
 			background-color: #d1d1d1; 
 			border-radius: 14px; 
@@ -226,22 +220,20 @@ if (isset($_SESSION['message'])) {
 			font-size :13px ; 
 			border:none; 
 		}
-		
-        .form-inline {
+		.form-inline {
 			display: flex;
 			gap: 10px;
 			align-items: center;
 			margin-bottom: 20px;
 		}
-        .table-responsive {
-            border-radius: 10px;
-            overflow: hidden;
-        }
-       .table {
+		.table-responsive {
+			border-radius: 10px;
+			overflow: hidden;
+		}
+		.table {
 			width: 100%; 
 			border:none;
 		}
-
 		.table th {
 			text-align:left ;
 			font-size :13px ;
