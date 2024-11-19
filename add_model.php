@@ -150,11 +150,11 @@ if (isset($_SESSION['message'])) {
 			font-size: 13px;
 		}	
 		.section-divider {
-			margin-top: 5px;
-			margin-bottom: 15px;
-			border: 0;
-			height: 1px;
-			background-color: rgba(0, 0, 0, 0.2);
+			border: none;
+            height: 1px;
+            background-color: #ddd;
+            margin-top: 5px;
+			margin-bottom: 10px;
 		}
 		.form-group {
 			display: flex;
@@ -162,8 +162,11 @@ if (isset($_SESSION['message'])) {
 			gap: 15px;
 			margin-bottom: 5px;
 		}
+		label {
+			padding-top: 5px;
+		}
 		.form-group label {
-			font-size: 0.9rem;
+			font-size: 13px;
 			width: 300px;
 		}
 		.form-control {
@@ -172,7 +175,7 @@ if (isset($_SESSION['message'])) {
 			border: 2px solid #646464; 
 			border-radius: 14px; 
 			color: #646464; 
-			font-size: 12px;	
+			font-size: 12px;
 		}
 
 		#searchInput {
@@ -180,7 +183,7 @@ if (isset($_SESSION['message'])) {
 		}
 		
 		#model_name {
-			margin-top: -6px;
+			margin-top: 0px;
 			margin-left: -30px;
 		}
 		
@@ -192,7 +195,7 @@ if (isset($_SESSION['message'])) {
 			color:#646464 ; 
 			font-size :13px ; 
 			border:none; 
-			margin-top: -10px;
+			margin-top: 0px;
 			margin-left: -30px;
 			}
 		.btn-save {
@@ -204,7 +207,7 @@ if (isset($_SESSION['message'])) {
 			font-size: 12px; 
 			border: none; 
 			border-radius: 14px; 
-			margin-top: -6px;
+			margin-top: 0px;
 			margin-left: 82px;
 		}
 		.btn-save:hover {
@@ -212,7 +215,7 @@ if (isset($_SESSION['message'])) {
 		}
 		#filterBy {
 			padding-left: 15px;
-            		width: 257px; 
+            width: 257px; 
 			height: 33px; 
 			background-color: #d1d1d1; 
 			border-radius: 14px; 
@@ -241,15 +244,18 @@ if (isset($_SESSION['message'])) {
 			color:#646464 ;
 			border: none ;
 			display: inline-block;
-			margin-top: -10px;
+			margin-top: -6px;
+			margin-bottom: -2px;
 		}
+		
+		.table thead th {
+			border-bottom: none;}
 
 		.table th:nth-child(1) {
 			width: 10%; 
 		}
-
 		th:nth-child(2) {
-			width: 36%; 
+			width: 35%; 
 		}
 
 		th:nth-child(3) {
@@ -257,7 +263,8 @@ if (isset($_SESSION['message'])) {
 		}
 
 		th:nth-child(4) {
-			width: 19%;
+			width: 10%;
+			margin-left: 10px;
 		}
 
 		.table td {
@@ -266,28 +273,43 @@ if (isset($_SESSION['message'])) {
 			border-collapse: separate; 
 			border-spacing: 10px 40px;
 			border: none; 
-			height: 38.35px;
+			/*height: 38.35px;*/
+			display: inline-block;
+			padding: 14px 10px;
+			padding-top: 12.5px;
 		}
 
 		.table td img {
 			opacity: 75%;
 		}
+		
+		td a img[src='edit.png'], td a img[src='delete.png'] {
+			transition: transform 0.3s ease-in-out;
+		}
+
+		td a img[src='edit.png']:hover {
+			transform: scale(1.1);
+		}
+
+		td a img[src='delete.png']:hover {
+			transform: scale(1.2);
+		}
 
 		td:nth-child(1) {
-			width: 11.5%;
+			width: 10%;
 		}
 
 		td:nth-child(2) {
-			width: 41%; 
+			width: 35%; 
 		}
 
 		td:nth-child(3) {
-			width: 41%;
+			width: 35%;
 
 		}
 
 		td:nth-child(4) {
-			width: 8%;
+			width: 10%;
 		}
 
 		table tbody {
@@ -306,11 +328,11 @@ if (isset($_SESSION['message'])) {
 		}
 
 		.table tbody tr:hover {
-			background-color :#ebebeb ; 
+			background-color :#ebebeb; 
 		}
 
 		tr {
-			font-size: 13px;	
+			font-size: 13px;
 		}
 
 		.pagination {
