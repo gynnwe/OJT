@@ -92,143 +92,240 @@ if (isset($_SESSION['message'])) {
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f8f9fa;
-        }
-        .container {
-            max-width: 1500px;
-            display: flex;
-            flex-wrap: wrap;
-        }
-        .card {
-            background-color: #ffffff;
-            padding: 15px;
-            border-radius: 15px;
-            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-        }
-        .add-edit-card, .search-card {
-            width: 1380px;
-            height: auto;
-            padding: 15px;
-            position: relative;
-        }
-        .floating-alert {
-            position: absolute;
-            top: 0;
-            right: 0;
-            z-index: 1050;
-            max-width: 300px;
-            display: none;
-            font-size: 0.7rem;
-        }
-        h1, h2 {
-            font-weight: bold;
-            color: #343a40;
-            font-size: 1rem;
-        }
-        .section-divider {
-            border: none;
+			font-family: Arial, sans-serif;
+			background-color: #f8f9fa;
+		}
+		.container {
+			margin-top: -1.1rem !important;
+			margin-left: 1.3rem !important;
+		}
+		.card {
+			background-color: #ffffff;
+			border-radius: 24px;
+			box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+			margin-bottom: 20px;
+			padding: 15px;
+			border: none;
+		}
+		.add-edit-card {
+			width: 100%;
+			height: 145px;
+			padding: 15px;
+			position: relative;
+		}
+		.search-card {
+			height: 480px;
+		}
+		.floating-alert {
+			position: absolute;
+			top: 0;
+			right: 0;
+			z-index: 1050;
+			max-width: 400px;
+			display: none;
+			font-size: 0.7rem;
+		}
+		h1, h2 {
+			color: #3A3A3A;
+			font-weight: bold;
+			font-size: 13px;
+		}
+		h3 {
+			color: #3A3A3A;
+			font-weight: regular;
+			font-size: 13px;
+		}	
+		.section-divider {
+			border: none;
             height: 1px;
             background-color: #ddd;
-            margin: 10px 0;
-        }
-        .form-group label {
-            font-size: 0.9rem;
-            display: block;
-        }
-        .btn-save {
-            background-color: #b32d2e;
-            color: #fff;
-            border: none;
-            padding: 5px 30px;
-            border-radius: 30px;
-            font-size: 0.8rem;
-            cursor: pointer;
-            align-self: flex-end;
-            margin-left: auto;
-        }
-        .btn-save:hover {
-            background-color: #a02626;
-        }
-        .form-control {
-            border-radius: 30px;
-            font-size: 0.8rem;
-            padding: 10px;
-            border: 2px solid #646464;
-            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.075);
-            width: 100%;
-        }
-        #filterBy {
-            width: 300px;
-            background-color: #f1f1f1;
-            color: #333;
-            font-size: 0.8rem;
-            border: none;
-            padding: 6px 10px;
-            border-radius: 30px;
-        }
-        .form-container {
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-        }
-        .form-group {
-            flex: 1;
-            margin-bottom: 0;
-        }
-        .btn-save {
-            margin-top: 25px;
-        }
-        table {
-            width: 100%;
-            background-color: #ffffff;
-            border-collapse: collapse;
-            margin-top: 10px;
-            border-radius: 10px;
-            overflow: hidden;
-        }
-        th, td {
-            padding: 8px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-            font-size: 0.8rem;
-        }
-        th {
-            background-color: #f1f1f1;
-        }
-        #searchInput {
-            width: 300px;
-            margin-right: 10px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            padding: 6px 10px;
-            border: 2px solid #646464;
-        }
-        img {
-            transition: transform 0.2s;
-        }
-        img:hover {
-            transform: scale(1.2);
-        }
-        .table-responsive {
-            border-radius: 10px;
-            overflow: hidden;
-        }
-        .pagination {
-            justify-content: flex-end;
-        }
-        .pagination .page-link {
-            border: none;
-            font-size: 0.8rem;
-            padding: 4px 8px;
-        }
-        .pagination .page-item:first-child .page-link {
-            color: #8B8B8B;
-        }
-        .pagination .page-item:last-child .page-link {
-            color: #474747;
-        }
+            margin-top: 5px;
+			margin-bottom: 10px;
+		}
+		.form-group {
+			display: block;
+			gap: 15px;
+			margin-bottom: 5px;
+		}
+		label {
+			padding-top: 5px;
+		}
+		.form-group label {
+			font-size: 13px;
+		}
+		.form-control {
+			height: 33px;
+			border: 2px solid #646464; 
+			border-radius: 14px; 
+			color: #646464; 
+			font-size: 12px;
+			display: inline-block;
+		}
+		#remarks_name {
+			max-width: 908px;
+			display: inline-block;
+		}
+		#searchInput {
+			width: 257px;
+		}
+		
+		#equip_type_id {
+			width: 257px; 
+			height: 33px; 
+			background-color: #d1d1d1; 
+			border-radius: 14px; 
+			color:#646464 ; 
+			font-size :13px ; 
+			border:none; 
+			margin-top: 0px;
+			margin-left: -30px;
+			}
+		.btn-save {
+			width: 130px; 
+			height: 33px; 
+			background-color: #a81519; 
+			color: white; 
+			font-weight: bold; 
+			font-size: 12px; 
+			border: none; 
+			border-radius: 14px; 
+			display: inline-block;
+			margin-left: 23px;
+		}
+		.btn-save:hover {
+			background-color: #E3595C; 
+		}
+		#filterBy {
+			padding-left: 15px;
+            width: 257px; 
+			height: 33px; 
+			background-color: #d1d1d1; 
+			border-radius: 14px; 
+			color:#646464 ; 
+			font-size :13px ; 
+			border:none; 
+		}
+		.form-inline {
+			display: flex;
+			gap: 10px;
+			align-items: center;
+			margin-bottom: 20px;
+		}
+		.table-responsive {
+			border-radius: 10px;
+			overflow: hidden;
+		}
+		.table {
+			width: 100%; 
+			border:none;
+		}
+		.table th {
+			text-align:left ;
+			font-size :13px ;
+			font-weight: normal;
+			color:#646464 ;
+			border: none ;
+			display: inline-block;
+			margin-top: -6px;
+			margin-bottom: -2px;
+		}
+		
+		.table thead th {
+			border-bottom: none;}
+
+		.table th:nth-child(1) {
+			width: 10%; 
+		}
+		th:nth-child(2) {
+			width: 70%; 
+		}
+
+		th:nth-child(3) {
+			width: 10%; 
+			margin-left: 5px;
+		}
+
+
+		.table td {
+			color:#646464 ; 
+			font-weight :bold ;
+			border-collapse: separate; 
+			border-spacing: 10px 40px;
+			border: none; 
+			/*height: 38.35px;*/
+			display: inline-block;
+			padding: 14px 10px;
+			padding-top: 13px;
+		}
+
+		.table td img {
+			opacity: 75%;
+		}
+		
+		td a img[src='edit.png'], td a img[src='delete.png'] {
+			transition: transform 0.3s ease-in-out;
+		}
+
+		td a img[src='edit.png']:hover {
+			transform: scale(1.1);
+		}
+
+		td a img[src='delete.png']:hover {
+			transform: scale(1.2);
+		}
+
+		td:nth-child(1) {
+			width: 10%;
+		}
+
+		td:nth-child(2) {
+			width: 70%; 
+		}
+
+		td:nth-child(3) {
+			width: 14%;
+
+		}
+
+
+		table tbody {
+			border-spacing: 15px 155px;
+			border-radius: 14px; 
+			margin: 20 -20px;
+		}
+
+		.table tbody tr:nth-child(odd), .table tbody tr:nth-child(even) {
+			background-color: white;
+			border: 1px solid #DFDFDF;
+			border-radius: 14px; 
+			display: block;
+			width: 100%;
+			margin-top: 5px;
+		}
+
+		.table tbody tr:hover {
+			background-color :#ebebeb; 
+		}
+
+		tr {
+			font-size: 13px;
+		}
+
+		.pagination {
+			justify-content: flex-end; 
+			margin: 0;
+		}
+		.pagination .page-link {
+			border: none; 
+			font-size: 0.8rem; 
+			padding: 0px 8px; 
+		}
+		.pagination .page-item:first-child .page-link {
+			color: #8B8B8B; 
+		}
+		.pagination .page-item:last-child .page-link {
+			color: #474747; 
+		}
     </style>
 </head>
 <body>
@@ -243,9 +340,10 @@ if (isset($_SESSION['message'])) {
                 <input type="hidden" name="remarks_id" id="remarks_id">
                 <div class="form-group">
                     <label for="remarks_name">New Remark</label>
+				</div>
                     <input type="text" name="remarks_name" id="remarks_name" class="form-control" required>
-                </div>
-                <button type="submit" class="btn-save">Save Remark</button>
+					<button type="submit" class="btn-save">Save Remark</button>
+                
             </form>
         </div>
 
@@ -260,7 +358,7 @@ if (isset($_SESSION['message'])) {
                 <input type="text" id="searchInput" class="form-control" placeholder="Search...">
             </div>
 
-            <h2>Existing Remarks</h2>
+            <h3>Existing Remarks</h3>
             <div class="table-responsive">
                 <table class="table table-striped">
                     <thead>
