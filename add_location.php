@@ -251,14 +251,17 @@ if (isset($_SESSION['message'])) {
 			width: 10%; 
 		}
 		th:nth-child(2) {
-			width: 35%; 
+			width: 25%; 
 		}
 
 		th:nth-child(3) {
-			width: 35%; 
+			width: 25%; 
 		}
 
 		th:nth-child(4) {
+			width: 25%;
+		}
+		th:nth-child(5) {
 			width: 10%;
 			margin-left: 10px;
 		}
@@ -296,15 +299,19 @@ if (isset($_SESSION['message'])) {
 		}
 
 		td:nth-child(2) {
-			width: 35%; 
+			width: 25%; 
 		}
 
 		td:nth-child(3) {
-			width: 35%;
+			width: 25%;
 
 		}
 
 		td:nth-child(4) {
+			width: 25%;
+		}
+		
+		td:nth-child(5) {
 			width: 10%;
 		}
 
