@@ -202,6 +202,8 @@ if (isset($_SESSION['message'])) {
 			border:none;
 		}
 
+		.table thead th {
+			border-bottom: none;}
 		.table th {
 			text-align:left ;
 			font-size :13px ;
@@ -209,19 +211,20 @@ if (isset($_SESSION['message'])) {
 			color:#646464 ;
 			border: none ;
 			display: inline-block;
-			margin-top: -10px;
+			margin-top: -5px;
 		}
 
 		.table th:nth-child(1) {
-			width: 13%; 
+			width: 10%; 
 		}
 
 		th:nth-child(2) {
-			width: 62%;
+			width: 60%;
 		}
 
 		th:nth-child(3) {
-			width: 25%;
+			width: 20%;
+			margin-left: 5px;
 		}
 
 		.table td {
@@ -230,7 +233,10 @@ if (isset($_SESSION['message'])) {
 			border-collapse: separate; 
 			border-spacing: 10px 40px;
 			border: none;
-			height: 38.35px;
+			/*height: 38.35px;*/
+			display: inline-block;
+			padding: 33px 10px;
+			padding-top: 12px;
 		}
 
 		.table td img {
@@ -238,15 +244,15 @@ if (isset($_SESSION['message'])) {
 		}
 
 		td:nth-child(1) {
-			width: 15%;
+			width: 10%;
 		}
 
 		td:nth-child(2) {
-			width: 73%;
+			width: 60%;
 		}
 
 		td:nth-child(3) {
-			width: 7.5%;
+			width: 20%;
 		}
 
 		td a img[src='edit.png'], td a img[src='delete.png'] {
