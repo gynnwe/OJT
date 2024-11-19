@@ -102,25 +102,27 @@ if (isset($_SESSION['message'])) {
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f8f9fa;
-        }
-        .container {
-            max-width: 1500px;
-        }
-        .card {
-            background-color: #ffffff;
-            border-radius: 15px;
-            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-            padding: 15px;
-        }
-        .add-edit-card {
-            width: 600px;
-            height: auto;
-            padding: 15px;
-            position: relative;
-        }
+			font-family: Arial, sans-serif;
+			background-color: #f8f9fa;
+		}
+		.container {
+			margin-top: -1.1rem !important;
+			margin-left: 1.3rem !important;
+		}
+		.card {
+			background-color: #ffffff;
+			border-radius: 24px;
+			box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+			margin-bottom: 20px;
+			padding: 15px;
+			border: none;
+		}
+		.add-edit-card {
+			width: 555px;
+			height: 200;
+			padding: 15px;
+			position: relative;
+		}
         .floating-alert {
             position: absolute;
             top: 0;
@@ -131,10 +133,17 @@ if (isset($_SESSION['message'])) {
             font-size: 0.7rem;
         }
         h1, h2 {
-            font-weight: bold;
-            color: #343a40;
-            font-size: 1rem;
+            color: #3A3A3A;
+			font-weight: bold;
+			font-size: 13px;
+			margin-top: 5px;
         }
+		h3 {
+			color: #3A3A3A;
+			font-weight: regular;
+			font-size: 13px;
+			margin-top: 5px;
+		}
         .section-divider {
             border: none;
             height: 1px;
@@ -148,37 +157,45 @@ if (isset($_SESSION['message'])) {
             margin-bottom: 5px;
         }
         .form-group label {
-            font-size: 0.9rem;
-            width: 100px;
+            font-size: 13px;
+			width: 300px;
         }
         .form-control {
-            border-radius: 30px;
-            font-size: 0.8rem;
-            padding: 10px;
-            border: 2px solid #646464;
-            width: 300px;
-            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.075);
+            width: 257px;
+			height: 33px;
+			border: 2px solid #646464; 
+			border-radius: 14px; 
+			color: #646464; 
+			font-size: 12px;	
         }
+		.add-edit-card .form-control {
+			margin-left: -200px;
+		}
+		#searchInput {
+			width: 257px;
+		}
         .btn-save {
-            background-color: #b32d2e;
-            color: #fff;
-            border: none;
-            padding: 5px 15px;
-            border-radius: 30px;
-            font-size: 0.8rem;
-            cursor: pointer;
-            margin-left: auto;
+            width: 130px; 
+			height: 33px; 
+			background-color: #a81519; 
+			color: white; 
+			font-weight: bold; 
+			font-size: 12px; 
+			border: none; 
+			border-radius: 14px; 
         }
         .btn-save:hover {
-            background-color: #a02626;
+            background-color: #E3595C;
         }
         #filterBy {
-            background-color: #f1f1f1;
-            color: #333;
-            border: none;
-            padding: 6px 10px;
-            border-radius: 30px;
-            width: 300px;
+            padding-left: 15px;
+            width: 257px; 
+			height: 33px; 
+			background-color: #d1d1d1; 
+			border-radius: 14px; 
+			color:#646464 ; 
+			font-size :13px ; 
+			border:none; 
         }
         .form-inline {
             display: flex;
@@ -190,42 +207,129 @@ if (isset($_SESSION['message'])) {
             border-radius: 10px;
             overflow: hidden;
         }
-        table {
-            width: 100%;
-            background-color: #ffffff;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
-        th, td {
-            padding: 8px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-            font-size: 0.8rem;
-        }
-        th {
-            background-color: #f1f1f1;
-        }
-        #searchInput {
-            border-radius: 20px;
-            font-size: 0.8rem;
-            padding: 6px 10px;
-            border: 2px solid #646464;
-            width: 300px;
-        }
-        .pagination {
-            justify-content: flex-end;
-        }
-        .pagination .page-link {
-            border: none;
-            font-size: 0.8rem;
-            padding: 4px 8px;
-        }
-        .pagination .page-item:first-child .page-link {
-            color: #8B8B8B;
-        }
-        .pagination .page-item:last-child .page-link {
-            color: #474747;
-        }
+        .table {
+			width: 100%; 
+			border:none;
+		}
+		.table th {
+			text-align:left ;
+			font-size :13px ;
+			font-weight: normal;
+			color:#646464 ;
+			border: none ;
+			display: inline-block;
+			margin-top: -5px;
+		}
+		.table thead th {
+			border-bottom: none;}
+		
+		.table th:nth-child(1) {
+			width: 10%; 
+		}
+
+		th:nth-child(2) {
+			width: 25%; 
+		}
+
+		th:nth-child(3) {
+			width: 25%; 
+		}
+
+		th:nth-child(4) {
+			width: 25%;
+		}
+		
+		th:nth-child(5) {
+			width: 10%;
+			margin-left: 8px;
+		}
+
+		.table td {
+			color:#646464 ; 
+			font-weight :bold ;
+			border-collapse: separate; 
+			border-spacing: 10px 40px;
+			border: none; 
+			/*height: 33.18px;*/
+			display: inline-block;
+			padding: 0px 10px;
+			padding-top: 5px;
+		}
+
+		.table td img {
+			opacity: 75%;
+			margin-bottom: 5px;
+		}
+		td a img[src='edit.png'], td a img[src='delete.png'] {
+			transition: transform 0.3s ease-in-out;
+		}
+
+		td a img[src='edit.png']:hover {
+			transform: scale(1.1);
+		}
+
+		td a img[src='delete.png']:hover {
+			transform: scale(1.2);
+		}
+
+		td:nth-child(1) {
+			width: 10%;
+		}
+
+		td:nth-child(2) {
+			width: 25%; 
+		}
+
+		td:nth-child(3) {
+			width: 25%;
+		}
+
+		td:nth-child(4) {
+			width: 25%;
+		}
+		
+		td:nth-child(5) {
+			width: 10%;
+		}
+
+		table tbody {
+			border-spacing: 15px 155px;
+			border-radius: 14px; 
+			margin: 20 -20px;
+		}
+
+		.table tbody tr:nth-child(odd), .table tbody tr:nth-child(even) {
+			background-color: white;
+			border: 1px solid #DFDFDF;
+			border-radius: 14px; 
+			display: block;
+			width: 100%;
+			margin-top: 5px;
+		}
+
+		.table tbody tr:hover {
+			background-color :#ebebeb ; 
+		}
+
+		tr {
+			font-size: 13px;	
+		}
+
+		.pagination {
+			justify-content: flex-end; 
+			margin: 0;
+		}
+		.pagination .page-link {
+			border: none; 
+			font-size: 0.8rem; 
+			padding: 0px 8px; 
+		}
+		.pagination .page-item:first-child .page-link {
+			color: #8B8B8B; 
+		}
+		.pagination .page-item:last-child .page-link {
+			color: #474747; 
+		}
     </style>
 </head>
 <body>
@@ -273,7 +377,7 @@ if (isset($_SESSION['message'])) {
                 <input type="text" id="searchInput" class="form-control" placeholder="Search...">
             </div>
 
-            <h2>Existing Personnel</h2>
+            <h3>Existing Personnel</h3>
             <div class="table-responsive">
                 <table class="table table-striped">
                     <thead>
