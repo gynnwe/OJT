@@ -235,7 +235,7 @@ if (isset($_SESSION['message'])) {
 			border: none;
 			/*height: 38.35px;*/
 			display: inline-block;
-			padding: 33px 10px;
+			padding: 11px 10px;
 			padding-top: 12px;
 		}
 
