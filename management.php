@@ -271,7 +271,7 @@ $conn = null;
 		}
 
 		.table tbody tr:nth-child(odd), .table tbody tr:nth-child(even) {
-			background-color: white;
+			background-color: white !important;
 			border: 1px solid #DFDFDF;
 			border-radius: 14px; 
 			display: block;
