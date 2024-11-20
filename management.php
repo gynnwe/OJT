@@ -83,10 +83,10 @@ $conn = null;
 			font-weight: bold !important;
 			font-size: 13px !important;
 		}
-		p {
+		.container p {
 			color: #3A3A3A;
 			font-weight: regular;
-			font-size: 13px;
+			font-size: 13px !important;
 			margin-bottom: 10px !important;
 		}		
 		.user-title {
