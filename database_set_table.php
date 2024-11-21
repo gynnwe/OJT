@@ -188,13 +188,14 @@ echo "Equipment Table created successfully<br>";
 	// --- Create Plan Details Table ---
 	$sql = "CREATE TABLE IF NOT EXISTS plan_details (
         id INT(7) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-		maintenance_plan_id INT(7) UNSIGNED NOT NULL,
+        maintenance_plan_id INT(7) UNSIGNED NOT NULL,
         month ENUM('January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December') NOT NULL,
         target DECIMAL(5,2) NOT NULL,
-		equipment_type ENUM('Computer', 'Laptop', 'Printer', 'Projector') NOT NULL,
-		details DECIMAL(5,2) NOT NULL,
-		accomplishment DECIMAL(5,2) NOT NULL,
-		FOREIGN KEY (maintenance_plan_id) REFERENCES maintenance_plan(id)
+        equipment_id INT(7) UNSIGNED NOT NULL,
+        details VARCHAR(255) NOT NULL,
+        accomplishment VARCHAR(255) NOT NULL,
+        FOREIGN KEY (maintenance_plan_id) REFERENCES maintenance_plan(id),
+        FOREIGN KEY (equipment_id) REFERENCES equipment(equipment_id)
     )";
 	
 	$conn->exec($sql);
