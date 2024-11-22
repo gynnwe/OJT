@@ -175,11 +175,17 @@ $conn = null;
 		.form-control {
 			width: 257px !important;
 			height: 33px !important;
-			border: 2px solid #646464 !important; 
+			border: 2px solid #646464 !important;
 			border-radius: 14px !important; 
 			color: #646464 !important; 
 			font-size: 12px !important;
 			margin: 0px !important;
+		}
+		
+		.mr-2 {
+			background-color: #d1d1d1 !important;
+			border: none !important;
+			color: #646464 !important;
 		}
 		
 		.table-responsive {
