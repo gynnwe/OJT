@@ -80,6 +80,8 @@ try {
     <title>Reports</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
 </head>
 <body>
     <div class="container mt-5">
@@ -158,7 +160,16 @@ try {
                 <?php endif; ?>
             </tbody>
         </table>
+
+        <!-- Pie Chart Section -->
+        <div class="mt-5 text-center">
+            <h4>Maintained Equipment Pie Chart</h4>
+            <div style="display: inline-block; width: 400px; height: 400px;">
+                <canvas id="remarksChart"></canvas>
+            </div>
+        </div>
     </div>
+
     <script>
         $(document).ready(function() {
             $('#toggle-non-serviceable').on('click', function() {
@@ -166,6 +177,50 @@ try {
                 $(this).text(function(i, text) {
                     return text === "View Non-serviceable Equipments" ? "Hide Non-serviceable Equipments" : "View Non-serviceable Equipments";
                 });
+            });
+
+            // Prepare data for the chart
+            const remarksData = <?= json_encode(array_count_values(array_column($maintenanceLogs, 'latest_remarks'))); ?>;
+            const totalData = Object.values(remarksData).reduce((a, b) => a + b, 0);
+
+            // Chart.js Configuration
+            const ctx = document.getElementById('remarksChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: Object.keys(remarksData),
+                    datasets: [{
+                        data: Object.values(remarksData),
+                        backgroundColor: [
+                            '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'
+                        ],
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: { position: 'top' },
+                        tooltip: {
+                            callbacks: {
+                                label: function(tooltipItem) {
+                                    const value = tooltipItem.raw;
+                                    const percentage = ((value / totalData) * 100).toFixed(1);
+                                    return `${tooltipItem.label}: ${value} (${percentage}%)`;
+                                }
+                            }
+                        },
+                        datalabels: {
+                            formatter: (value, ctx) => {
+                                const percentage = ((value / totalData) * 100).toFixed(1);
+                                return `${percentage}%`;
+                            },
+                            color: '#fff',
+                            font: { weight: 'bold', size: 12 }
+                        }
+                    }
+                },
+                plugins: [ChartDataLabels]
             });
         });
     </script>
