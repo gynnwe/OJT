@@ -9,7 +9,7 @@ try {
     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-
+    // Function to get equipment type details using its ID
     function getEquipmentTypesWithId($conn, $equipmentId) {
         $query = "SELECT * FROM equipment_type WHERE equip_type_id = $equipmentId";
         $stmt = $conn->prepare($query);
@@ -17,6 +17,7 @@ try {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Function to get total serviceable equipment count
     function getTotalServiceableEquipment($conn, $equipmentTypeId) {
         $query = "SELECT COUNT(*) as total_serviceable FROM equipment WHERE status = 'Serviceable' AND equip_type_id = :equipmentTypeId";
         $stmt = $conn->prepare($query);
@@ -25,6 +26,7 @@ try {
         return $stmt->fetch(PDO::FETCH_ASSOC)['total_serviceable'];
     }
 
+    // Fetch maintenance plan and details if plan_id is provided
     if (!empty($_GET['plan_id'])) {
         $planId = $_GET['plan_id'];
 
@@ -112,6 +114,13 @@ try {
                 </tr>
             </tbody>
         </table>
+
+        <!-- Button to View and Print PDF -->
+        <form action="generate_pdf.php" method="POST" target="_blank">
+            <input type="hidden" name="plan_id" value="<?= htmlspecialchars($maintenancePlan['id']) ?>">
+            <button type="submit" class="btn btn-primary mt-3">View & Print PDF</button>
+        </form>
+
     <?php else: ?>
         <p>No maintenance plan found for the provided ID.</p>
     <?php endif; ?>
