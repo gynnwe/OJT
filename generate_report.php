@@ -31,7 +31,7 @@ $sql = "
         r.remarks_name AS remarks,
         e.equip_name AS equipment_name,
         e.property_num,
-        CONCAT(l.building, ' - ', l.office, ' - ', l.room) AS location_name,  -- Concatenate location fields with dashes
+        CONCAT(l.building, ' - ', l.office, ' - ', l.room) AS location_name,
         p.firstname,
         p.lastname
     FROM 
@@ -63,12 +63,13 @@ $pdf->SetAuthor('University of Southeastern Philippines');
 $pdf->SetTitle('ICT Equipment History Sheet');
 $pdf->SetSubject('Equipment Report');
 
-// Set 1cm margins on all sides
-$pdf->SetMargins(10, 10, 10);
+// Set margins
+$pdf->SetMargins(15, 15, 15);
 $pdf->SetHeaderMargin(10);
 $pdf->SetFooterMargin(10);
 $pdf->SetAutoPageBreak(TRUE, 10);
 
+// Add a new page
 $pdf->AddPage();
 
 // Logo and Header Section
@@ -77,28 +78,26 @@ $logoPath = 'assets/usep-logo.jpg';
 // Set default font to Arial for most text
 $pdf->SetFont('helvetica', '', 10);
 
-// Use the custom font for "University of Southeastern Philippines"
-$pdf->SetFont('oldenglishttextmt', '', 11); // Ensure the font name matches exactly with the font file
-
+// Header Content
 $html = '
     <table border="0" cellpadding="5" cellspacing="0" width="100%">
         <tr>
-            <td width="15%" align="center"><img src="' . $logoPath . '" width="70" height="70" /></td>
-            <td width="60%" align="center" style="font-size: 9px; padding-left: 5px;">
+            <td width="20%" align="center"><img src="' . $logoPath . '" width="70" height="70" /></td>
+            <td width="55%" align="center" style="font-size: 9px;">
                 <strong style="font-family: Arial;">Republic of the Philippines</strong><br>
-                <strong style="font-family: OldEnglishTextMT;">University of Southeastern Philippines</strong><br>
+                <strong style="font-family: oldenglishttextmt; font-size: 16px;">University of Southeastern Philippines</strong><br>
                 <span style="font-family: Arial;">Iñigo St., Bo. Obrero, Davao City 8000</span><br>
                 <span style="font-family: Arial;">Telephone: (082) 227-8192</span><br>
-                <span style="font-family: Arial;">Website: <a href="http://www.usep.edu.ph">www.usep.edu.ph</a></span><br> 
+                <span style="font-family: Arial;">Website: <a href="http://www.usep.edu.ph">www.usep.edu.ph</a></span><br>
                 <span style="font-family: Arial;">Email: <a href="mailto:president@usep.edu.ph">president@usep.edu.ph</a></span>
             </td>
             <td width="25%" align="left">
                 <table border="0.5" cellpadding="2" cellspacing="0" style="font-size:7px; width: 100%; font-family: Arial;">
-                    <tr><td style="text-align: left; padding-left: 5px;">Form No.</td><td>FM-USeP-ICT-04</td></tr>
-                    <tr><td style="text-align: left; padding-left: 5px;">Issue Status</td><td>01</td></tr>
-                    <tr><td style="text-align: left; padding-left: 5px;">Revision No.</td><td>00</td></tr>
-                    <tr><td style="text-align: left; padding-left: 5px;">Date Effective</td><td>23 December 2022</td></tr>
-                    <tr><td style="text-align: left; padding-left: 5px;">Approved by</td><td>President</td></tr>
+                    <tr><td>Form No.</td><td>FM-USeP-ICT-04</td></tr>
+                    <tr><td>Issue Status</td><td>01</td></tr>
+                    <tr><td>Revision No.</td><td>00</td></tr>
+                    <tr><td>Date Effective</td><td>23 December 2022</td></tr>
+                    <tr><td>Approved by</td><td>President</td></tr>
                 </table>
             </td>
         </tr>
@@ -107,52 +106,48 @@ $html = '
     <h2 align="center" style="font-size: 12px; font-family: Arial;">ICT EQUIPMENT HISTORY SHEET</h2>
 ';
 
-// Reset font back to Arial for the rest of the document
-$pdf->SetFont('helvetica', '', 10);
-
-// Equipment details table
+// Equipment Details
 $firstLog = $logs[0];
 $html .= '
     <table border="0.5" cellpadding="4" cellspacing="0" width="100%">
         <tr>
-            <td width="35%" style="font-family: Arial;"><strong>Equipment:</strong></td>
-            <td width="65%" style="font-family: Arial;">' . htmlspecialchars($firstLog['equipment_name']) . '</td>
+            <td width="35%"><strong>Equipment:</strong></td>
+            <td width="65%">' . htmlspecialchars($firstLog['equipment_name']) . '</td>
         </tr>
         <tr>
-            <td style="font-family: Arial;"><strong>Property/Serial Number:</strong></td>
-            <td style="font-family: Arial;">' . htmlspecialchars($firstLog['property_num']) . '</td>
+            <td><strong>Property/Serial Number:</strong></td>
+            <td>' . htmlspecialchars($firstLog['property_num']) . '</td>
         </tr>
         <tr>
-            <td style="font-family: Arial;"><strong>Location:</strong></td>
-            <td style="font-family: Arial;">' . htmlspecialchars($firstLog['location_name']) . '</td>
+            <td><strong>Location:</strong></td>
+            <td>' . htmlspecialchars($firstLog['location_name']) . '</td>
         </tr>
     </table>
     <br>
 ';
 
-// Maintenance Logs table with precise column widths
+// Maintenance Logs Table
 $html .= '
     <table border="0.5" cellpadding="4" cellspacing="0" width="100%">
         <thead>
             <tr>
-                <th width="15%" style="font-family: Arial;">Date</th>
-                <th width="15%" style="font-family: Arial;">JO Number</th>
-                <th width="30%" style="font-family: Arial;">Actions Taken</th>
-                <th width="20%" style="font-family: Arial;">Remarks</th>
-                <th width="20%" style="font-family: Arial;">Responsible SDMD Personnel</th>
+                <th width="20%">Date</th>
+                <th width="15%">JO Number</th>
+                <th width="30%">Actions Taken</th>
+                <th width="20%">Remarks</th>
+                <th width="15%">Responsible Personnel</th>
             </tr>
         </thead>
         <tbody>';
 
-// Loop through the logs to populate the rows
 foreach ($logs as $log) {
     $html .= '
         <tr>
-            <td style="font-family: Arial;">' . htmlspecialchars($log['maintenance_date']) . '</td>
-            <td style="font-family: Arial;">' . htmlspecialchars($log['jo_number']) . '</td>
-            <td style="font-family: Arial;">' . htmlspecialchars($log['actions_taken']) . '</td>
-            <td style="font-family: Arial;">' . htmlspecialchars($log['remarks']) . '</td>
-            <td style="font-family: Arial;">' . htmlspecialchars($log['firstname'] . ' ' . $log['lastname']) . '</td>
+            <td>' . htmlspecialchars($log['maintenance_date']) . '</td>
+            <td>' . htmlspecialchars($log['jo_number']) . '</td>
+            <td>' . htmlspecialchars($log['actions_taken']) . '</td>
+            <td>' . htmlspecialchars($log['remarks']) . '</td>
+            <td>' . htmlspecialchars($log['firstname'] . ' ' . $log['lastname']) . '</td>
         </tr>';
 }
 
@@ -160,7 +155,7 @@ $html .= '
         </tbody>
     </table>
     <br>
-    <div style="text-align: center; font-size: 10px; font-family: Arial;">
+    <div style="text-align: center; font-size: 10px;">
         Systems and Data Management Division (SDMD) - Page 1 of 1
     </div>';
 
