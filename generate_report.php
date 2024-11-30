@@ -22,7 +22,7 @@ if (!$property_num) {
     die('Property number is required');
 }
 
-// Fetch all maintenance logs for the specific property number, including the concatenated location name with dashes
+// Fetch all maintenance logs for the specific property number
 $sql = "
     SELECT 
         ml.maintenance_date,
@@ -64,19 +64,16 @@ $pdf->SetTitle('ICT Equipment History Sheet');
 $pdf->SetSubject('Equipment Report');
 
 // Set margins
-$pdf->SetMargins(15, 15, 15);
+$pdf->SetMargins(25.4, 25.4, 25.4); // 1 inch margins
 $pdf->SetHeaderMargin(10);
 $pdf->SetFooterMargin(10);
-$pdf->SetAutoPageBreak(TRUE, 10);
+$pdf->SetAutoPageBreak(TRUE, 25.4); // Bottom margin
 
 // Add a new page
 $pdf->AddPage();
 
 // Logo and Header Section
 $logoPath = 'assets/usep-logo.jpg';
-
-// Set default font to Arial for most text
-$pdf->SetFont('helvetica', '', 10);
 
 // Header Content
 $html = '
@@ -106,10 +103,10 @@ $html = '
     <h2 align="center" style="font-size: 12px; font-family: Arial;">ICT EQUIPMENT HISTORY SHEET</h2>
 ';
 
-// Equipment Details
+// Equipment Details Section (Calibri, 11pt)
 $firstLog = $logs[0];
 $html .= '
-    <table border="0.5" cellpadding="4" cellspacing="0" width="100%">
+    <table border="0.5" cellpadding="4" cellspacing="0" width="100%" style="font-family: calibri; font-size: 11px;">
         <tr>
             <td width="35%"><strong>Equipment:</strong></td>
             <td width="65%">' . htmlspecialchars($firstLog['equipment_name']) . '</td>
@@ -126,9 +123,9 @@ $html .= '
     <br>
 ';
 
-// Maintenance Logs Table
+// Maintenance Logs Table (Calibri, 11pt)
 $html .= '
-    <table border="0.5" cellpadding="4" cellspacing="0" width="100%">
+    <table border="0.5" cellpadding="4" cellspacing="0" width="100%" style="font-family: calibri; font-size: 11px;">
         <thead>
             <tr>
                 <th width="20%">Date</th>
