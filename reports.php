@@ -34,13 +34,12 @@ try {
         LEFT JOIN 
             personnel p ON ml.personnel_id = p.personnel_id
         WHERE 
-            ml.maintenance_date = (
-                SELECT MAX(ml_inner.maintenance_date)
-                FROM ict_maintenance_logs ml_inner
-                WHERE ml_inner.equipment_id = ml.equipment_id
+            (ml.equipment_id, ml.maintenance_date) IN (
+                SELECT equipment_id, MAX(maintenance_date)
+                FROM ict_maintenance_logs
+                GROUP BY equipment_id
             )
-        GROUP BY e.property_num
-        ORDER BY e.property_num, last_maintenance_date DESC
+        ORDER BY e.property_num, ml.maintenance_date DESC
     ";
     $stmt = $conn->prepare($sql);
     $stmt->execute();
@@ -67,25 +66,24 @@ try {
     $nonServiceableEquipments = $stmtNonServiceable->fetchAll(PDO::FETCH_ASSOC);
 
     // Fetch counts for maintained and not-maintained equipment
-    $currentMonth = date('Y-m');
     $sqlMaintained = "
         SELECT COUNT(DISTINCT equipment.equipment_id) AS maintained_count
         FROM equipment
         JOIN ict_maintenance_logs im ON equipment.equipment_id = im.equipment_id
-        WHERE im.maintenance_date LIKE :currentMonth
     ";
     $stmtMaintained = $conn->prepare($sqlMaintained);
-    $stmtMaintained->execute([':currentMonth' => $currentMonth . '%']);
+    $stmtMaintained->execute();
     $maintainedCount = $stmtMaintained->fetchColumn();
 
     $sqlNotMaintained = "
-        SELECT COUNT(DISTINCT equipment.equipment_id) AS not_maintained_count
+        SELECT COUNT(*) AS not_maintained_count
         FROM equipment
-        LEFT JOIN ict_maintenance_logs im ON equipment.equipment_id = im.equipment_id
-        WHERE im.equipment_id IS NULL OR im.maintenance_date NOT LIKE :currentMonth
+        WHERE equipment_id NOT IN (
+            SELECT DISTINCT equipment_id FROM ict_maintenance_logs
+        )
     ";
     $stmtNotMaintained = $conn->prepare($sqlNotMaintained);
-    $stmtNotMaintained->execute([':currentMonth' => $currentMonth . '%']);
+    $stmtNotMaintained->execute();
     $notMaintainedCount = $stmtNotMaintained->fetchColumn();
 
     // Fetch total number of equipment
@@ -121,7 +119,6 @@ try {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
 </head>
 <body>
     <div class="container mt-4">
@@ -226,19 +223,16 @@ try {
             </tbody>
         </table>
 
-        <!-- Existing Pie Chart -->
+        <!-- Charts Section -->
         <div class="mt-5 text-center">
-            <h4>Maintained Equipment Pie Chart</h4>
-            <div style="display: inline-block; width: 400px; height: 400px;">
-                <canvas id="remarksChart"></canvas>
-            </div>
-        </div>
-
-        <!-- Bar Chart Section -->
-        <div class="mt-5 text-center">
-            <h4>Maintained vs. Not Maintained Equipment</h4>
-            <div style="display: inline-block; width: 500px; height: 400px;">
-                <canvas id="maintainedChart"></canvas>
+            <h4>Charts</h4>
+            <div class="row">
+                <div class="col-md-6">
+                    <canvas id="remarksChart" style="width: 100%; height: 400px;"></canvas>
+                </div>
+                <div class="col-md-6">
+                    <canvas id="maintainedChart" style="width: 100%; height: 400px;"></canvas>
+                </div>
             </div>
         </div>
     </div>
@@ -252,66 +246,49 @@ try {
                 });
             });
 
-            // Prepare data for the pie chart
+            // Pie Chart
             const remarksData = <?= json_encode(array_count_values(array_column($maintenanceLogs, 'latest_remarks'))); ?>;
             const totalData = Object.values(remarksData).reduce((a, b) => a + b, 0);
 
-            // Pie Chart
-            const ctx = document.getElementById('remarksChart').getContext('2d');
-            new Chart(ctx, {
+            const pieCtx = document.getElementById('remarksChart').getContext('2d');
+            new Chart(pieCtx, {
                 type: 'pie',
                 data: {
                     labels: Object.keys(remarksData),
                     datasets: [{
                         data: Object.values(remarksData),
-                        backgroundColor: [
-                            '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'
-                        ],
+                        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF']
                     }]
                 },
                 options: {
                     responsive: true,
-                    maintainAspectRatio: true,
                     plugins: {
-                        legend: { position: 'top' },
-                        tooltip: {
-                            callbacks: {
-                                label: function(tooltipItem) {
-                                    const value = tooltipItem.raw;
-                                    const percentage = ((value / totalData) * 100).toFixed(1);
-                                    return `${tooltipItem.label}: ${value} (${percentage}%)`;
-                                }
-                            }
-                        },
+                        legend: { position: 'top' }
                     }
                 }
             });
 
             // Bar Chart
-            const data = {
-                labels: ['Maintained', 'Not Maintained'],
-                datasets: [{
-                    label: 'Number of Equipments',
-                    data: [<?= $maintainedCount ?>, <?= $notMaintainedCount ?>],
-                    backgroundColor: ['#36A2EB', '#FF6384']
-                }]
-            };
-
-            const config = {
+            const barCtx = document.getElementById('maintainedChart').getContext('2d');
+            new Chart(barCtx, {
                 type: 'bar',
-                data: data,
+                data: {
+                    labels: ['Maintained', 'Not Maintained'],
+                    datasets: [{
+                        data: [<?= $maintainedCount ?>, <?= $notMaintainedCount ?>],
+                        backgroundColor: ['#36A2EB', '#FF6384']
+                    }]
+                },
                 options: {
                     responsive: true,
-                    plugins: {
-                        legend: { display: false },
-                    },
                     scales: {
                         y: { beginAtZero: true }
+                    },
+                    plugins: {
+                        legend: { display: false }
                     }
                 }
-            };
-
-            new Chart(document.getElementById('maintainedChart'), config);
+            });
         });
     </script>
 </body>
