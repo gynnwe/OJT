@@ -270,7 +270,7 @@ input[type="text"], input[type="date"], select {
             <div id="selected_equipment">Selected Equipment:</div>
 
             <label for="actions_taken">Actions Taken:</label>
-<textarea name="actions_taken" id="actions_taken" class="form-control mb-3" required maxlength="45" 
+<textarea name="actions_taken" id="actions_taken" class="form-control mb-3" required maxlength="40" 
           placeholder="Required"></textarea>
           <label for="remarks">Remarks:</label>
             <select name="remarks" id="remarks" class="form-control mb-3" required>

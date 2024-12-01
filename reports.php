@@ -65,7 +65,47 @@ try {
     $stmtNonServiceable = $conn->prepare($sqlNonServiceable);
     $stmtNonServiceable->execute();
     $nonServiceableEquipments = $stmtNonServiceable->fetchAll(PDO::FETCH_ASSOC);
-    
+
+    // Fetch counts for maintained and not-maintained equipment
+    $currentMonth = date('Y-m');
+    $sqlMaintained = "
+        SELECT COUNT(DISTINCT equipment.equipment_id) AS maintained_count
+        FROM equipment
+        JOIN ict_maintenance_logs im ON equipment.equipment_id = im.equipment_id
+        WHERE im.maintenance_date LIKE :currentMonth
+    ";
+    $stmtMaintained = $conn->prepare($sqlMaintained);
+    $stmtMaintained->execute([':currentMonth' => $currentMonth . '%']);
+    $maintainedCount = $stmtMaintained->fetchColumn();
+
+    $sqlNotMaintained = "
+        SELECT COUNT(DISTINCT equipment.equipment_id) AS not_maintained_count
+        FROM equipment
+        LEFT JOIN ict_maintenance_logs im ON equipment.equipment_id = im.equipment_id
+        WHERE im.equipment_id IS NULL OR im.maintenance_date NOT LIKE :currentMonth
+    ";
+    $stmtNotMaintained = $conn->prepare($sqlNotMaintained);
+    $stmtNotMaintained->execute([':currentMonth' => $currentMonth . '%']);
+    $notMaintainedCount = $stmtNotMaintained->fetchColumn();
+
+    // Fetch total number of equipment
+    $sqlTotalEquipment = "SELECT COUNT(*) AS total_equipment FROM equipment";
+    $stmtTotalEquipment = $conn->prepare($sqlTotalEquipment);
+    $stmtTotalEquipment->execute();
+    $totalEquipment = $stmtTotalEquipment->fetchColumn();
+
+    // Fetch number of serviceable equipment
+    $sqlServiceable = "SELECT COUNT(*) AS serviceable_equipment FROM equipment WHERE status = 'Serviceable'";
+    $stmtServiceable = $conn->prepare($sqlServiceable);
+    $stmtServiceable->execute();
+    $serviceableEquipment = $stmtServiceable->fetchColumn();
+
+    // Fetch number of non-serviceable equipment
+    $sqlNonServiceableCount = "SELECT COUNT(*) AS non_serviceable_equipment FROM equipment WHERE status = 'Non-serviceable'";
+    $stmtNonServiceableCount = $conn->prepare($sqlNonServiceableCount);
+    $stmtNonServiceableCount->execute();
+    $nonServiceableEquipment = $stmtNonServiceableCount->fetchColumn();
+
 } catch (PDOException $e) {
     echo "Error: " . $e->getMessage();
     exit;
@@ -84,6 +124,31 @@ try {
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
 </head>
 <body>
+    <div class="container mt-4">
+        <!-- Equipment Overview Section -->
+        <h4>Equipment Overview</h4>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Total Equipment</th>
+                    <th>Maintained Equipment</th>
+                    <th>Not Maintained Equipment</th>
+                    <th>Serviceable Equipment</th>
+                    <th>Non-serviceable Equipment</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><?= htmlspecialchars($totalEquipment); ?></td>
+                    <td><?= htmlspecialchars($maintainedCount); ?></td>
+                    <td><?= htmlspecialchars($notMaintainedCount); ?></td>
+                    <td><?= htmlspecialchars($serviceableEquipment); ?></td>
+                    <td><?= htmlspecialchars($nonServiceableEquipment); ?></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
     <div class="container mt-5">
         <h3>Reports</h3>
 
@@ -145,13 +210,13 @@ try {
                 <?php if (!empty($maintenanceLogs)): ?>
                     <?php foreach ($maintenanceLogs as $log): ?>
                         <tr>
-                            <td><?php echo htmlspecialchars($log['equipment_name']); ?></td>
-                            <td><?php echo htmlspecialchars($log['property_num']); ?></td>
-                            <td><?php echo htmlspecialchars($log['last_maintenance_date']); ?></td>
-                            <td><?php echo htmlspecialchars($log['latest_remarks']); ?></td>
-                            <td><?php echo htmlspecialchars($log['firstname'] . ' ' . $log['lastname']); ?></td>
+                            <td><?= htmlspecialchars($log['equipment_name']); ?></td>
+                            <td><?= htmlspecialchars($log['property_num']); ?></td>
+                            <td><?= htmlspecialchars($log['last_maintenance_date']); ?></td>
+                            <td><?= htmlspecialchars($log['latest_remarks']); ?></td>
+                            <td><?= htmlspecialchars($log['firstname'] . ' ' . $log['lastname']); ?></td>
                             <td>
-                                <a href="generate_report.php?property_num=<?php echo urlencode($log['property_num']); ?>" class="btn btn-primary">View & Print</a>
+                                <a href="generate_report.php?property_num=<?= urlencode($log['property_num']); ?>" class="btn btn-primary">View & Print</a>
                             </td>
                         </tr>
                     <?php endforeach; ?>
@@ -161,11 +226,19 @@ try {
             </tbody>
         </table>
 
-        <!-- Pie Chart Section -->
+        <!-- Existing Pie Chart -->
         <div class="mt-5 text-center">
             <h4>Maintained Equipment Pie Chart</h4>
             <div style="display: inline-block; width: 400px; height: 400px;">
                 <canvas id="remarksChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Bar Chart Section -->
+        <div class="mt-5 text-center">
+            <h4>Maintained vs. Not Maintained Equipment</h4>
+            <div style="display: inline-block; width: 500px; height: 400px;">
+                <canvas id="maintainedChart"></canvas>
             </div>
         </div>
     </div>
@@ -179,11 +252,11 @@ try {
                 });
             });
 
-            // Prepare data for the chart
+            // Prepare data for the pie chart
             const remarksData = <?= json_encode(array_count_values(array_column($maintenanceLogs, 'latest_remarks'))); ?>;
             const totalData = Object.values(remarksData).reduce((a, b) => a + b, 0);
 
-            // Chart.js Configuration
+            // Pie Chart
             const ctx = document.getElementById('remarksChart').getContext('2d');
             new Chart(ctx, {
                 type: 'pie',
@@ -210,20 +283,36 @@ try {
                                 }
                             }
                         },
-                        datalabels: {
-                            formatter: (value, ctx) => {
-                                const percentage = ((value / totalData) * 100).toFixed(1);
-                                return `${percentage}%`;
-                            },
-                            color: '#fff',
-                            font: { weight: 'bold', size: 12 }
-                        }
                     }
-                },
-                plugins: [ChartDataLabels]
+                }
             });
+
+            // Bar Chart
+            const data = {
+                labels: ['Maintained', 'Not Maintained'],
+                datasets: [{
+                    label: 'Number of Equipments',
+                    data: [<?= $maintainedCount ?>, <?= $notMaintainedCount ?>],
+                    backgroundColor: ['#36A2EB', '#FF6384']
+                }]
+            };
+
+            const config = {
+                type: 'bar',
+                data: data,
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: false },
+                    },
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            };
+
+            new Chart(document.getElementById('maintainedChart'), config);
         });
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
