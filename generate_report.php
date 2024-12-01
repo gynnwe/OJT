@@ -5,10 +5,14 @@ use setasign\Fpdi\TcpdfFpdi;
 
 // Custom TCPDF class with FPDI integration
 class CustomPDF extends TcpdfFpdi {
-    public function Footer() {
-        // Disable footer
+    public function Header() {
+        // Override this method to prevent the default header from being added
     }
-}
+
+    public function Footer() {
+        // Override this method to prevent the footer as well
+    }
+}   
 
 // Database connection
 $servername = "localhost";
@@ -67,6 +71,7 @@ if (!$logs) {
 // Create PDF instance
 $pdf = new CustomPDF();
 $pdf->SetAutoPageBreak(true, 10);
+$pdf->SetMargins(0, 0, 0); // Top, left, right margins set to 0
 
 // Import the PDF template
 $templatePath = 'assets/ICT_Equipment_Template.pdf'; // Path to the uploaded template
