@@ -98,7 +98,7 @@ $pdf->Write(0, $logs[0]['location_name']);
 
 // Place Maintenance Logs
 $startY = 90.5; // Starting Y coordinate for the first row of the logs table
-$lineHeight = 5.2; // Height between rows
+$lineHeight = 5.1; // Height between rows
 
 foreach ($logs as $log) {
     $pdf->SetXY(19, $startY);
