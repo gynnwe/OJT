@@ -126,7 +126,7 @@ foreach ($logs as $log) {
     $pdf->SetXY(19, $startY);
     $pdf->Write(0, $log['maintenance_date']); // Date
 
-    $pdf->SetXY(47, $startY);
+    $pdf->SetXY(46.5, $startY);
     $pdf->Write(0, $log['jo_number']); // JO Number
 
     $pdf->SetXY(70, $startY);
