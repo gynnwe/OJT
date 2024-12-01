@@ -12,7 +12,7 @@ class CustomPDF extends TcpdfFpdi {
     public function Footer() {
         // Override this method to prevent the footer as well
     }
-}   
+}
 
 // Database connection
 $servername = "localhost";
@@ -68,6 +68,19 @@ if (!$logs) {
     die('No records found for this property number.');
 }
 
+// Function to add equipment header details on every page
+function addEquipmentHeader($pdf, $logs) {
+    // Place Equipment Details
+    $pdf->SetXY(57, 61.4); // Adjust for Equipment
+    $pdf->Write(0, $logs[0]['equipment_name']);
+
+    $pdf->SetXY(57, 67.7); // Adjust for Property/Serial Number
+    $pdf->Write(0, $logs[0]['property_num']);
+
+    $pdf->SetXY(57, 74.2); // Adjust for Location
+    $pdf->Write(0, $logs[0]['location_name']);
+}
+
 // Create PDF instance
 $pdf = new CustomPDF();
 $pdf->SetAutoPageBreak(true, 10);
@@ -86,21 +99,30 @@ $pdf->useTemplate($tplId);
 // Add the Calibri font
 $pdf->SetFont('calibri', '', 9); // Use Calibri font, size 11
 
-// Place Equipment Details
-$pdf->SetXY(57, 61.4); // Adjust for Equipment
-$pdf->Write(0, $logs[0]['equipment_name']);
-
-$pdf->SetXY(57, 67.7); // Adjust for Property/Serial Number
-$pdf->Write(0, $logs[0]['property_num']);
-
-$pdf->SetXY(57, 74.2); // Adjust for Location
-$pdf->Write(0, $logs[0]['location_name']);
+// Add header information to the first page
+addEquipmentHeader($pdf, $logs);
 
 // Place Maintenance Logs
 $startY = 90.5; // Starting Y coordinate for the first row of the logs table
 $lineHeight = 5.1; // Height between rows
+$pageHeightLimit = 270; // Approximate usable height of the page (adjust based on your template)
 
 foreach ($logs as $log) {
+    // Check if adding the next row exceeds the page height
+    if ($startY + $lineHeight > $pageHeightLimit) {
+        // Add a new page and re-import the template
+        $pdf->AddPage();
+        $tplId = $pdf->importPage(1); // Import the first page of the template
+        $pdf->useTemplate($tplId);
+
+        // Add header information to the new page
+        addEquipmentHeader($pdf, $logs);
+
+        // Reset the starting Y coordinate for the new page
+        $startY = 90.5; // Start again from the top of the logs section
+    }
+
+    // Write log data to the current page
     $pdf->SetXY(19, $startY);
     $pdf->Write(0, $log['maintenance_date']); // Date
 
@@ -116,7 +138,8 @@ foreach ($logs as $log) {
     $pdf->SetXY(170, $startY);
     $pdf->Write(0, $log['firstname'] . ' ' . $log['lastname']); // Responsible Personnel
 
-    $startY += $lineHeight; // Move to the next row
+    // Move to the next row
+    $startY += $lineHeight;
 }
 
 // Output PDF
