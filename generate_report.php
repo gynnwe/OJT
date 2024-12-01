@@ -143,5 +143,6 @@ foreach ($logs as $log) {
 }
 
 // Output PDF
-$pdf->Output('output.pdf', 'I');
+$filename = $property_num . '.pdf'; // Use the property number as the filename
+$pdf->Output($filename, 'I');
 ?>
