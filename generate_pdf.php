@@ -17,14 +17,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['plan_id'])) {
         $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        // Fetch the maintenance plan and details
+        // Fetch the maintenance plan
         $stmtPlan = $conn->prepare("SELECT * FROM maintenance_plan WHERE id = :planId");
         $stmtPlan->bindParam(':planId', $planId, PDO::PARAM_INT);
         $stmtPlan->execute();
         $maintenancePlan = $stmtPlan->fetch(PDO::FETCH_ASSOC);
 
-        $stmtDetails = $conn->prepare("SELECT * FROM plan_details WHERE maintenance_plan_id = :planId ORDER BY month ASC");
+        // Fetch plan details and dynamically calculate implemented values
+        $stmtDetails = $conn->prepare("
+            SELECT pd.*, 
+                   (SELECT COUNT(DISTINCT ml.equipment_id)
+                    FROM ict_maintenance_logs ml
+                    WHERE ml.maintenance_date BETWEEN CONCAT(:planYear, '-', MONTH(pd.month), '-01') 
+                                              AND LAST_DAY(CONCAT(:planYear, '-', MONTH(pd.month), '-01'))
+                      AND ml.equipment_id = pd.equipment_id) AS implemented
+            FROM plan_details pd
+            WHERE maintenance_plan_id = :planId
+            ORDER BY pd.month ASC
+        ");
         $stmtDetails->bindParam(':planId', $planId, PDO::PARAM_INT);
+        $stmtDetails->bindParam(':planYear', $maintenancePlan['year'], PDO::PARAM_INT);
         $stmtDetails->execute();
         $planDetails = $stmtDetails->fetchAll(PDO::FETCH_ASSOC);
 
@@ -72,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['plan_id'])) {
     $x = $startX;
     foreach ($planDetails as $detail) {
         $pdf->SetXY($x, $startY);
-        $pdf->Write(0, htmlspecialchars($detail['target'] ?? '0')); // Use null coalescing operator
+        $pdf->Write(0, htmlspecialchars((int)($detail['target'] ?? 0))); // Cast to integer to remove .0
         $x += $cellWidth;
     }
 
@@ -81,7 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['plan_id'])) {
     $x = $startX;
     foreach ($planDetails as $detail) {
         $pdf->SetXY($x, $startY);
-        $pdf->Write(0, htmlspecialchars($detail['implemented'] ?? '0')); // Use null coalescing operator
+        $pdf->Write(0, htmlspecialchars((int)($detail['implemented'] ?? 0))); // Cast to integer to remove .0
         $x += $cellWidth;
     }
 
