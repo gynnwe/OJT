@@ -23,9 +23,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['plan_id'])) {
         $stmtPlan->execute();
         $maintenancePlan = $stmtPlan->fetch(PDO::FETCH_ASSOC);
 
-        // Fetch plan details
-        $stmtDetails = $conn->prepare("SELECT * FROM plan_details WHERE maintenance_plan_id = :planId");
+        // Fetch plan details and calculate implemented values dynamically
+        $stmtDetails = $conn->prepare("
+            SELECT pd.*, 
+                   (SELECT COUNT(DISTINCT ml.equipment_id)
+                    FROM ict_maintenance_logs ml
+                    WHERE ml.equipment_id = pd.equipment_id
+                      AND YEAR(ml.maintenance_date) = :planYear
+                      AND MONTH(ml.maintenance_date) = MONTH(STR_TO_DATE(pd.month, '%M'))) AS implemented
+            FROM plan_details pd
+            WHERE maintenance_plan_id = :planId
+            ORDER BY FIELD(pd.month, 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December')
+        ");
         $stmtDetails->bindParam(':planId', $planId, PDO::PARAM_INT);
+        $stmtDetails->bindParam(':planYear', $maintenancePlan['year'], PDO::PARAM_INT);
         $stmtDetails->execute();
         $planDetails = $stmtDetails->fetchAll(PDO::FETCH_ASSOC);
 
