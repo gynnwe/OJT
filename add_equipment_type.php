@@ -82,6 +82,10 @@ if (isset($_SESSION['message'])) {
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 	<style>
+		body {
+			background-color: transparent !important;
+		}
+		
 		.equipment-type-form {
 			background-color: #FFFFFF;
 			width: 471px;
@@ -227,7 +231,6 @@ if (isset($_SESSION['message'])) {
 			border-collapse: separate; 
 			border-spacing: 10px 40px;
 			border: none;
-			/*height: 38.35px;*/
 			display: inline-block;
 			padding: 11px 10px;
 			padding-top: 12px;
