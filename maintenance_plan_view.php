@@ -84,34 +84,35 @@ try {
             </thead>
             <tbody>
                 <tr>
-                    <td><strong>Target</strong></td>
-                    <?php foreach ($planDetails as $detail): ?>
-                        <td><?= htmlspecialchars($detail['target']) ?></td>
-                    <?php endforeach; ?>
-                </tr>
                 <tr>
-                    <td><strong>Implemented</strong></td>
-                    <?php foreach ($planDetails as $detail): 
-                        $monthNumeric = date_parse($detail['month'])['month'];
+    <td><strong>Target</strong></td>
+    <?php foreach ($planDetails as $detail): ?>
+        <td><?= htmlspecialchars((int)$detail['target']) ?></td>
+    <?php endforeach; ?>
+</tr>
+<tr>
+    <td><strong>Implemented</strong></td>
+    <?php foreach ($planDetails as $detail): 
+        $monthNumeric = date_parse($detail['month'])['month'];
 
-                        $queryTotalMaintained = "
-                        SELECT COUNT(DISTINCT e.equipment_id) AS total_maintained 
-                            FROM equipment e
-                            JOIN ict_maintenance_logs ml ON e.equipment_id = ml.equipment_id
-                            WHERE e.status = 'Serviceable' 
-                            AND e.equip_type_id = :equipmentTypeId
-                            AND YEAR(ml.maintenance_date) = :planYear
-                            AND MONTH(ml.maintenance_date) = :month";
-                        $stmtTotalMaintained = $conn->prepare($queryTotalMaintained);
-                        $stmtTotalMaintained->bindParam(':equipmentTypeId', $detail['equipment_id'], PDO::PARAM_INT);
-                        $stmtTotalMaintained->bindParam(':planYear', $maintenancePlan['year'], PDO::PARAM_INT);
-                        $stmtTotalMaintained->bindParam(':month', $monthNumeric, PDO::PARAM_INT);
-                        $stmtTotalMaintained->execute();
-                        $totalMaintained = $stmtTotalMaintained->fetch(PDO::FETCH_ASSOC)['total_maintained'];
-                    ?>
-                        <td><?= htmlspecialchars($totalMaintained) ?></td>
-                    <?php endforeach; ?>
-                </tr>
+        $queryTotalMaintained = "
+        SELECT COUNT(DISTINCT e.equipment_id) AS total_maintained 
+            FROM equipment e
+            JOIN ict_maintenance_logs ml ON e.equipment_id = ml.equipment_id
+            WHERE e.status = 'Serviceable' 
+            AND e.equip_type_id = :equipmentTypeId
+            AND YEAR(ml.maintenance_date) = :planYear
+            AND MONTH(ml.maintenance_date) = :month";
+        $stmtTotalMaintained = $conn->prepare($queryTotalMaintained);
+        $stmtTotalMaintained->bindParam(':equipmentTypeId', $detail['equipment_id'], PDO::PARAM_INT);
+        $stmtTotalMaintained->bindParam(':planYear', $maintenancePlan['year'], PDO::PARAM_INT);
+        $stmtTotalMaintained->bindParam(':month', $monthNumeric, PDO::PARAM_INT);
+        $stmtTotalMaintained->execute();
+        $totalMaintained = $stmtTotalMaintained->fetch(PDO::FETCH_ASSOC)['total_maintained'];
+    ?>
+        <td><?= htmlspecialchars((int)$totalMaintained) ?></td>
+    <?php endforeach; ?>
+</tr>
             </tbody>
         </table>
 
