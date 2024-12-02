@@ -10,34 +10,61 @@ $username = "root";
 $password = ""; 
 $dbname = "ictmms";
 
-// Create connection
-$conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
-$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-// Fetch users
 try {
+    $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    // Handle form submission
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        $email = $_POST['email'];
+        $firstname = $_POST['firstname'];
+        $lastname = $_POST['lastname'];
+        $user = $_POST['username'];
+        $pass = $_POST['psw'];
+        $pass_repeat = $_POST['psw-repeat'];
+        $role = 'Assistant';
+
+        if ($pass !== $pass_repeat) {
+            $error = "Passwords do not match.";
+        } else {
+            $hashed_password = password_hash($pass, PASSWORD_DEFAULT);
+
+            $sql = "INSERT INTO user (email, firstname, lastname, username, password, role) 
+                   VALUES (:email, :firstname, :lastname, :username, :password, :role)";
+            $stmt = $conn->prepare($sql);
+
+            $stmt->bindParam(':email', $email);
+            $stmt->bindParam(':firstname', $firstname);
+            $stmt->bindParam(':lastname', $lastname);
+            $stmt->bindParam(':username', $user);
+            $stmt->bindParam(':password', $hashed_password);
+            $stmt->bindParam(':role', $role);
+
+            if ($stmt->execute()) {
+                $_SESSION['message'] = "Registration successful!";
+                header("Location: " . $_SERVER['PHP_SELF']);
+                exit;
+            } else {
+                $error = "Error registering user.";
+            }
+        }
+    }
+
+    // Fetch users
     $sql = "SELECT * FROM user";
     $stmt = $conn->prepare($sql);
     $stmt->execute();
     $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 } catch(PDOException $e) {
-    echo "Error: " . $e->getMessage();
+    $error = "Error: " . $e->getMessage();
 }
 
-// Fetch non-serviceable equipment
-try {
-    $sql = "SELECT e.equipment_id, e.property_num, e.status, l.building, l.office, l.room 
-            FROM equipment e 
-            JOIN location l ON e.location_id = l.location_id 
-            WHERE e.status = 'Non-serviceable'";
-    $stmt = $conn->prepare($sql);
-    $stmt->execute();
-    $nonServiceableEquipment = $stmt->fetchAll(PDO::FETCH_ASSOC);
-} catch(PDOException $e) {
-    echo "Error: " . $e->getMessage();
+// Store any success/error messages
+if (isset($_SESSION['message'])) {
+    $message = $_SESSION['message'];
+    unset($_SESSION['message']);
 }
-
-$conn = null;
 ?>
 
 <!DOCTYPE html>
@@ -45,7 +72,7 @@ $conn = null;
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Management</title>
+    <title>Add Users</title>
 	<style>
 		@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600&display=swap');
         @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
@@ -307,7 +334,6 @@ $conn = null;
 		.pagination .page-item:last-child .page-link {
 			color: #474747; 
 		}
-		
 	</style>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
@@ -317,32 +343,36 @@ $conn = null;
 <body>
 	<div class="container">
         <div class="card add-edit-card">
-			<form action="registration_process.php" method="POST">
-				<h1>Register</h1>
-				<hr class="section-divider1">
-				<p class="p1">Please fill out this form to create an account</p>
-				
-				
-				<input type="email" placeholder="Enter e-mail" name="email" id="email" required>
-				<input type="text" placeholder="Enter your first name" name="firstname" id="firstname" required>
-				<input type="text" placeholder="Enter your last name" name="lastname" id="lastname" required>
-				<input type="text" placeholder="Enter username" name="username" id="username" required>
+            <?php if (isset($message)): ?>
+                <div class="alert alert-success"><?php echo $message; ?></div>
+            <?php endif; ?>
+            <?php if (isset($error)): ?>
+                <div class="alert alert-danger"><?php echo $error; ?></div>
+            <?php endif; ?>
+            
+            <form method="POST">
+                <h1>Register a User</h1>
+                <hr class="section-divider1">
 
-				<div class="password-container">
-					<input type="password" placeholder="Enter Password" name="psw" id="psw" required>
-					<i class="bi bi-eye password-toggle" id="togglePassword"></i>
-				</div>
+                <input type="email" placeholder="Enter e-mail" name="email" id="email" required>
+                <input type="text" placeholder="Enter your first name" name="firstname" id="firstname" required>
+                <input type="text" placeholder="Enter your last name" name="lastname" id="lastname" required>
+                <input type="text" placeholder="Enter username" name="username" id="username" required>
 
-				<div class="password-container">
-					<input type="password" placeholder="Repeat Password" name="psw-repeat" id="psw-repeat" required>
-					<i class="bi bi-eye password-toggle" id="toggleRepeatPassword"></i>
-				</div>
-				<hr class="section-divider2">
+                <div class="password-container">
+                    <input type="password" placeholder="Enter Password" name="psw" id="psw" required>
+                    <i class="bi bi-eye password-toggle" id="togglePassword"></i>
+                </div>
 
-				<p>By creating an account, you agree to our <a href="#">Terms and Privacy</a>.</p>
-				<button type="submit" class="registerbtn">Register</button>
-			</form>
-		</div>
+                <div class="password-container">
+                    <input type="password" placeholder="Repeat Password" name="psw-repeat" id="psw-repeat" required>
+                    <i class="bi bi-eye password-toggle" id="toggleRepeatPassword"></i>
+                </div>
+                <hr class="section-divider2">
+
+                <button type="submit" class="registerbtn">Register</button>
+            </form>
+        </div>
 	
 		<div class="card search-card">
             <h1>List of Registered Users</h1>

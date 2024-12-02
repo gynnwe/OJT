@@ -38,8 +38,6 @@ try {
                 }
                 if ($stmt->execute()) {
                     $_SESSION['message'] = $equip_type_id ? "Equipment type updated successfully." : "New equipment type added successfully.";
-                    header("Location: add_equipment_type.php");
-                    exit;
                 } else {
                     $error = "Failed to save the equipment type.";
                 }
@@ -84,10 +82,6 @@ if (isset($_SESSION['message'])) {
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 	<style>
-		.mt-5 {
-			margin-top: 3rem !important;
-			margin-left: 0rem !important;
-		}
 		.equipment-type-form {
 			background-color: #FFFFFF;
 			width: 471px;

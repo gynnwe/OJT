@@ -55,7 +55,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         
                 // Execute statement and check success
                 if ($stmt->execute()) {
-                    echo "<script>alert('Equipment data inserted successfully!'); window.location.href='equipment_page.php';</script>";
+                    echo "<script>alert('Equipment data inserted successfully!');</script>";
                 } else {
                     echo "<script>alert('Failed to insert equipment data.'); window.location.href='equipment_input_ict.php';</script>";
                 }
