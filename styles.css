@@ -7,7 +7,6 @@
     box-sizing: border-box;
 }
 
-/* Dashboard Page Layout */
 .dashboard {
     font-family: "Inter", sans-serif;
     display: flex;
@@ -15,7 +14,6 @@
     background-color: #f4f4f4;
 }
 
-/* Sidebar styles */
 .sidebar {
     width: 249px;
     background-color: #632121;
@@ -98,7 +96,6 @@
     color: #646464;
 }
 
-/* Main container and content layout */
 .main-container {
     display: flex;
     flex: 1;
@@ -108,12 +105,11 @@
 .main-content {
     flex: 1;
     overflow: hidden;
-    margin-left: 249px; /* Match sidebar width */
+    margin-left: 249px;
     display: flex;
     flex-direction: column;
 }
 
-/* Header styles */
 .header {
     background-color: white;
     display: flex;
@@ -162,7 +158,6 @@
     color: #666; 
 }
 
-/* Content frame styles */
 .content-frame {
     width: 100%;
     height: calc(100vh - 60px);
@@ -170,10 +165,13 @@
     margin-top: 60px;
     padding: 0;
     overflow-y: auto;
-    background-color: #f4f4f4;
+    background-image: url('assets/dashboard_background.jpg');
+	background-size: cover;
+	background-repeat: no-repeat;
+	background-position: center;
 }
 
-/* Responsive adjustments */
+
 @media (max-width: 768px) {
     .main-content {
         margin-left: 0;
@@ -193,8 +191,3 @@
         transform: translateX(0);
     }
 }
-
-
-
-
-
