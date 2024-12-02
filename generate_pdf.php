@@ -23,36 +23,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['plan_id'])) {
         $stmtPlan->execute();
         $maintenancePlan = $stmtPlan->fetch(PDO::FETCH_ASSOC);
 
-        // Fetch equipment name using equipment_id from the maintenance plan
-        $equipmentId = $maintenancePlan['equipment_id'] ?? null; // Ensure equipment_id exists
-        $equipmentName = 'N/A'; // Default if not found
-
-        if ($equipmentId) {
-            $stmtEquipment = $conn->prepare("SELECT equip_type_name FROM equipment_type WHERE equip_type_id = :equipmentId");
-            $stmtEquipment->bindParam(':equipmentId', $equipmentId, PDO::PARAM_INT);
-            $stmtEquipment->execute();
-            $equipment = $stmtEquipment->fetch(PDO::FETCH_ASSOC);
-            if ($equipment) {
-                $equipmentName = $equipment['equip_type_name'];
-            }
-        }
-
-        // Fetch plan details and calculate implemented values
-        $stmtDetails = $conn->prepare("
-            SELECT pd.*, 
-                   (SELECT COUNT(DISTINCT ml.equipment_id)
-                    FROM ict_maintenance_logs ml
-                    WHERE YEAR(ml.maintenance_date) = :planYear
-                      AND MONTH(ml.maintenance_date) = MONTH(STR_TO_DATE(pd.month, '%M'))
-                      AND ml.equipment_id = pd.equipment_id) AS implemented
-            FROM plan_details pd
-            WHERE maintenance_plan_id = :planId
-            ORDER BY FIELD(pd.month, 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December')
-        ");
+        // Fetch plan details
+        $stmtDetails = $conn->prepare("SELECT * FROM plan_details WHERE maintenance_plan_id = :planId");
         $stmtDetails->bindParam(':planId', $planId, PDO::PARAM_INT);
-        $stmtDetails->bindParam(':planYear', $maintenancePlan['year'], PDO::PARAM_INT);
         $stmtDetails->execute();
         $planDetails = $stmtDetails->fetchAll(PDO::FETCH_ASSOC);
+
+        // Fetch equipment name using equipment_id from the first plan detail
+        $equipmentName = 'N/A';
+        if (!empty($planDetails) && isset($planDetails[0]['equipment_id'])) {
+            $stmtEquipment = $conn->prepare("SELECT equip_type_name FROM equipment_type WHERE equip_type_id = :equipmentId");
+            $stmtEquipment->bindParam(':equipmentId', $planDetails[0]['equipment_id'], PDO::PARAM_INT);
+            $stmtEquipment->execute();
+            $equipment = $stmtEquipment->fetch(PDO::FETCH_ASSOC);
+            $equipmentName = $equipment['equip_type_name'] ?? 'N/A';
+        }
 
     } catch (PDOException $e) {
         die("Database error: " . $e->getMessage());
@@ -83,8 +68,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['plan_id'])) {
     $pdf->SetFont('Helvetica', '', 12);
     $pdf->SetXY(150, 63); // Adjust coordinates for the year
     $pdf->Write(0, htmlspecialchars($maintenancePlan['year'] ?? 'N/A'));
-    $pdf->SetXY(50, 50); // Adjust coordinates for the equipment name
-    $pdf->Write(0, 'Equipment Name: ' . htmlspecialchars($equipmentName));
+    $pdf->SetFont('Helvetica', '', 10);
+    $pdf->SetXY(39.9, 100); // Adjust coordinates for the equipment name
+    $pdf->Write(0, '' . htmlspecialchars($equipmentName));
 
     // Fill Table Data (Targets and Implemented)
     $startX = 159.9; // Starting X coordinate
