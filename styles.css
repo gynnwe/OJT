@@ -18,7 +18,7 @@
 /* Sidebar styles */
 .sidebar {
     width: 249px;
-    background-color: #fff;
+    background-color: #632121;
     padding: 15px;
     color: white;
     position: fixed;
@@ -42,6 +42,7 @@
 
 .sidebar p {
     margin: 8.5px 0;
+	color: #FFCFCF !important;
 }
 
 .sidebar .nav-links {
@@ -57,12 +58,17 @@
 }
 
 .sidebar .nav-links a {
-    color: #646464;
+    color: #FFDCDC;
     text-decoration: none;
     font-size: 13px;
     display: flex;
     align-items: center;
     padding: 8.5px 0;
+	transition: background-color 0.4s ease;
+}
+
+.sidebar .nav-links a:hover {
+	background-color: rgba(255, 255, 255, 0.10);
 }
 
 .sidebar .nav-links a span.material-symbols-rounded {
@@ -74,14 +80,14 @@
 }
 
 .sidebar .nav-links a.active {
-    background-color: white;
-    color: #991B1E;
+    color: #FFB47E;
 }
 
 .sidebar hr {
-    border: 0.01px solid #ccc;
+    border: 0.01px solid #FFFFFF;
     width: 100%;
     margin: 8.5px 0;
+	opacity: 0.3;
 }
 
 .nav-links li:last-child {
