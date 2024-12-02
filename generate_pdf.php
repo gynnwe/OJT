@@ -23,17 +23,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['plan_id'])) {
         $stmtPlan->execute();
         $maintenancePlan = $stmtPlan->fetch(PDO::FETCH_ASSOC);
 
-        // Fetch plan details and dynamically calculate implemented values
+        // Fetch equipment name using equipment_id from the maintenance plan
+        $equipmentId = $maintenancePlan['equipment_id'] ?? null; // Ensure equipment_id exists
+        $equipmentName = 'N/A'; // Default if not found
+
+        if ($equipmentId) {
+            $stmtEquipment = $conn->prepare("SELECT equip_type_name FROM equipment_type WHERE equip_type_id = :equipmentId");
+            $stmtEquipment->bindParam(':equipmentId', $equipmentId, PDO::PARAM_INT);
+            $stmtEquipment->execute();
+            $equipment = $stmtEquipment->fetch(PDO::FETCH_ASSOC);
+            if ($equipment) {
+                $equipmentName = $equipment['equip_type_name'];
+            }
+        }
+
+        // Fetch plan details and calculate implemented values
         $stmtDetails = $conn->prepare("
             SELECT pd.*, 
                    (SELECT COUNT(DISTINCT ml.equipment_id)
                     FROM ict_maintenance_logs ml
-                    WHERE ml.maintenance_date BETWEEN CONCAT(:planYear, '-', MONTH(pd.month), '-01') 
-                                              AND LAST_DAY(CONCAT(:planYear, '-', MONTH(pd.month), '-01'))
+                    WHERE YEAR(ml.maintenance_date) = :planYear
+                      AND MONTH(ml.maintenance_date) = MONTH(STR_TO_DATE(pd.month, '%M'))
                       AND ml.equipment_id = pd.equipment_id) AS implemented
             FROM plan_details pd
             WHERE maintenance_plan_id = :planId
-            ORDER BY pd.month ASC
+            ORDER BY FIELD(pd.month, 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December')
         ");
         $stmtDetails->bindParam(':planId', $planId, PDO::PARAM_INT);
         $stmtDetails->bindParam(':planYear', $maintenancePlan['year'], PDO::PARAM_INT);
@@ -65,35 +79,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['plan_id'])) {
     $tplId = $pdf->importPage(1);
     $pdf->useTemplate($tplId);
 
-    // Add dynamic content to the template
-    $pdf->SetFont('Helvetica', '', 10);
-
-    // Fill Year and Equipment Name (use null coalescing operator to avoid errors)
-    $pdf->SetXY(300, 30); // Adjust based on template coordinates
+    // Fill Year and Equipment Name
+    $pdf->SetFont('Helvetica', '', 12);
+    $pdf->SetXY(150, 63); // Adjust coordinates for the year
     $pdf->Write(0, htmlspecialchars($maintenancePlan['year'] ?? 'N/A'));
-    $pdf->SetXY(200, 40); // Adjust based on template coordinates
-    $pdf->Write(0, htmlspecialchars($maintenancePlan['equipment_name'] ?? 'N/A'));
+    $pdf->SetXY(50, 50); // Adjust coordinates for the equipment name
+    $pdf->Write(0, 'Equipment Name: ' . htmlspecialchars($equipmentName));
 
     // Fill Table Data (Targets and Implemented)
-    $startX = 160;
-    $startY = 96.7;
-    $cellWidth = 10;
-    $rowHeight = 6;
+    $startX = 159.9; // Starting X coordinate
+    $startY = 96.7; // Starting Y coordinate
+    $cellWidth = 10.5; // Cell width
+    $rowHeight = 6; // Row height
 
-    // Targets Row
+    // Render Target Row
     $x = $startX;
     foreach ($planDetails as $detail) {
+        $pdf->SetFont('Helvetica', '', 10);
         $pdf->SetXY($x, $startY);
-        $pdf->Write(0, htmlspecialchars((int)($detail['target'] ?? 0))); // Cast to integer to remove .0
+        $pdf->Write(0, htmlspecialchars((int)$detail['target']));
         $x += $cellWidth;
     }
 
-    // Implemented Row
+    // Render Implemented Row
     $startY += $rowHeight;
     $x = $startX;
     foreach ($planDetails as $detail) {
+        $pdf->SetFont('Helvetica', '', 10);
         $pdf->SetXY($x, $startY);
-        $pdf->Write(0, htmlspecialchars((int)($detail['implemented'] ?? 0))); // Cast to integer to remove .0
+        $pdf->Write(0, htmlspecialchars((int)($detail['implemented'] ?? 0)));
         $x += $cellWidth;
     }
 
