@@ -358,7 +358,7 @@ if (isset($_SESSION['message'])) {
 		}
 
 		.page-link {
-			color: #474747; 
+			color: #474747; }
 	</style>
 </head>
 <body>
