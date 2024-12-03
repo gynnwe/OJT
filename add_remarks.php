@@ -96,8 +96,8 @@ if (isset($_SESSION['message'])) {
 			background-color: transparent !important;
 		}
 		.container {
-			margin-top: -1.1rem !important;
-			margin-left: 1.3rem !important;
+			margin-top: 3.65rem !important;
+			margin-left: 2.6rem !important;
 		}
 		.card {
 			background-color: #ffffff;
@@ -108,13 +108,13 @@ if (isset($_SESSION['message'])) {
 			border: none;
 		}
 		.add-edit-card {
-			width: 100%;
+			width: 460px;
 			height: 145px;
 			padding: 15px;
 			position: relative;
 		}
 		.search-card {
-			height: 480px;
+			height: 410px;
 		}
 		.floating-alert {
 			position: absolute;
@@ -162,7 +162,7 @@ if (isset($_SESSION['message'])) {
 			display: inline-block;
 		}
 		#remarks_name {
-			max-width: 908px;
+			width: 257px;
 			display: inline-block;
 		}
 		#searchInput {
@@ -254,8 +254,8 @@ if (isset($_SESSION['message'])) {
 			border: none; 
 			/*height: 38.35px;*/
 			display: inline-block;
-			padding: 14px 10px;
-			padding-top: 13px;
+			padding: 6px 10px;
+			padding-top: 6px;
 		}
 
 		.table td img {
