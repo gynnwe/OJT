@@ -1,6 +1,4 @@
 <?php
-// Database connection setup remains the same
-// Database connection parameters
 $servername = "localhost";
 $username = "root";
 $password = "";
@@ -17,11 +15,17 @@ $dbname = "ictmms";
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    function getYearsWithMaintenanceLogs($conn) {
-        $query = "SELECT DISTINCT YEAR(maintenance_date) AS year_maintained FROM ict_maintenance_logs ORDER BY year_maintained DESC";
-        $stmt = $conn->prepare($query);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    function getYears($conn) {
+        $currentYear = date('Y');
+        $years = array();
+        
+        // Generates next 5 years including current year
+        for ($i = 0; $i < 5; $i++) {
+            $year = $currentYear + $i;
+            $years[] = array('year_maintained' => $year);
+        }
+        
+        return $years;
     }
 
     // Fetch Maintenance Plan and Details
@@ -50,7 +54,7 @@ $dbname = "ictmms";
     }
     
     $equipmentTypes = getEquipmentTypes($conn);
-    $years = getYearsWithMaintenanceLogs($conn);
+    $years = getYears($conn);
 ?>
 
 <!DOCTYPE html>
