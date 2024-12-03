@@ -123,6 +123,11 @@ if (isset($_SESSION['message'])) {
 			padding: 15px;
 			position: relative;
 		}
+		
+		.search-card {
+			height: 390px;
+		}
+		
         .floating-alert {
             position: absolute;
             top: 0;
@@ -320,22 +325,33 @@ if (isset($_SESSION['message'])) {
 		tr {
 			font-size: 13px;	
 		}
+		
+		.empty-row, .no-personnel {
+			height: 31.7px;
+		}
+
+		.pagination .disabled .page-link {
+			pointer-events: none;
+			color: #ccc !important;
+		}
 
 		.pagination {
 			justify-content: flex-end; 
-			margin: 0;
+			margin-top: -5.2px;
 		}
+
 		.pagination .page-link {
 			border: none; 
 			font-size: 0.8rem; 
-			padding: 0px 8px; 
+			padding: 4px 8px; 
 		}
-		.pagination .page-item:first-child .page-link {
-			color: #8B8B8B; 
+		
+		.pagination .page-link:hover {
+			color: #b86e63;
 		}
-		.pagination .page-item:last-child .page-link {
-			color: #474747; 
-		}
+
+		.page-link {
+			color: #474747; }
     </style>
 </head>
 <body>
@@ -385,48 +401,86 @@ if (isset($_SESSION['message'])) {
 
             <h3>Existing Personnel</h3>
             <div class="table-responsive">
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>First Name</th>
-                            <th>Last Name</th>
-                            <th>Office</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="personnelTableBody">
-                        <?php if (!empty($personnel)): ?>
-                            <?php foreach ($personnel as $person): ?>
-                                <tr id="row-<?php echo htmlspecialchars($person['personnel_id']); ?>">
-                                    <td><?php echo htmlspecialchars($person['personnel_id']); ?></td>
-                                    <td><?php echo htmlspecialchars($person['firstname']); ?></td>
-                                    <td><?php echo htmlspecialchars($person['lastname']); ?></td>
-                                    <td><?php echo htmlspecialchars($person['office']); ?></td>
-                                    <td>
-                                        <a href="#" onclick="editPersonnel(<?php echo htmlspecialchars($person['personnel_id']); ?>)">
-                                            <img src="edit.png" alt="Edit" style="width:20px; cursor: pointer;">
-                                        </a>
-                                        <a href="#" onclick="softDelete(<?php echo htmlspecialchars($person['personnel_id']); ?>)">
-                                            <img src="delete.png" alt="Delete" style="width:20px; cursor: pointer;">
-                                        </a>
-                                    </td>
-                                </tr>
-                            <?php endforeach; ?>
-                        <?php else: ?>
-                            <tr>
-                                <td colspan="5">No personnel available.</td>
-                            </tr>
-                        <?php endif; ?>
-                    </tbody>
-                </table>
-            </div>
-            <nav>
-                <ul class="pagination">
-                    <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-                    <li class="page-item"><a class="page-link" href="#">Next</a></li>
-                </ul>
-            </nav>
+
+				<?php
+				// Assuming $personnel is your array of personnel
+				$maxRows = 5; // Maximum rows per page
+				$totalEntries = count($personnel); // Total number of entries
+				$totalPages = ceil($totalEntries / $maxRows); // Total number of pages
+
+				// Get the current page from query parameters, default to 1
+				$currentPage = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+				$currentPage = max(1, min($currentPage, $totalPages)); // Ensure current page is within valid range
+
+				// Calculate the starting index for the current page
+				$startIndex = ($currentPage - 1) * $maxRows;
+
+				// Slice the personnel array to get only the entries for the current page
+				$currentPersonnel = array_slice($personnel, $startIndex, $maxRows);
+				?>
+
+				<table class="table table-striped">
+					<thead>
+						<tr>
+							<th>ID</th>
+							<th>First Name</th>
+							<th>Last Name</th>
+							<th>Office</th>
+							<th>Actions</th>
+						</tr>
+					</thead>
+					<tbody id="personnelTableBody">
+						<?php 
+						if ($totalEntries === 0): ?>
+							<tr class="no-personnel"><td></td><td colspan="5">No personnel available.</td></tr>
+							<?php 
+							// Add empty rows to make a total of 5
+							for ($j = 1; $j < $maxRows; $j++): ?>
+								<tr class="empty-row"><td colspan="5"></td></tr>
+							<?php endfor; 
+						else:
+							// Display personnel for the current page
+							foreach ($currentPersonnel as $person): ?>
+								<tr id="row-<?php echo htmlspecialchars($person['personnel_id']); ?>">
+									<td><?php echo htmlspecialchars($person['personnel_id']); ?></td>
+									<td><?php echo htmlspecialchars($person['firstname']); ?></td>
+									<td><?php echo htmlspecialchars($person['lastname']); ?></td>
+									<td><?php echo htmlspecialchars($person['office']); ?></td>
+									<td>
+										<a href="#" onclick="editPersonnel(<?php echo htmlspecialchars($person['personnel_id']); ?>)">
+											<img src="edit.png" alt="Edit" style="width:20px; cursor: pointer;">
+										</a>
+										<a href="#" onclick="softDelete(<?php echo htmlspecialchars($person['personnel_id']); ?>)">
+											<img src="delete.png" alt="Delete" style="width:20px; cursor: pointer;">
+										</a>
+									</td>
+								</tr>
+							<?php endforeach;
+
+							// Add empty rows if there are fewer than 5 entries on this page
+							for ($j = count($currentPersonnel); $j < $maxRows; $j++): ?>
+								<tr class="empty-row"><td colspan="5"></td></tr> <!-- Empty row with class -->
+							<?php endfor;
+						endif; ?>
+					</tbody>
+				</table>
+
+				<nav>
+					<ul class="pagination">
+						<?php if ($currentPage > 1): ?>
+							<li class="page-item"><a class="page-link" href="?page=<?php echo $currentPage - 1; ?>">Previous</a></li>
+						<?php else: ?>
+							<li class="page-item disabled"><span class="page-link">Previous</span></li>
+						<?php endif; ?>
+
+						<?php if ($currentPage < $totalPages): ?>
+							<li class="page-item"><a class="page-link" href="?page=<?php echo $currentPage + 1; ?>">Next</a></li>
+						<?php else: ?>
+							<li class="page-item disabled"><span class="page-link">Next</span></li>
+						<?php endif; ?>
+					</ul>
+				</nav>
+			</div>	
         </div>
     </div>
 
