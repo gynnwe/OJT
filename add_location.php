@@ -276,7 +276,6 @@ if (isset($_SESSION['message'])) {
 			/*height: 38.35px;*/
 			display: inline-block;
 			padding: 4px 10px;
-			padding-top: 4px;
 		}
 
 		.table td img {
@@ -338,22 +337,33 @@ if (isset($_SESSION['message'])) {
 		tr {
 			font-size: 13px;
 		}
+		
+		.empty-row {
+			height: 30px;
+		}
+		
+		.pagination .disabled .page-link {
+			pointer-events: none;
+			color: #ccc !important;
+		}
 
 		.pagination {
 			justify-content: flex-end; 
-			margin: 0;
+			margin-top: -5.2px;
 		}
+
 		.pagination .page-link {
 			border: none; 
 			font-size: 0.8rem; 
-			padding: 0px 8px; 
+			padding: 4px 8px; 
 		}
-		.pagination .page-item:first-child .page-link {
-			color: #8B8B8B; 
+		
+		.pagination .page-link:hover {
+			color: #b86e63;
 		}
-		.pagination .page-item:last-child .page-link {
+
+		.page-link {
 			color: #474747; 
-		}
     </style>
 </head>
 <body>
@@ -403,42 +413,86 @@ if (isset($_SESSION['message'])) {
 
             <h2>Existing Locations</h2>
             <div class="table-responsive">
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Building</th>
-                            <th>Office</th>
-                            <th>Room</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="locationTableBody">
-                        <?php foreach ($locations as $location): ?>
-                            <tr id="row-<?php echo htmlspecialchars($location['location_id']); ?>">
-                                <td><?php echo htmlspecialchars($location['location_id']); ?></td>
-                                <td><?php echo htmlspecialchars($location['building']); ?></td>
-                                <td><?php echo htmlspecialchars($location['office']); ?></td>
-                                <td><?php echo htmlspecialchars($location['room']); ?></td>
-                                <td>
-                                    <a href="#" onclick="editLocation(<?php echo htmlspecialchars($location['location_id']); ?>)">
-                                        <img src="edit.png" alt="Edit" style="width:20px; cursor: pointer;">
-                                    </a>
-                                    <a href="#" onclick="softDelete(<?php echo htmlspecialchars($location['location_id']); ?>)">
-                                        <img src="delete.png" alt="Delete" style="width:20px; cursor: pointer;">
-                                    </a>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
-            <nav>
-                <ul class="pagination">
-                    <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-                    <li class="page-item"><a class="page-link" href="#">Next</a></li>
-                </ul>
-            </nav>
+
+				<?php
+				// Assuming $locations is your array of locations
+				$maxRows = 5; // Maximum rows per page
+				$totalEntries = count($locations); // Total number of entries
+				$totalPages = ceil($totalEntries / $maxRows); // Total number of pages
+
+				// Get the current page from query parameters, default to 1
+				$currentPage = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+				$currentPage = max(1, min($currentPage, $totalPages)); // Ensure current page is within valid range
+
+				// Calculate the starting index for the current page
+				$startIndex = ($currentPage - 1) * $maxRows;
+
+				// Slice the locations array to get only the entries for the current page
+				$currentLocations = array_slice($locations, $startIndex, $maxRows);
+				?>
+
+				<table class="table table-striped">
+					<thead>
+						<tr>
+							<th>ID</th>
+							<th>Building</th>
+							<th>Office</th>
+							<th>Room</th>
+							<th>Actions</th>
+						</tr>
+					</thead>
+					<tbody id="locationTableBody">
+						<?php 
+						if ($totalEntries === 0): ?>
+							<tr class="no-locations"><td></td><td colspan="4">No locations registered.</td></tr>
+							<?php 
+							// Add empty rows to make a total of 5
+							for ($j = 1; $j < $maxRows; $j++): ?>
+								<tr class="empty-row"><td colspan="5"></td></tr>
+							<?php endfor; 
+						else:
+							// Display locations for the current page
+							foreach ($currentLocations as $location): ?>
+								<tr id="row-<?php echo htmlspecialchars($location['location_id']); ?>">
+									<td><?php echo htmlspecialchars($location['location_id']); ?></td>
+									<td><?php echo htmlspecialchars($location['building']); ?></td>
+									<td><?php echo htmlspecialchars($location['office']); ?></td>
+									<td><?php echo htmlspecialchars($location['room']); ?></td>
+									<td>
+										<a href="#" onclick="editLocation(<?php echo htmlspecialchars($location['location_id']); ?>)">
+											<img src="edit.png" alt="Edit" style="width:20px; cursor: pointer;">
+										</a>
+										<a href="#" onclick="softDelete(<?php echo htmlspecialchars($location['location_id']); ?>)">
+											<img src="delete.png" alt="Delete" style="width:20px; cursor: pointer;">
+										</a>
+									</td>
+								</tr>
+							<?php endforeach;
+
+							// Add empty rows if there are fewer than 5 entries on this page
+							for ($j = count($currentLocations); $j < $maxRows; $j++): ?>
+								<tr class="empty-row"><td colspan="5"></td></tr> <!-- Empty row with class -->
+							<?php endfor;
+						endif; ?>
+					</tbody>
+				</table>
+
+				<nav>
+					<ul class="pagination">
+						<?php if ($currentPage > 1): ?>
+							<li class="page-item"><a class="page-link" href="?page=<?php echo $currentPage - 1; ?>">Previous</a></li>
+						<?php else: ?>
+							<li class="page-item disabled"><span class="page-link">Previous</span></li>
+						<?php endif; ?>
+
+						<?php if ($currentPage < $totalPages): ?>
+							<li class="page-item"><a class="page-link" href="?page=<?php echo $currentPage + 1; ?>">Next</a></li>
+						<?php else: ?>
+							<li class="page-item disabled"><span class="page-link">Next</span></li>
+						<?php endif; ?>
+					</ul>
+				</nav>
+			</div>
         </div>
     </div>
 
