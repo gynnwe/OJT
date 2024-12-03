@@ -118,7 +118,7 @@ if (isset($_SESSION['message'])) {
 		.equipment-type-form h2,
 		.equipment-type-list h2 {
 			color: #3A3A3A;
-			font-weight: regular;
+			font-weight: 500 !important;
 			font-size: 13px;
 		}
 
@@ -201,6 +201,7 @@ if (isset($_SESSION['message'])) {
 		.table {
 			width: 100%; 
 			border:none;
+			margin-top: -9px;
 		}
 
 		.table thead th {
@@ -289,6 +290,15 @@ if (isset($_SESSION['message'])) {
 		tr[id^="row-"] {
 			font-size: 13px;	
 		}
+		
+		.empty-row {
+			height: 35px;
+		}
+
+		.pagination .disabled .page-link {
+			pointer-events: none;
+			color: #ccc !important;
+		}
 
 		.pagination {
 			justify-content: flex-end; 
@@ -300,14 +310,13 @@ if (isset($_SESSION['message'])) {
 			font-size: 0.8rem; 
 			padding: 4px 8px; 
 		}
-
-		.pagination .page-item:first-child .page-link {
-			color: #8B8B8B; 
+		
+		.pagination .page-link:hover {
+			color: #b86e63;
 		}
 
-		.pagination .page-item:last-child .page-link {
+		.page-link {
 			color: #474747; 
-		}	
 	</style>
 </head>
 <body>
@@ -351,43 +360,82 @@ if (isset($_SESSION['message'])) {
         
         <h2>Existing Equipment Types</h2>
         <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Equipment Type Name</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody id="equipmentTableBody">
-                <?php if (!empty($equipment_types)): ?>
-                    <?php foreach ($equipment_types as $type): ?>
-                        <tr id="row-<?php echo $type['equip_type_id']; ?>">
-                            <td><?php echo htmlspecialchars($type['equip_type_id']); ?></td>
-                            <td><?php echo htmlspecialchars($type['equip_type_name']); ?></td>
-                            <td>
-                                <a href="#" onclick="editEquipment(<?php echo $type['equip_type_id']; ?>, '<?php echo htmlspecialchars($type['equip_type_name']); ?>')">
-                                    <img src="edit.png" alt="Edit" style="width:20px; cursor: pointer;">
-                                </a>
-                                <a href="#" onclick="softDelete(<?php echo $type['equip_type_id']; ?>)">
-                                    <img src="delete.png" alt="Delete" style="width:20px; cursor: pointer;">
-                                </a>
-                            </td>
-							
-                        </tr>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <tr><td colspan="3">No equipment types available.</td></tr>
-                <?php endif; ?>
-            </tbody>
-        </table>
+		<?php
+			// Assuming $equipment_types is your array of equipment types
+			$maxRows = 5; // Maximum rows per page
+			$totalEntries = count($equipment_types); // Total number of entries
+			$totalPages = ceil($totalEntries / $maxRows); // Total number of pages
 
-        <nav>
-            <ul class="pagination">
-                <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-                <li class="page-item"><a class="page-link" href="#">Next</a></li>
-            </ul>
-        </nav>
+			// Get the current page from query parameters, default to 1
+			$currentPage = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+			$currentPage = max(1, min($currentPage, $totalPages)); // Ensure current page is within valid range
 
+			// Calculate the starting index for the current page
+			$startIndex = ($currentPage - 1) * $maxRows;
+
+			// Slice the equipment types array to get only the entries for the current page
+			$currentEquipmentTypes = array_slice($equipment_types, $startIndex, $maxRows);
+		?>
+
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>Equipment Type Name</th>
+					<th>Actions</th>
+				</tr>
+			</thead>
+			
+			<tbody id="equipmentTableBody">
+				<?php 
+				// If there are no equipment types, show the message in the first row
+				if ($totalEntries === 0): ?>
+					<tr><td></td><td colspan="2">No equipment types registered.</td></tr>
+					<?php 
+					// Add empty rows to make a total of 5
+					for ($j = 1; $j < $maxRows; $j++): ?>
+						<tr class="empty-row"><td colspan="3"></td></tr>
+					<?php endfor; 
+				else:
+					// Display equipment types for the current page
+					foreach ($currentEquipmentTypes as $equipment): ?>
+						<tr id="row-<?php echo htmlspecialchars($equipment['equip_type_id']); ?>">
+							<td><?php echo htmlspecialchars($equipment['equip_type_id']); ?></td>
+							<td><?php echo htmlspecialchars($equipment['equip_type_name']); ?></td>
+							<td>
+								<a href="#" onclick="editEquipment(<?php echo $equipment['equip_type_id']; ?>, '<?php echo htmlspecialchars($equipment['equip_type_name']); ?>')">
+									<img src="edit.png" alt="Edit" style="width:20px; cursor: pointer;">
+								</a>
+								<a href="#" onclick="softDelete(<?php echo $equipment['equip_type_id']; ?>)">
+									<img src="delete.png" alt="Delete" style="width:20px; cursor: pointer;">
+								</a>
+							</td>
+						</tr>
+					<?php endforeach;
+
+					// Add empty rows if there are fewer than 5 entries on this page
+					for ($j = count($currentEquipmentTypes); $j < $maxRows; $j++): ?>
+						<tr class="empty-row"><td colspan="3"></td></tr> <!-- Empty row with class -->
+					<?php endfor;
+				endif; ?>
+			</tbody>
+		</table>
+
+		<nav>
+			<ul class="pagination">
+				<?php if ($currentPage > 1): ?>
+					<li class="page-item"><a class="page-link" href="?page=<?php echo $currentPage - 1; ?>">Previous</a></li>
+				<?php else: ?>
+					<li class="page-item disabled"><span class="page-link">Previous</span></li>
+				<?php endif; ?>
+
+				<?php if ($currentPage < $totalPages): ?>
+					<li class="page-item"><a class="page-link" href="?page=<?php echo $currentPage + 1; ?>">Next</a></li>
+				<?php else: ?>
+					<li class="page-item disabled"><span class="page-link">Next</span></li>
+				<?php endif; ?>
+			</ul>
+		</nav>
     </div>
 </div>
 
