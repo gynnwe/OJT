@@ -310,22 +310,33 @@ if (isset($_SESSION['message'])) {
 		tr {
 			font-size: 13px;
 		}
+		
+		.empty-row, .no-remarks {
+			height: 35px;
+		}
+
+		.pagination .disabled .page-link {
+			pointer-events: none;
+			color: #ccc !important;
+		}
 
 		.pagination {
 			justify-content: flex-end; 
-			margin: 0;
+			margin-top: -5.2px;
 		}
+
 		.pagination .page-link {
 			border: none; 
 			font-size: 0.8rem; 
-			padding: 0px 8px; 
+			padding: 4px 8px; 
 		}
-		.pagination .page-item:first-child .page-link {
-			color: #8B8B8B; 
+		
+		.pagination .page-link:hover {
+			color: #b86e63;
 		}
-		.pagination .page-item:last-child .page-link {
-			color: #474747; 
-		}
+
+		.page-link {
+			color: #474747; }
     </style>
 </head>
 <body>
@@ -360,44 +371,83 @@ if (isset($_SESSION['message'])) {
 
             <h3>Existing Remarks</h3>
             <div class="table-responsive">
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Remarks</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="remarksTableBody">
-                        <?php if (!empty($remarks)): ?>
-                            <?php foreach ($remarks as $remark): ?>
-                                <tr id="row-<?php echo htmlspecialchars($remark['remarks_id']); ?>">
-                                    <td><?php echo htmlspecialchars($remark['remarks_id']); ?></td>
-                                    <td><?php echo htmlspecialchars($remark['remarks_name']); ?></td>
-                                    <td>
-                                        <a href="#" onclick="editRemark(<?php echo htmlspecialchars($remark['remarks_id']); ?>)">
-                                            <img src="edit.png" alt="Edit" style="width:20px; cursor: pointer;">
-                                        </a>
-                                        <a href="#" onclick="softDelete(<?php echo htmlspecialchars($remark['remarks_id']); ?>)">
-                                            <img src="delete.png" alt="Delete" style="width:20px; cursor: pointer;">
-                                        </a>
-                                    </td>
-                                </tr>
-                            <?php endforeach; ?>
-                        <?php else: ?>
-                            <tr>
-                                <td colspan="3">No remarks added.</td>
-                            </tr>
-                        <?php endif; ?>
-                    </tbody>
-                </table>
-            </div>
-            <nav>
-                <ul class="pagination">
-                    <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-                    <li class="page-item"><a class="page-link" href="#">Next</a></li>
-                </ul>
-            </nav>
+                
+				
+				<?php
+				// Assuming $remarks is your array of remarks
+				$maxRows = 5; // Maximum rows per page
+				$totalEntries = count($remarks); // Total number of entries
+				$totalPages = ceil($totalEntries / $maxRows); // Total number of pages
+
+				// Get the current page from query parameters, default to 1
+				$currentPage = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+				$currentPage = max(1, min($currentPage, $totalPages)); // Ensure current page is within valid range
+
+				// Calculate the starting index for the current page
+				$startIndex = ($currentPage - 1) * $maxRows;
+
+				// Slice the remarks array to get only the entries for the current page
+				$currentRemarks = array_slice($remarks, $startIndex, $maxRows);
+				?>
+
+				<table class="table table-striped">
+					<thead>
+						<tr>
+							<th>ID</th>
+							<th>Remarks</th>
+							<th>Actions</th>
+						</tr>
+					</thead>
+					<tbody id="remarksTableBody">
+						<?php 
+						if ($totalEntries === 0): ?>
+							<tr class="no-remarks"><td></td><td colspan="3">No remarks added.</td></tr>
+							<?php 
+							// Add empty rows to make a total of 5
+							for ($j = 1; $j < $maxRows; $j++): ?>
+								<tr class="empty-row"><td colspan="3"></td></tr>
+							<?php endfor; 
+						else:
+							// Display remarks for the current page
+							foreach ($currentRemarks as $remark): ?>
+								<tr id="row-<?php echo htmlspecialchars($remark['remarks_id']); ?>">
+									<td><?php echo htmlspecialchars($remark['remarks_id']); ?></td>
+									<td><?php echo htmlspecialchars($remark['remarks_name']); ?></td>
+									<td>
+										<a href="#" onclick="editRemark(<?php echo htmlspecialchars($remark['remarks_id']); ?>)">
+											<img src="edit.png" alt="Edit" style="width:20px; cursor: pointer;">
+										</a>
+										<a href="#" onclick="softDelete(<?php echo htmlspecialchars($remark['remarks_id']); ?>)">
+											<img src="delete.png" alt="Delete" style="width:20px; cursor: pointer;">
+										</a>
+									</td>
+								</tr>
+							<?php endforeach;
+
+							// Add empty rows if there are fewer than 5 entries on this page
+							for ($j = count($currentRemarks); $j < $maxRows; $j++): ?>
+								<tr class="empty-row"><td colspan="3"></td></tr> <!-- Empty row with class -->
+							<?php endfor;
+						endif; ?>
+					</tbody>
+				</table>
+
+				<nav>
+					<ul class="pagination">
+						<?php if ($currentPage > 1): ?>
+							<li class="page-item"><a class="page-link" href="?page=<?php echo $currentPage - 1; ?>">Previous</a></li>
+						<?php else: ?>
+							<li class="page-item disabled"><span class="page-link">Previous</span></li>
+						<?php endif; ?>
+
+						<?php if ($currentPage < $totalPages): ?>
+							<li class="page-item"><a class="page-link" href="?page=<?php echo $currentPage + 1; ?>">Next</a></li>
+						<?php else: ?>
+							<li class="page-item disabled"><span class="page-link">Next</span></li>
+						<?php endif; ?>
+					</ul>
+				</nav>
+			</div>
         </div>
     </div>
 
