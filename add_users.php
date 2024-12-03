@@ -82,8 +82,8 @@ if (isset($_SESSION['message'])) {
 			background-color: transparent !important;
 		}
 		.container {
-			margin-top: -1.1rem !important;
-			margin-left: 1.3rem !important;
+			margin-top: 3.65rem !important;
+			margin-left: 2.6rem !important;
 			display: flex;
 		}
 		.card {
@@ -132,7 +132,7 @@ if (isset($_SESSION['message'])) {
 		
 		.section-divider2 {
             margin-top: -3px;
-			margin-bottom: 10px;
+			margin-bottom: 18px;
 		}
 		.section-divider3 {
             margin-top: 8px;
