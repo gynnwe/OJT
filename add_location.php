@@ -338,7 +338,7 @@ if (isset($_SESSION['message'])) {
 			font-size: 13px;
 		}
 		
-		.empty-row {
+		.empty-row, .no-locations {
 			height: 30px;
 		}
 		
