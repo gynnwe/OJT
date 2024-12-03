@@ -17,6 +17,9 @@ date_default_timezone_set('Asia/Manila');
     <title>Modified Layout</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
+		body {
+			background-color: transparent !important;
+		}
         .mt-5 {
             margin-top: 0 rem !important;
         }
