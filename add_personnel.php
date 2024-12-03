@@ -106,8 +106,8 @@ if (isset($_SESSION['message'])) {
 			background-color: transparent !important;
 		}
 		.container {
-			margin-top: -1.1rem !important;
-			margin-left: 1.3rem !important;
+			margin-top: 3.65rem !important;
+			margin-left: 2.6rem !important;
 		}
 		.card {
 			background-color: #ffffff;
@@ -142,7 +142,8 @@ if (isset($_SESSION['message'])) {
 			color: #3A3A3A;
 			font-weight: regular;
 			font-size: 13px;
-			margin-top: 5px;
+			margin-top: -10px;
+			margin-bottom: 0px;
 		}
         .section-divider {
             border: none;
@@ -171,6 +172,11 @@ if (isset($_SESSION['message'])) {
 		.add-edit-card .form-control {
 			margin-left: -200px;
 		}
+		
+		.search-card {
+			margin-top: -10px;
+		}
+		
 		#searchInput {
 			width: 257px;
 		}
