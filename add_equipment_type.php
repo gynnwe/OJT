@@ -85,7 +85,10 @@ if (isset($_SESSION['message'])) {
 		body {
 			background-color: transparent !important;
 		}
-		
+		.container {
+			margin-top: 3.65rem !important;
+			margin-left: 2.6rem !important;
+		}
 		.equipment-type-form {
 			background-color: #FFFFFF;
 			width: 471px;
@@ -99,7 +102,7 @@ if (isset($_SESSION['message'])) {
 		.equipment-type-list {
 			background-color: #FFFFFF;
 			width: 100%;
-			height: 490px;
+			height: 440px;
 			border-radius: 24px;
 			box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 			padding: 15px;
@@ -232,8 +235,8 @@ if (isset($_SESSION['message'])) {
 			border-spacing: 10px 40px;
 			border: none;
 			display: inline-block;
-			padding: 11px 10px;
-			padding-top: 12px;
+			padding: 6px 10px;
+			padding-top: 6px;
 		}
 
 		.table td img {
