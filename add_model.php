@@ -110,8 +110,8 @@ if (isset($_SESSION['message'])) {
 			background-color: transparent !important;
 		}
 		.container {
-			margin-top: -1.1rem !important;
-			margin-left: 1.3rem !important;
+			margin-top: 3.65rem !important;
+			margin-left: 2.6rem !important;
 		}
 		.card {
 			background-color: #ffffff;
@@ -128,7 +128,7 @@ if (isset($_SESSION['message'])) {
 			position: relative;
 		}
 		.search-card {
-			height: 480px;
+			height: 410px;
 		}
 		.floating-alert {
 			position: absolute;
@@ -273,10 +273,9 @@ if (isset($_SESSION['message'])) {
 			border-collapse: separate; 
 			border-spacing: 10px 40px;
 			border: none; 
-			/*height: 38.35px;*/
 			display: inline-block;
-			padding: 14px 10px;
-			padding-top: 12.5px;
+			padding: 6px 10px;
+			padding-top: 6px;
 		}
 
 		.table td img {
