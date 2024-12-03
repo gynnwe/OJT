@@ -313,7 +313,7 @@ if (isset($_SESSION['message'])) {
 		}
 
 		.table tbody tr:hover {
-			background-color :#ebebeb; 
+			background-color :#ebebeb !important; 
 		}
 
 		tr {
