@@ -93,14 +93,13 @@ if (isset($_SESSION['message'])) {
 			margin-bottom: 20px;
 			padding: 15px;
 			border: none;
+			height: 546px;
 		}
 		.add-edit-card {
 			width: 30%;
-			height: auto;
 		}
 		.search-card {
 			width: 70%;
-			height: auto;
 			margin-left: 20px;
 		}
 		
@@ -126,8 +125,8 @@ if (isset($_SESSION['message'])) {
 		}
 		
 		.section-divider1 {
-            margin-top: 10px;
-			margin-bottom: 10px;
+            margin-top: 16px;
+			margin-bottom: 18px;
 		}
 		
 		.section-divider2 {
@@ -319,21 +318,32 @@ if (isset($_SESSION['message'])) {
 		tr {
 			font-size: 13px;
 		}
+		.empty-row, .no-users {
+			height: 40px;
+		}
+
+		.pagination .disabled .page-link {
+			pointer-events: none;
+			color: #ccc !important;
+		}
+
 		.pagination {
 			justify-content: flex-end; 
-			margin: 0;
+			margin-top: -5.2px;
 		}
+
 		.pagination .page-link {
 			border: none; 
 			font-size: 0.8rem; 
-			padding: 0px 8px; 
+			padding: 4px 8px; 
 		}
-		.pagination .page-item:first-child .page-link {
-			color: #8B8B8B; 
+		
+		.pagination .page-link:hover {
+			color: #b86e63;
 		}
-		.pagination .page-item:last-child .page-link {
-			color: #474747; 
-		}
+
+		.page-link {
+			color: #474747; }
 	</style>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
@@ -389,33 +399,79 @@ if (isset($_SESSION['message'])) {
 
             <p class="user-title">Existing Registered Users</p>
             <div class="table-responsive">
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Email</th>
+                
+				
+				
+				<?php
+				// Assuming $users is your array of users
+				$maxRows = 7; // Maximum rows per page
+				$totalEntries = count($users); // Total number of entries
+				$totalPages = ceil($totalEntries / $maxRows); // Total number of pages
+
+				// Get the current page from query parameters, default to 1
+				$currentPage = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+				$currentPage = max(1, min($currentPage, $totalPages)); // Ensure current page is within valid range
+
+				// Calculate the starting index for the current page
+				$startIndex = ($currentPage - 1) * $maxRows;
+
+				// Slice the users array to get only the entries for the current page
+				$currentUsers = array_slice($users, $startIndex, $maxRows);
+				?>
+
+				<table class="table table-striped">
+					<thead>
+						<tr>
+							<th>Email</th>
 							<th>First Name</th>
 							<th>Last Name</th>
 							<th>Username</th>
-                        </tr>
-                    </thead>
-                    <tbody id="locationTableBody">
-                        <?php foreach ($users as $user): ?>
-                            <tr id="row-<?php echo htmlspecialchars($location['location_id']); ?>">
-                                <td><?php echo htmlspecialchars($user['email']); ?></td>
-								<td><?php echo htmlspecialchars($user['firstname']); ?></td>
-								<td><?php echo htmlspecialchars($user['lastname']); ?></td>
-								<td><?php echo htmlspecialchars($user['username']); ?></td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
-            <nav>
-                <ul class="pagination">
-                    <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-                    <li class="page-item"><a class="page-link" href="#">Next</a></li>
-                </ul>
-            </nav>
+						</tr>
+					</thead>
+					<tbody id="locationTableBody">
+						<?php 
+						if ($totalEntries === 0): ?>
+							<tr class="no-users"><td colspan="4">No users available.</td></tr>
+							<?php 
+							// Add empty rows to make a total of 7
+							for ($j = 1; $j < $maxRows; $j++): ?>
+								<tr class="empty-row"><td colspan="4"></td></tr>
+							<?php endfor; 
+						else:
+							// Display users for the current page
+							foreach ($currentUsers as $user): ?>
+								<tr id="row-<?php echo htmlspecialchars($user['email']); ?>">
+									<td><?php echo htmlspecialchars($user['email']); ?></td>
+									<td><?php echo htmlspecialchars($user['firstname']); ?></td>
+									<td><?php echo htmlspecialchars($user['lastname']); ?></td>
+									<td><?php echo htmlspecialchars($user['username']); ?></td>
+								</tr>
+							<?php endforeach;
+
+							// Add empty rows if there are fewer than 7 entries on this page
+							for ($j = count($currentUsers); $j < $maxRows; $j++): ?>
+								<tr class="empty-row"><td colspan="4"></td></tr> <!-- Empty row with class -->
+							<?php endfor;
+						endif; ?>
+					</tbody>
+				</table>
+
+				<nav>
+					<ul class="pagination">
+						<?php if ($currentPage > 1): ?>
+							<li class="page-item"><a class="page-link" href="?page=<?php echo $currentPage - 1; ?>">Previous</a></li>
+						<?php else: ?>
+							<li class="page-item disabled"><span class="page-link">Previous</span></li>
+						<?php endif; ?>
+
+						<?php if ($currentPage < $totalPages): ?>
+							<li class="page-item"><a class="page-link" href="?page=<?php echo $currentPage + 1; ?>">Next</a></li>
+						<?php else: ?>
+							<li class="page-item disabled"><span class="page-link">Next</span></li>
+						<?php endif; ?>
+					</ul>
+				</nav>
+			</div>		
         </div>
 	</div>
 </body>
