@@ -163,7 +163,7 @@ echo "Equipment Table created successfully<br>";
         admin_id INT(7) UNSIGNED NOT NULL,
 		year YEAR NOT NULL,
 		date_prepared DATE NOT NULL,
-		count INT(5) NOT NULL,
+        count INT(5) NOT NULL,
 		FOREIGN KEY (admin_id) REFERENCES user(admin_id)
     )";
 	
@@ -191,11 +191,11 @@ echo "Equipment Table created successfully<br>";
         maintenance_plan_id INT(7) UNSIGNED NOT NULL,
         month ENUM('January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December') NOT NULL,
         target DECIMAL(5,2) NOT NULL,
-        equipment_id INT(7) UNSIGNED NOT NULL,
+        equip_type_id INT(7) UNSIGNED NOT NULL,
         details VARCHAR(255) NOT NULL,
         accomplishment VARCHAR(255) NOT NULL,
         FOREIGN KEY (maintenance_plan_id) REFERENCES maintenance_plan(id),
-        FOREIGN KEY (equipment_id) REFERENCES equipment(equipment_id)
+        FOREIGN KEY (equip_type_id) REFERENCES equipment_type(equip_type_id)
     )";
 	
 	$conn->exec($sql);

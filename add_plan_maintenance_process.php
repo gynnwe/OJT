@@ -9,14 +9,11 @@ try {
     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    function saveMaintenancePlan($conn, $equipmentTypeId, $year, $counts) {
-        $totalPlannedCount = array_sum($counts);
+    function saveMaintenancePlan($conn, $year, $totalPlannedCount) {
         $datePrepared = date('Y-m-d');
     
-        $query = "
-            INSERT INTO maintenance_plan (admin_id, year, date_prepared, count)
-            VALUES (:adminId, :year, :datePrepared, :totalPlannedCount)
-            ON DUPLICATE KEY UPDATE count = :totalPlannedCount";
+        $query = "INSERT INTO maintenance_plan (admin_id, year, date_prepared, count)
+                  VALUES (:adminId, :year, :datePrepared, :totalPlannedCount)";
     
         $stmt = $conn->prepare($query);
         $stmt->execute([
@@ -31,8 +28,8 @@ try {
     
     function savePlanDetails($conn, $maintenancePlanId, $equipmentTypeId, $counts) {
         $query = "
-            INSERT INTO plan_details (maintenance_plan_id, month, target, equipment_id, details, accomplishment)
-            VALUES (:maintenancePlanId, :month, :target, :equipmentType, '', '')";
+            INSERT INTO plan_details (maintenance_plan_id, month, target, equip_type_id, details, accomplishment)
+            VALUES (:maintenancePlanId, :month, :target, :equipmentTypeId, '', '')";
     
         $stmt = $conn->prepare($query);
     
@@ -41,24 +38,42 @@ try {
                 ':maintenancePlanId' => $maintenancePlanId,
                 ':month' => date('F', mktime(0, 0, 0, $month, 1)),
                 ':target' => $count,
-                ':equipmentType' => $equipmentTypeId
+                ':equipmentTypeId' => $equipmentTypeId
             ]);
         }
     }
 
     // Handle POST data
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        $selectedEquipmentType = $_POST['equipment_type'];
         $yearMaintained = $_POST['year_maintained'];
+        $equipmentTypes = $_POST['equipment_types'];
         $counts = $_POST['counts'];
 
-        if ($selectedEquipmentType && $yearMaintained && !empty($counts)) {
-            // Save the maintenance plan and retrieve the maintenance_plan_id
-            $maintenancePlanId = saveMaintenancePlan($conn, $selectedEquipmentType, $yearMaintained, $counts);
+        if ($yearMaintained && !empty($equipmentTypes) && !empty($counts)) {
+            // Start transaction
+            $conn->beginTransaction();
 
-            if ($maintenancePlanId) {
-                // Save plan details
-                savePlanDetails($conn, $maintenancePlanId, $selectedEquipmentType, $counts);
+            try {
+                // Calculate total count across all equipment types
+                $totalPlannedCount = 0;
+                foreach ($counts as $equipmentCounts) {
+                    $totalPlannedCount += array_sum($equipmentCounts);
+                }
+
+                // Save the main maintenance plan
+                $maintenancePlanId = saveMaintenancePlan($conn, $yearMaintained, $totalPlannedCount);
+
+                // Save details for each equipment type
+                foreach ($equipmentTypes as $index => $equipmentTypeId) {
+                    savePlanDetails($conn, $maintenancePlanId, $equipmentTypeId, $counts[$index]);
+                }
+
+                $conn->commit();
+                header("Location: plan_maintenance.php");
+                exit;
+            } catch (Exception $e) {
+                $conn->rollBack();
+                throw $e;
             }
         }
     }

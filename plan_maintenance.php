@@ -37,7 +37,7 @@ $dbname = "ictmms";
     }
 
     function fetchPlanDetails($conn, $planId) {
-        $query = "SELECT month, target, equipment_id, details, accomplishment 
+        $query = "SELECT month, target, equip_type_id, details, accomplishment 
                   FROM plan_details 
                   WHERE maintenance_plan_id = :planId";
         $stmt = $conn->prepare($query);
@@ -112,13 +112,13 @@ $dbname = "ictmms";
     <?php endif; ?>
 
     <!-- Modal -->
-    <div class="modal fade" id="maintenanceModal" tabindex="-1" aria-labelledby="maintenanceModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+    <div class="modal fade" id="maintenanceModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <form method="post" action="add_plan_maintenance_process.php">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="maintenanceModalLabel">Equipment Maintenance Form</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <h5 class="modal-title">Equipment Maintenance Form</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body">
                         <!-- Year Dropdown -->
@@ -126,31 +126,48 @@ $dbname = "ictmms";
                             <label for="year_maintained" class="form-label">Select Year:</label>
                             <select name="year_maintained" id="year_maintained" class="form-select" required>
                                 <option value="">--Select Year--</option>
-                                <?php   
-                                foreach ($years as $year) {
-                                    echo '<option value="' . htmlspecialchars($year['year_maintained']) . '">' . htmlspecialchars($year['year_maintained']) . '</option>';
-                                }
-                                ?>
+                                <?php foreach ($years as $year): ?>
+                                    <option value="<?= htmlspecialchars($year['year_maintained']) ?>">
+                                        <?= htmlspecialchars($year['year_maintained']) ?>
+                                    </option>
+                                <?php endforeach; ?>
                             </select>
                         </div>
-                        <div class="mb-3">
-                            <label for="equipment_type" class="form-label">Select Equipment Type:</label>
-                            <select name="equipment_type" id="equipment_type" class="form-select" required>
-                                <option value="">--Select Equipment Type--</option>
-                                <?php
-                                foreach ($equipmentTypes as $type) {
-                                    echo '<option value="' . htmlspecialchars($type['equip_type_id']) . '">' . htmlspecialchars($type['equip_type_name']) . '</option>';
-                                }
-                                ?>
-                            </select>
-                        </div>
-                        <!-- Input monthly maintenance counts -->
-                        <?php for ($i = 1; $i <= 12; $i++): ?>
-                            <div class="mb-3">
-                                <label for="count<?= $i ?>" class="form-label"><?= date("F", mktime(0, 0, 0, $i, 1)) ?> Count:</label>
-                                <input type="number" name="counts[<?= $i ?>]" id="count<?= $i ?>" class="form-control" min="0" required>
+
+                        <!-- Equipment Types Container -->
+                        <div id="equipmentTypesContainer">
+                            <div class="equipment-entry border p-3 mb-3">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <h6>Equipment Entry</h6>
+                                    <button type="button" class="btn btn-danger btn-sm remove-equipment" style="display: none;">Remove</button>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Select Equipment Type:</label>
+                                    <select name="equipment_types[]" class="form-select" required>
+                                        <option value="">--Select Equipment Type--</option>
+                                        <?php foreach ($equipmentTypes as $type): ?>
+                                            <option value="<?= htmlspecialchars($type['equip_type_id']) ?>">
+                                                <?= htmlspecialchars($type['equip_type_name']) ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                                <!-- Monthly counts for this equipment -->
+                                <div class="row">
+                                    <?php for ($i = 1; $i <= 12; $i++): ?>
+                                        <div class="col-md-3 mb-3">
+                                            <label class="form-label"><?= date("F", mktime(0, 0, 0, $i, 1)) ?>:</label>
+                                            <input type="number" name="counts[0][<?= $i ?>]" class="form-control" min="0" required>
+                                        </div>
+                                    <?php endfor; ?>
+                                </div>
                             </div>
-                        <?php endfor; ?>
+                        </div>
+
+                        <!-- Add More Equipment Button -->
+                        <button type="button" class="btn btn-success" id="addMoreEquipment">
+                            Add Another Equipment Type
+                        </button>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -163,5 +180,39 @@ $dbname = "ictmms";
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    let equipmentCount = 0;
+    const container = document.getElementById('equipmentTypesContainer');
+    const addButton = document.getElementById('addMoreEquipment');
+
+    addButton.addEventListener('click', function() {
+        equipmentCount++;
+        const template = container.querySelector('.equipment-entry').cloneNode(true);
+        
+        // Update name attributes for the new equipment entry
+        template.querySelectorAll('input[name^="counts[0]"]').forEach(input => {
+            const month = input.name.match(/\[(\d+)\]$/)[1];
+            input.name = `counts[${equipmentCount}][${month}]`;
+            input.value = ''; // Clear the value
+        });
+
+        // Update equipment type select name
+        template.querySelector('select[name="equipment_types[]"]').selectedIndex = 0;
+
+        // Show remove button for additional entries
+        template.querySelector('.remove-equipment').style.display = 'block';
+
+        container.appendChild(template);
+    });
+
+    // Event delegation for remove buttons
+    container.addEventListener('click', function(e) {
+        if (e.target.classList.contains('remove-equipment')) {
+            e.target.closest('.equipment-entry').remove();
+        }
+    });
+});
+</script>
 </body>
 </html>
