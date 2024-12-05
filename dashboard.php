@@ -4,6 +4,38 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
     header("location: login.php");
     exit;
 }
+
+// Fetch user details
+$user = null; // Initialize $user to null
+if (isset($_SESSION['user_id'])) {
+    $user_id = $_SESSION['user_id'];
+    // Database connection details
+    $servername = "localhost";
+    $username = "root";
+    $password = "";
+    $dbname = "ictmms";
+
+    try {
+        // Create connection
+        $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        // Fetch user details
+        $sql = "SELECT email, firstname, lastname, role FROM user WHERE admin_id = :user_id";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':user_id', $user_id);
+        $stmt->execute();
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        if (!$user) {
+            die("User not found.");
+        }
+    } catch (PDOException $e) {
+        echo "Error: " . $e->getMessage();
+    }
+} else {
+    die("User ID not set in session.");
+}
 ?>
 
 <!DOCTYPE html>
@@ -24,16 +56,70 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
 </head>
 <body class="dashboard">
     <!-- Header-->
-    <div class="header">
-        <span id="current-page">Dashboard</span>
-        <div class="user-info">
-            <span class="material-symbols-rounded">account_box</span>
-            <div class="text-info">
-                <span class="username"><?php echo ucfirst(htmlspecialchars($_SESSION['firstname'])) . ' ' . ucfirst(htmlspecialchars($_SESSION['lastname']));?></span>
-                <span class="role"><?php echo ucfirst(htmlspecialchars($_SESSION['role']));?></span>
-            </div>
-        </div>
-    </div>
+	<div class="header">
+		<span id="current-page">Dashboard</span>
+		<div class="user-info" id="user-info">
+			<span class="material-symbols-rounded">account_box</span>
+			<div class="text-info">
+				<span class="username">
+					<?php echo ucfirst(htmlspecialchars($_SESSION['firstname'])) . ' ' . ucfirst(htmlspecialchars($_SESSION['lastname']));?>
+				</span>
+				<span class="role">
+					<?php echo ucfirst(htmlspecialchars($_SESSION['role']));?>
+				</span>
+			</div>
+		</div>
+	</div>
+
+	<!-- Modal -->
+	<div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="editUserModalLabel">Update Profile</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<div id="alert-message" class="alert" style="display: none; margin-bottom: 15px;"></div>
+					<form id="updateProfileForm" method="POST" action="profile.php">
+						<div class="form-group">
+							<label for="email">Email:</label>
+							<input type="email" class="form-control" id="email" name="email" value="<?php echo htmlspecialchars($user['email']); ?>" required>
+						</div>
+						<div class="form-group">
+							<label for="firstname">First Name:</label>
+							<input type="text" class="form-control" id="firstname" name="firstname" value="<?php echo htmlspecialchars($user['firstname']); ?>" required>
+						</div>
+						<div class="form-group">
+							<label for="lastname">Last Name:</label>
+							<input type="text" class="form-control" id="lastname" name="lastname" value="<?php echo htmlspecialchars($user['lastname']); ?>" required>
+						</div>
+						<hr>
+						<div class="password-section">
+							<small class="text-muted mb-3 d-block">Leave password fields empty if you don't want to change your password.</small>
+							<div class="form-group">
+								<label for="current_password">Current Password:</label>
+								<input type="password" class="form-control" id="current_password" name="current_password">
+							</div>
+							<div class="form-group">
+								<label for="new_password">New Password:</label>
+								<input type="password" class="form-control" id="new_password" name="new_password">
+								<small class="form-text text-muted">Password must be at least 8 characters long with at least 1 uppercase letter, number and symbol.</small>
+								<div id="password-strength" class="mt-2"></div>
+							</div>
+							<div class="form-group">
+								<label for="repeat_password">Repeat New Password:</label>
+								<input type="password" class="form-control" id="repeat_password" name="repeat_password">
+							</div>
+						</div>
+						<button type="submit" class="btn btn-primary">Save Changes</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
     
     <div class="main-container">
         <!-- Sidebar -->
@@ -69,29 +155,196 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
         </div>
     </div>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
-    
+	<!-- jQuery -->
+	<script src="https://code.jquery.com/jquery-3.6.4.min.js" 
+			integrity="sha384-UG8ao2jwOWB7/oDdObZc6ItJmwUkR/PfMyt9Qs5AwX7PsnYn1CRKCTWyncPTWvaS" 
+			crossorigin="anonymous"></script>
+
+	<!-- Bootstrap 4 JavaScript -->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+
+
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Handle navigation clicks
-        document.querySelectorAll('.nav-link').forEach(link => {
-            link.addEventListener('click', function(e) {
-                if (this.getAttribute('href') !== '#') {
-                    e.preventDefault();
-                    
-                    // Update active state
-                    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-                    this.classList.add('active');
-                    
-                    // Update page title
-                    document.getElementById('current-page').textContent = this.dataset.title;
-                    
-                    // Load content in iframe
-                    document.getElementById('content-frame').src = this.getAttribute('href');
-                }
-            });
-        });
+	document.addEventListener('DOMContentLoaded', function () {
+		// Password strength validation function
+		function validatePassword(password) {
+			const minLength = password.length >= 8;
+			const hasUpperCase = /[A-Z]/.test(password);
+			const hasNumber = /[0-9]/.test(password);
+			const hasSymbol = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+			
+			return {
+				valid: minLength && hasUpperCase && hasNumber && hasSymbol,
+				errors: {
+					length: !minLength,
+					uppercase: !hasUpperCase,
+					number: !hasNumber,
+					symbol: !hasSymbol
+				}
+			};
+		}
+
+		// Update password strength indicator
+		$('#new_password').on('input', function() {
+			const password = $(this).val().trim();
+			const strengthDiv = $('#password-strength');
+			const validation = validatePassword(password);
+			
+			let strengthHtml = '';
+			if (password) {
+				strengthHtml += '<div class="password-requirements">';
+				strengthHtml += `<div class="${validation.errors.length ? 'text-danger' : 'text-success'}">�${validation.errors.length ? '✗' : '✓'} 8+ characters</div>`;
+				strengthHtml += `<div class="${validation.errors.uppercase ? 'text-danger' : 'text-success'}">�${validation.errors.uppercase ? '✗' : '✓'} Uppercase letter</div>`;
+				strengthHtml += `<div class="${validation.errors.number ? 'text-danger' : 'text-success'}">�${validation.errors.number ? '✗' : '✓'} Number</div>`;
+				strengthHtml += `<div class="${validation.errors.symbol ? 'text-danger' : 'text-success'}">�${validation.errors.symbol ? '✗' : '✓'} Symbol</div>`;
+				strengthHtml += '</div>';
+			}
+			strengthDiv.html(strengthHtml);
+		});
+
+		// Handle navigation clicks
+		document.querySelectorAll('.nav-link').forEach(link => {
+			link.addEventListener('click', function (e) {
+				if (this.getAttribute('href') !== '#') {
+					e.preventDefault();
+
+					// Update active state
+					document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+					this.classList.add('active');
+
+					// Update page title
+					document.getElementById('current-page').textContent = this.dataset.title;
+
+					// Load content in iframe
+					document.getElementById('content-frame').src = this.getAttribute('href');
+				}
+			});
+		});
+
+		// Show modal on user-info click
+		$('#user-info').on('click', function () {
+			$('#editUserModal').modal('show');
+		});
+
+		// Handle form submission
+		$('#updateProfileForm').on('submit', function(e) {
+			e.preventDefault();
+			
+			const alertDiv = $('#alert-message');
+			const email = $('#email').val().trim();
+			const firstname = $('#firstname').val().trim();
+			const lastname = $('#lastname').val().trim();
+			const currentPassword = $('#current_password').val().trim();
+			const newPassword = $('#new_password').val().trim();
+			const repeatPassword = $('#repeat_password').val().trim();
+
+			// Validate email and name fields
+			if (!email) {
+				alertDiv.removeClass('alert-success').addClass('alert-danger')
+					.text('Email is required').show();
+				return;
+			}
+			if (!isValidEmail(email)) {
+				alertDiv.removeClass('alert-success').addClass('alert-danger')
+					.text('Please enter a valid email address').show();
+				return;
+			}
+			if (!firstname) {
+				alertDiv.removeClass('alert-success').addClass('alert-danger')
+					.text('First name is required').show();
+				return;
+			}
+			if (!lastname) {
+				alertDiv.removeClass('alert-success').addClass('alert-danger')
+					.text('Last name is required').show();
+				return;
+			}
+			
+			// Check if any password field is filled
+			if (currentPassword || newPassword || repeatPassword) {
+				// All password fields must be filled if any are filled
+				if (!currentPassword) {
+					alertDiv.removeClass('alert-success').addClass('alert-danger')
+						.text('Please enter your current password').show();
+					return;
+				}
+				if (!newPassword) {
+					alertDiv.removeClass('alert-success').addClass('alert-danger')
+						.text('Please enter a new password').show();
+					return;
+				}
+				if (!repeatPassword) {
+					alertDiv.removeClass('alert-success').addClass('alert-danger')
+						.text('Please confirm your new password').show();
+					return;
+				}
+
+				// Validate password strength
+				const validation = validatePassword(newPassword);
+				if (!validation.valid) {
+					let errorMessage = 'Password must have: ';
+					if (validation.errors.length) errorMessage += '8+ characters, ';
+					if (validation.errors.uppercase) errorMessage += 'an uppercase letter, ';
+					if (validation.errors.number) errorMessage += 'a number, ';
+					if (validation.errors.symbol) errorMessage += 'a symbol, ';
+					errorMessage = errorMessage.slice(0, -2);
+					
+					alertDiv.removeClass('alert-success').addClass('alert-danger')
+						.text(errorMessage).show();
+					return;
+				}
+			}
+			
+			// Submit form data via AJAX
+			$.ajax({
+				url: 'profile.php',
+				type: 'POST',
+				dataType: 'json',
+				data: $(this).serialize(),
+				success: function(response) {
+					console.log('Response:', response); // Debug line
+					alertDiv.removeClass('alert-success alert-danger');
+					
+					if (response.status === 'success') {
+						alertDiv.addClass('alert-success');
+						// Clear password fields on success if they were used
+						if (currentPassword || newPassword || repeatPassword) {
+							$('#current_password, #new_password, #repeat_password').val('');
+							// Clear the password strength indicator
+							$('#password-strength').empty();
+						}
+						// Update the user info in the header if it was changed
+						if (response.user) {
+							$('.username').text(response.user.firstname + ' ' + response.user.lastname);
+						}
+					} else {
+						alertDiv.addClass('alert-danger');
+					}
+					
+					alertDiv.text(response.message).fadeIn();
+					
+					// Hide alert after 3 seconds if it's a success message
+					if (response.status === 'success') {
+						setTimeout(function() {
+							alertDiv.fadeOut();
+						}, 3000);
+					}
+				},
+				error: function(xhr, status, error) {
+					console.log('Error:', xhr, status, error); // Debug line
+					alertDiv.removeClass('alert-success')
+						.addClass('alert-danger')
+						.text('An error occurred while updating the profile')
+						.fadeIn();
+				}
+			});
+		});
+
+		// Email validation function
+		function isValidEmail(email) {
+			const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+			return emailRegex.test(email);
+		}
     });
 
     function logout() {
