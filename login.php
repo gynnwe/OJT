@@ -148,7 +148,7 @@
         }
 
         .sign-in-title {
-            font-size: 24px;
+            font-size: 35px;
             font-weight: bold;
             color: #333;
             margin-bottom: 10px;
