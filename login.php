@@ -7,7 +7,6 @@
     <title>Login</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600&display=swap');
-        @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 
         * {
             margin: 0;
@@ -15,87 +14,112 @@
             box-sizing: border-box;
         }
 
-        /* Login Page */
-        .login {
+        body {
+            background-image: url('assets/dashboard_background.jpg');
+            background-size: cover;
+            background-position: center;
             font-family: 'Plus Jakarta Sans', sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #f3f3f3;
         }
 
-        .container-login {
-            background-color: #fff;
-            border-radius: 32px;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-            padding: 30px 20px;
-            width: 360px;
-            text-align: center;
+        .main-container {
+            position: relative;
+            width: 768px;
+            height: 407px;
+            background-color: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
         }
 
-        .container-login h1 {
-            font-size: 24px;
-            font-weight: bolder;
-            margin-bottom: 20px;
-            color: #090E1D;
+        .maroon-square {
+            position: absolute;
+            width: 408px;
+            height: 407px;
+            background-color: #632121;
+            border-radius: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .content {
+            padding: 20px;
+            color: white;
             text-align: left;
-        }
-
-        .container-login p {
-            font-size: 14px;
-            margin-bottom: 20px;
-            color: #555;
-        }
-
-        .container-login label {
-            display: block;
-            text-align: left;
-            margin-bottom: 8px;
-            font-weight: bold;
-            color: #090E1D;
-        }
-
-        .container-login input[type="email"],
-        .container-login input[type="password"],
-        .container-login input[type="text"] {
             width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            border-radius: 10px;
+            height: 100%;
+        }
+
+        .logos {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            align-items: flex-end;
+        }
+
+        .logos img {
+            width: auto;
+        }
+
+        .logos img:nth-child(2) {
+            align-self: flex-end;
+        }
+
+        .content h1 {
+            margin-top: 30px;
+            margin-left: 40px;
+            font-size: 40px;
+            font-weight: 800;
+            letter-spacing: 2%;
+            line-height: 39px;
+        }
+
+        .sign-in-form {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 320px;
+        }
+
+        .form-container {
+            width: 100%;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-top: 20px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        input[type="email"], input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border-radius: 5px;
             border: 1px solid #ccc;
             font-size: 14px;
         }
 
-        button.loginbtn {
-            margin: 10px 0;
+        button {
             width: 100%;
             padding: 12px;
+            margin-top: 20px;
             background-color: #a50000;
-            color: #fff;
+            color: white;
             border: none;
             border-radius: 5px;
             font-size: 16px;
             cursor: pointer;
         }
 
-        button.loginbtn:hover {
+        button:hover {
             background-color: #8b0000;
-        }
-
-        .container-login a {
-            font-weight: bold;
-            color: #090E1D;
-            text-decoration: underline;
-        }
-
-        .container-login a:hover {
-            text-decoration: underline;
-        }
-
-        .forgot-password {
-            margin-top: 10px;
-            text-align: left;
         }
 
         .password-container {
@@ -106,9 +130,9 @@
         .password-container input[type="password"],
         .password-container input[type="text"] {
             width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            border-radius: 10px;
+            padding: 10px;
+            margin-top: 5px;
+            border-radius: 5px;
             border: 1px solid #ccc;
             font-size: 14px;
             padding-right: 40px; /* Add padding to make space for the eye icon */
@@ -116,58 +140,62 @@
 
         .password-toggle {
             position: absolute;
-            right: 15px;
             top: 50%;
+            right: 10px;
             transform: translateY(-50%);
             cursor: pointer;
             font-size: 18px;
-            color: #666;
         }
 
-        .container-login .logo {
-            width: 152px;
-            margin-bottom: 20px;
+        .sign-in-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
         }
     </style>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.5.0/font/bootstrap-icons.min.css" rel="stylesheet">
 </head>
-<body class="login">
-    <form action="login_process.php" method="POST">
-        <div class="container-login">
-            <img src="assets/usep-logo.png" alt="USeP Logo" class="logo">
-            <h1>Sign In</h1>
-
-            <label for="email"><b>Email Address</b></label>
-            <input type="email" placeholder="youremail@usep.edu.ph" name="email" id="email" required>
-
-            <label for="psw"><b>Password</b></label>
-            <div class="password-container">
-                <input type="password" placeholder="••••••••••" name="psw" id="psw" required>
-                <i class="bi bi-eye password-toggle" id="togglePassword"></i>
+<body>
+    <div class="main-container">
+        <div class="maroon-square">
+            <div class="content">
+                <div class="logos">
+                    <img src="assets/usep-logo.png" alt="USeP Logo" width="165" height="164">
+                    <img src="assets/cic.png" alt="CIC Logo" width="120" height="136">
+                </div>
+                <h1>ICT Equipment<br>Monitoring<br>System</h1>
             </div>
-
-            <button type="submit" class="loginbtn">Sign In</button>
-            <p class="forgot-password"><a href="#">Forgot password?</a></p>
         </div>
-    </form>
+        <div class="sign-in-form">
+            <form action="login_process.php" method="POST" class="form-container">
+                <div class="sign-in-title">Sign In</div>
+                
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" placeholder="youremail@usep.edu.ph" required>
+
+                <label for="password">Password</label>
+                <div class="password-container">
+                <input type="password" placeholder="••••••••••" name="psw" id="psw" required>
+                    <i class="bi bi-eye password-toggle" id="togglePassword"></i>
+                </div>
+
+                <button type="submit">Sign In</button>
+            </form>
+        </div>
+    </div>
 
     <script>
         const togglePassword = document.getElementById('togglePassword');
-        const passwordField = document.getElementById('psw');
+        const passwordField = document.getElementById('password');
 
         togglePassword.addEventListener('click', function() {
-            // Toggle the type attribute of the password field
             const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
             passwordField.setAttribute('type', type);
 
             // Toggle the eye icon classes between bi-eye and bi-eye-slash
-            if (type === 'password') {
-                this.classList.remove('bi-eye-slash');
-                this.classList.add('bi-eye');
-            } else {
-                this.classList.remove('bi-eye');
-                this.classList.add('bi-eye-slash');
-            }
+            this.classList.toggle('bi-eye');
+            this.classList.toggle('bi-eye-slash');
         });
     </script>
 </body>

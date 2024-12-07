@@ -47,241 +47,254 @@ try {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ICT Equipment</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.3/font/bootstrap-icons.min.css" rel="stylesheet">
-	<script src="scripts.js" defer ></script>
+    <title>Register Equipment</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
- /* General Styling for Add Equipment Form */
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f9f9f9;
-    color: #333;
-    margin: 0;
-    padding: 0;
-}
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 
-.container {
-    max-width: 600px;
-    background-color: #fff;
-    border-radius: 8px;
-    padding: 10px; 
-    box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.1);
-    margin: 20px auto; 
-}
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: transparent !important;
+        }
 
-label {
-    font-weight: bold;
-    margin-bottom: 3px;
-}
+        .container {
+            margin-top: 3.65rem !important;
+            margin-left: 2.6rem !important;
+            display: flex;
+            gap: 20px;
+        }
 
-.form-label {
-    display: block;
-    font-size: 0.85rem; 
-    margin-top: 4px; 
-    color: #444;
-}
+        .card {
+            background-color: #ffffff;
+            border-radius: 24px !important;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            border: none;
+        }
 
-.form-select, .form-control {
-    display: block;
-    width: 100%;
-    padding: 5px; 
-    font-size: 0.8rem; 
-    line-height: 1.2; 
-    color: #495057;
-    background-color: #fff;
-    background-clip: padding-box;
-    border: 1px solid #ced4da;
-    border-radius: 4px;
-    box-shadow: inset 0px 1px 1px rgba(0, 0, 0, 0.1);
-    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-}
+        .register-card {
+            flex: 1;
+            max-width: 400px;
+        }
 
-.form-select:focus, .form-control:focus {
-    border-color: #80bdff;
-    outline: 0;
-    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-}
+        .list-card {
+            flex: 2;
+        }
 
-button[type="submit"], .btn-primary {
-    display: inline-block;
-    font-weight: 600;
-    color: #fff;
-    text-align: center;
-    vertical-align: middle;
-    cursor: pointer;
-    background-color: #b51d29;
-    border: 1px solid #b51d29;
-    padding: 6px 10px; 
-    font-size: 0.8rem; 
-    border-radius: 4px;
-    transition: background-color 0.15s ease-in-out;
-    margin-top: 8px; 
-}
+        h5 {
+            color: #3A3A3A;
+            font-weight: bold !important;
+            font-size: 14px !important;
+        }
 
-button[type="submit"]:hover, .btn-primary:hover {
-    background-color: #a31723;
-    border-color: #a31723;
-}
+        .form-control,
+        .form-select {
+            width: 100%;
+            border: 2px solid #646464;
+            border-radius: 14px;
+            color: #646464;
+            font-size: 12px;
+            padding: 10px;
+            margin-bottom: 15px;
+        }
 
-button[type="submit"]:focus, .btn-primary:focus {
-    box-shadow: 0 0 0 0.2rem rgba(181, 29, 41, 0.25);
-    outline: 0;
-}
+        #filterBy {
+            background-color: #d1d1d1 !important;
+			border: none !important;
+            padding: 5px !important;
+			color: #646464 !important;
+        }
 
-button[type="button"], .btn-secondary {
-    background-color: #6c757d;
-    color: #fff;
-    border: 1px solid #6c757d;
-    padding: 6px 10px; 
-    font-size: 0.8rem; 
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.15s ease-in-out;
-    margin-top: 8px; 
-}
+        .form-control::placeholder,
+        .form-select::placeholder {
+            color: #646464;
+        }
 
-button[type="button"]:hover, .btn-secondary:hover {
-    background-color: #5a6268;
-    border-color: #545b62;
-}
+        button.btn-submit {
+            width: 100%;
+            padding: 10px;
+            background-color: #a81519;
+            color: white;
+            font-weight: bold;
+            font-size: 12px;
+            border: none;
+            border-radius: 14px;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
 
-.mb-3 {
-    margin-bottom: 8px; 
-}
+        button.btn-submit:hover {
+            background-color: #8b0000;
+        }
 
-input[type="text"], input[type="date"] {
-    padding: 6px; 
-    font-size: 0.8rem; 
-    border-radius: 4px;
-    border: 1px solid #ced4da;
-    width: calc(100% - 12px); 
-}
+        .search-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
 
-select {
-    padding: 6px; 
-    font-size: 0.8rem; 
-    border-radius: 4px;
-    border: 1px solid #ced4da;
-    width: calc(100% - 12px); 
-}
+        .table-responsive {
+            border-radius: 10px;
+            overflow: hidden;
+        }
 
-/* Rounded Corners for Cards */
-.card {
-    border-radius: 8px;
-    box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.1);
-}
+        .table {
+            width: 100%;
+            border: none;
+            font-size: 12px;
+        }
 
-/* Styling for Add/Cancel buttons */
-.btn {
-    border-radius: 6px;
-    padding: 6px 10px; 
-    font-size: 0.8rem;
-    font-weight: bold;
-}
+        .table th,
+        .table td {
+            color: #646464;
+            padding: 10px;
+            text-align: left;
+        }
 
-.btn-add {
-    background-color: #b51d29;
-    color: #fff;
-}
+        .pagination {
+            justify-content: flex-end;
+            margin: 0;
+        }
 
-.btn-cancel {
-    background-color: #6c757d;
-    color: #fff;
-}
+        .pagination .page-link {
+            color: #8B8B8B;
+            border: none;
+            font-size: 12px;
+            padding: 0 8px;
+        }
 
-.btn-add:hover {
-    background-color: #a31723;
-}
+        .pagination .page-item .page-link:hover {
+            color: #a31723;
+            text-decoration: underline;
+        }
 
-.btn-cancel:hover {
-    background-color: #5a6268;
-}
+        .section-divider1 {
+            border: none;
+            height: 1px;
+            background-color: #ddd;
+            margin: 10px 0;
+        }
 
-.btn-add:focus, .btn-cancel:focus {
-    box-shadow: 0 0 0 0.2rem rgba(108, 117, 125, 0.5);
-}
+        .section-divider2 {
+            border: none;
+            height: 1px;
+            background-color: #ddd;
+            margin: 20px 0;
+        }
     </style>
 </head>
+
 <body>
-    <div class="container mt-5">
-        <!-- Add Equipment Form -->
-        <?php if (isset($_GET['error'])): ?>
-            <div class="alert alert-danger"><?php echo htmlspecialchars($_GET['error']); ?></div>
-        <?php endif; ?>
-        
-        <form action="equipment_process.php" method="POST">
-            <div class="mb-3">
-                <label for="location_id" class="form-label">Location:</label>
+    <div class="container">
+        <!-- Register Equipment Section -->
+        <div class="card register-card">
+            <h5>Register Equipment</h5>
+            <hr class="section-divider1">
+            <form action="equipment_process.php" method="POST">
                 <select name="location_id" id="location_id" class="form-select" required>
-                    <option value="">Select a location</option>
-                    <?php if (!empty($locations)): ?>
-                        <?php foreach ($locations as $location): ?>
+                    <option value="" disabled selected>Location</option>
+                    <?php if (!empty($locations)) : ?>
+                        <?php foreach ($locations as $location) : ?>
                             <option value="<?php echo htmlspecialchars($location['location_id']); ?>">
                                 <?php echo htmlspecialchars($location['building'] . " - " . $location['office'] . " - " . $location['room']); ?>
                             </option>
                         <?php endforeach; ?>
-                    <?php else: ?>
+                    <?php else : ?>
                         <option value="">No locations available</option>
                     <?php endif; ?>
                 </select>
-            </div>
 
-            <div class="mb-3">
-                <label for="equipment_type" class="form-label">Equipment Type:</label>
                 <select name="equipment_type" id="equipment_type" class="form-select" required>
-                    <option value="">Select an equipment type</option>
-                    <?php if (!empty($equipment_types)): ?>
-                        <?php foreach ($equipment_types as $type): ?>
+                    <option value="" disabled selected>Equipment Type</option>
+                    <?php if (!empty($equipment_types)) : ?>
+                        <?php foreach ($equipment_types as $type) : ?>
                             <option value="<?php echo htmlspecialchars($type['equip_type_id']); ?>">
                                 <?php echo htmlspecialchars($type['equip_type_name']); ?>
                             </option>
                         <?php endforeach; ?>
-                    <?php else: ?>
+                    <?php else : ?>
                         <option value="">No equipment types available</option>
                     <?php endif; ?>
                 </select>
-            </div>
 
-            <div class="mb-3">
-                <label for="equip_name" class="form-label">Equipment Name:</label>
-                <input type="text" name="equip_name" id="equip_name" class="form-control" required>
-            </div>
+                <input type="text" name="equip_name" id="equip_name" class="form-control" placeholder="Equipment Name" required>
 
-            <div class="mb-3">
-                <label for="property_num" class="form-label">Property Number:</label>
-                <input type="text" name="property_num" id="property_num" class="form-control" required>
-            </div>
+                <input type="text" name="property_num" id="property_num" class="form-control" placeholder="Property Number" required>
 
-            <div class="mb-3">
-                <label for="model_name" class="form-label">Model Name:</label>
                 <select name="model_id" id="model_name" class="form-select" required>
+                    <option value="" disabled selected>Model Name</option>
                     <!-- Options will be populated dynamically based on selected equipment type -->
                 </select>
-            </div>
 
-            <div class="mb-3">
-                <label for="status" class="form-label">Status:</label>
                 <select name="status" id="status" class="form-select" required>
+                    <option value="" disabled selected>Status</option>
                     <option value="Serviceable">Serviceable</option>
                     <option value="Non-serviceable">Non-serviceable</option>
                 </select>
-            </div>
 
-            <div class="mb-3">
-                <label for="date_purchased" class="form-label">Date Purchased:</label>
-                <input type="date" name="date_purchased" id="date_purchased" class="form-control" required max="<?php echo date('Y-m-d'); ?>">
-            </div>
+                <input type="date" name="date_purchased" id="date_purchased" class="form-control" placeholder="Date Purchased" required max="<?php echo date('Y-m-d'); ?>">
+                <hr class="section-divider2">
+                <button type="submit" class="btn-submit">Submit</button>
+            </form>
+        </div>
 
-            <!-- Submit Button -->
-            <button type="submit" class="btn btn-primary">Submit</button>
-        </form>
+        <!-- Registered Equipment List -->
+        <div class="card list-card">
+            <h5>Registered Equipments</h5>
+            <hr class="section-divider1">
+            <div class="search-bar">
+                <select class="form-select" id="filterBy">
+                    <option value="all">All</option>
+                    <option value="monitor">Monitor</option>
+                    <option value="printer">Printer</option>
+                </select>
+                <input type="text" class="form-control" placeholder="Search by name">
+            </div>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Equipment Name</th>
+                            <th>Property Number</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if (!empty($registered_equipments)) : ?>
+                            <?php foreach ($registered_equipments as $equipment) : ?>
+                                <tr>
+                                    <td><?php echo htmlspecialchars($equipment['equip_name']); ?></td>
+                                    <td><?php echo htmlspecialchars($equipment['property_num']); ?></td>
+                                    <td><?php echo htmlspecialchars($equipment['status']); ?></td>
+                                    <td><?php echo htmlspecialchars($equipment['date_purchased']); ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php else : ?>
+                            <tr>
+                                <td colspan="4">No registered equipment available</td>
+                            </tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+            <nav>
+                <ul class="pagination">
+                    <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+                    <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                </ul>
+            </nav>
+        </div>
     </div>
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
+
 </html>
+
