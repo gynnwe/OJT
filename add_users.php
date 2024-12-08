@@ -97,7 +97,17 @@ if (isset($_SESSION['message'])) {
 		}
 		.add-edit-card {
 			width: 30%;
+			position: relative !important;
 		}
+		
+		.alert {
+			position: absolute !important;
+			font-size: 10px !important;
+			top: 0 !important;
+			right: 0 !important;
+			max-width: 170px !important;
+		}
+
 		.search-card {
 			width: 70%;
 			margin-left: 20px;
@@ -343,7 +353,7 @@ if (isset($_SESSION['message'])) {
 		}
 
 		.page-link {
-			color: #474747; }
+			color: #474747 !important; }
 	</style>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
@@ -353,12 +363,8 @@ if (isset($_SESSION['message'])) {
 <body>
 	<div class="container">
         <div class="card add-edit-card">
-            <?php if (isset($message)): ?>
-                <div class="alert alert-success"><?php echo $message; ?></div>
-            <?php endif; ?>
-            <?php if (isset($error)): ?>
-                <div class="alert alert-danger"><?php echo $error; ?></div>
-            <?php endif; ?>
+            <?php if (isset($message)) echo "<div class='alert alert-success floating-alert' id='successAlert'>$message</div>"; ?>
+            <?php if (isset($error)) echo "<div class='alert alert-danger floating-alert' id='errorAlert'>$error</div>"; ?>
             
             <form method="POST">
                 <h1>Register a User</h1>
@@ -472,7 +478,23 @@ if (isset($_SESSION['message'])) {
 					</ul>
 				</nav>
 			</div>		
-        </div>
+        	</div>
 	</div>
+	<script>
+	        $(document).ready(function() {
+	            const successAlert = $('#successAlert');
+	            const errorAlert = $('#errorAlert');
+	            if (successAlert.length) {
+	                successAlert.fadeIn().delay(5000).fadeOut('slow', function() {
+	                    $(this).remove();
+	                });
+	            }
+	            if (errorAlert.length) {
+	                errorAlert.fadeIn().delay(5000).fadeOut('slow', function() {
+	                    $(this).remove();
+	                });
+	            }
+	        });
+	 </script>
 </body>
 </html>
