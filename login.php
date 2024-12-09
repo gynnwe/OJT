@@ -70,7 +70,7 @@
 
         .content h1 {
             margin-top: 30px;
-            margin-left: 40px;
+            margin-left: 30px;
             font-size: 40px;
             font-weight: 800;
             letter-spacing: 2%;
