@@ -20,15 +20,17 @@ try {
         $model_id = isset($_POST['model_id']) && !empty($_POST['model_id']) ? $_POST['model_id'] : null;
 
         if (!empty($model_name)) {
-            $duplicateCheckSQL = "SELECT COUNT(*) FROM model 
-                                  WHERE model_name = :model_name 
-                                  AND (model_id != :model_id OR :model_id IS NULL)
-                                  AND deleted_id = 0";
-            $stmt = $conn->prepare($duplicateCheckSQL);
-            $stmt->bindParam(':model_name', $model_name);
-            $stmt->bindParam(':model_id', $model_id);
-            $stmt->execute();
-            $count = $stmt->fetchColumn();
+			$duplicateCheckSQL = "SELECT COUNT(*) FROM model 
+								  WHERE model_name = :model_name 
+								  AND equip_type_id = :equip_type_id
+								  AND (model_id != :model_id OR :model_id IS NULL)
+								  AND deleted_id = 0";
+			$stmt = $conn->prepare($duplicateCheckSQL);
+			$stmt->bindParam(':model_name', $model_name);
+			$stmt->bindParam(':model_id', $model_id);
+			$stmt->bindParam(':equip_type_id', $equip_type_id);
+			$stmt->execute();
+			$count = $stmt->fetchColumn();
 
             if ($count > 0) {
                 $error = "Model name already exists. Please enter a unique model name.";
