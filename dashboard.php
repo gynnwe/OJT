@@ -172,7 +172,6 @@ if (isset($_SESSION['user_id'])) {
 		</div>
 	</div>
 
-	<!-- Modal -->
 	<div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
@@ -292,14 +291,14 @@ if (isset($_SESSION['user_id'])) {
 			const password = $(this).val().trim();
 			const strengthDiv = $('#password-strength');
 			const validation = validatePassword(password);
-			
+
 			let strengthHtml = '';
 			if (password) {
 				strengthHtml += '<div class="password-requirements">';
-				strengthHtml += `<div class="${validation.errors.length ? 'text-danger' : 'text-success'}">•${validation.errors.length ? '✗' : '✓'} 8+ characters</div>`;
-				strengthHtml += `<div class="${validation.errors.uppercase ? 'text-danger' : 'text-success'}">•${validation.errors.uppercase ? '✗' : '✓'} Uppercase letter</div>`;
-				strengthHtml += `<div class="${validation.errors.number ? 'text-danger' : 'text-success'}">•${validation.errors.number ? '✗' : '✓'} Number</div>`;
-				strengthHtml += `<div class="${validation.errors.symbol ? 'text-danger' : 'text-success'}">•${validation.errors.symbol ? '✗' : '✓'} Symbol</div>`;
+				strengthHtml += `<div class="${validation.errors.length ? 'text-danger' : 'text-success'}">• 8+ characters</div>`;
+				strengthHtml += `<div class="${validation.errors.uppercase ? 'text-danger' : 'text-success'}">• Uppercase letter</div>`;
+				strengthHtml += `<div class="${validation.errors.number ? 'text-danger' : 'text-success'}">• Number</div>`;
+				strengthHtml += `<div class="${validation.errors.symbol ? 'text-danger' : 'text-success'}">• Symbol</div>`;
 				strengthHtml += '</div>';
 			}
 			strengthDiv.html(strengthHtml);
