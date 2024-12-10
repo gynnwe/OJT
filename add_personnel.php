@@ -486,36 +486,30 @@ if (isset($_SESSION['message'])) {
 
     <script>
         $(document).ready(function() {
-            const successAlert = $('#successAlert');
-            const errorAlert = $('#errorAlert');
-            if (successAlert.length) {
-                successAlert.fadeIn().delay(5000).fadeOut('slow', function() {
-                    $(this).remove();
-                });
-            }
-            if (errorAlert.length) {
-                errorAlert.fadeIn().delay(5000).fadeOut('slow', function() {
-                    $(this).remove();
-                });
-            }
-            
-            $('#searchInput').on('keyup', function() {
-                const filterBy = $('#filterBy').val();
-                const value = $(this).val().toLowerCase();
-                let isMatch = false;
+			const successAlert = $('#successAlert');
+			const errorAlert = $('#errorAlert');
+			if (successAlert.length) {
+				successAlert.fadeIn().delay(5000).fadeOut('slow', function() {
+					$(this).remove();
+				});
+			}
+			if (errorAlert.length) {
+				errorAlert.fadeIn().delay(5000).fadeOut('slow', function() {
+					$(this).remove();
+				});
+			}
 
-                $('#personnelTableBody tr').filter(function() {
-                    const match = $(this).find(`td:nth-child(${filterBy === 'id' ? 1 : filterBy === 'firstname' ? 2 : filterBy === 'lastname' ? 3 : 4})`)
-                        .text().toLowerCase().indexOf(value) > -1;
-                    $(this).toggle(match);
-                    if (match) isMatch = true;
-                });
+			$('#searchInput').on('keyup', function() {
+				const filterBy = $('#filterBy').val();
+				const value = $(this).val().toLowerCase();
 
-                if (!isMatch && value !== '') {
-                    alert("Personnel doesn't exist.");
-                }
-            });
-        });
+				$('#personnelTableBody tr').filter(function() {
+					const match = $(this).find(`td:nth-child(${filterBy === 'id' ? 1 : filterBy === 'firstname' ? 2 : filterBy === 'lastname' ? 3 : 4})`)
+						.text().toLowerCase().indexOf(value) > -1;
+					$(this).toggle(match);
+				});
+			});
+		});
 
         function editPersonnel(id) {
             const row = document.getElementById('row-' + id);
