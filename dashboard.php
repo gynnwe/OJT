@@ -39,19 +39,120 @@ if (isset($_SESSION['user_id'])) {
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
-<head>
+<html lang="en"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ICTEMMS</title>
-    
-    <!-- Bootstrap CSS -->
+	<style>
+		.modal-content {
+			background-color: #ffffff;
+			border-radius: 24px !important;
+			box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1) !important;
+			border: none !important;
+			padding: 15px;
+			max-width: 400px;
+			margin-left: 80px;
+			margin-top: 80px;
+		}
+
+		.modal-header {
+			border-bottom: none;
+			margin-top: -15px;
+		}
+
+		.modal-header h5 {
+			color: #3A3A3A;
+			font-weight: bold;
+			font-size: 13px;
+			padding-top: 4px;
+		}
+		
+		.section-divider {
+			border: none;
+			height: 1px;
+			background-color: #ddd;
+			margin-top: 5px;
+			margin-bottom: 10px;
+		}
+
+		.form-group {
+			display: flex;
+			align-items: center;
+			gap: 15px;
+			margin-bottom: 5px;
+		}
+
+		.form-group label {
+			font-size: 13px;
+			width: 300px;
+			padding-top: 5px;
+		}
+
+		.form-control {
+			height: 33px !important;
+			border: 2px solid #646464;
+			border-radius: 14px !important;
+			color: #646464 !important;
+			font-size: 12px !important;
+		}
+
+		.modal-body button[type="submit"] {
+			width: 130px;
+			height: 33px;
+			background-color: #a81519;
+			color: white;
+			font-weight: bold;
+			font-size: 12px;
+			border: none;
+			border-radius: 14px;
+			margin-top: 10px;
+			margin-left: 110px;
+		}
+
+		.modal-body button[type="submit"]:hover {
+			background-color: #E3595C;
+		}
+		
+		.password-section {
+			margin-top: 15px;
+		}
+
+		.password-section small {
+			font-size: 12px;
+			color: #646464;
+		}
+
+		#password-strength {
+			font-size: 12px;
+			margin-top: 5px;
+			margin-left: 165px;
+		}
+		
+		.form-group #repeat_password, .form-group label[for="repeat_password"] {
+			margin-top: 15px;
+		}
+		
+		#alert-message {
+			border-radius: 14px;
+			font-size: 12px;
+			padding: 10px;
+			margin-bottom: 15px;
+		}
+
+		.alert-success {
+			background-color: #d4edda;
+			border-color: #c3e6cb;
+			color: #155724;
+		}
+
+		.alert-danger {
+			background-color: #f8d7da;
+			border-color: #f5c6cb;
+			color: #721c24;
+		}
+	</style>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    
-    <!-- Material Icons -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" />
-    
-    <!-- Custom CSS -->
     <link rel="stylesheet" href="styles.css">
 </head>
 <body class="dashboard">
@@ -82,7 +183,7 @@ if (isset($_SESSION['user_id'])) {
 					</button>
 				</div>
 				<div class="modal-body">
-					<div id="alert-message" class="alert" style="display: none; margin-bottom: 15px;"></div>
+					<div id="alert-message" class="alert" style="display: none; margin-bottom: 15px; padding: 2px; text-align: center;"></div>
 					<form id="updateProfileForm" method="POST" action="profile.php">
 						<div class="form-group">
 							<label for="email">Email:</label>
@@ -106,9 +207,11 @@ if (isset($_SESSION['user_id'])) {
 							<div class="form-group">
 								<label for="new_password">New Password:</label>
 								<input type="password" class="form-control" id="new_password" name="new_password">
-								<small class="form-text text-muted">Password must be at least 8 characters long with at least 1 uppercase letter, number and symbol.</small>
+							</div>
+							<div class="password-texts">
 								<div id="password-strength" class="mt-2"></div>
 							</div>
+							<small class="form-text text-muted">Password must be at least 8 characters long with at least 1 uppercase letter, number and symbol.</small>
 							<div class="form-group">
 								<label for="repeat_password">Repeat New Password:</label>
 								<input type="password" class="form-control" id="repeat_password" name="repeat_password">
@@ -148,7 +251,6 @@ if (isset($_SESSION['user_id'])) {
             </ul>
         </div>
 
-        <!-- Main Content Area -->
         <div class="main-content">
             <iframe id="content-frame" class="content-frame" src="dashboard-content.php"></iframe>
 			
@@ -160,29 +262,30 @@ if (isset($_SESSION['user_id'])) {
 			integrity="sha384-UG8ao2jwOWB7/oDdObZc6ItJmwUkR/PfMyt9Qs5AwX7PsnYn1CRKCTWyncPTWvaS" 
 			crossorigin="anonymous"></script>
 
-	<!-- Bootstrap 4 JavaScript -->
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
 
 
     <script>
-	document.addEventListener('DOMContentLoaded', function () {
-		// Password strength validation function
-		function validatePassword(password) {
-			const minLength = password.length >= 8;
-			const hasUpperCase = /[A-Z]/.test(password);
-			const hasNumber = /[0-9]/.test(password);
-			const hasSymbol = /[!@#$%^&*(),.?":{}|<>]/.test(password);
-			
-			return {
-				valid: minLength && hasUpperCase && hasNumber && hasSymbol,
-				errors: {
-					length: !minLength,
-					uppercase: !hasUpperCase,
-					number: !hasNumber,
-					symbol: !hasSymbol
-				}
-			};
-		}
+		
+		
+		document.addEventListener('DOMContentLoaded', function () {
+			// Password strength validation function
+			function validatePassword(password) {
+				const minLength = password.length >= 8;
+				const hasUpperCase = /[A-Z]/.test(password);
+				const hasNumber = /[0-9]/.test(password);
+				const hasSymbol = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+				return {
+					valid: minLength && hasUpperCase && hasNumber && hasSymbol,
+					errors: {
+						length: !minLength,
+						uppercase: !hasUpperCase,
+						number: !hasNumber,
+						symbol: !hasSymbol
+					}
+				};
+			}
 
 		// Update password strength indicator
 		$('#new_password').on('input', function() {
@@ -193,10 +296,10 @@ if (isset($_SESSION['user_id'])) {
 			let strengthHtml = '';
 			if (password) {
 				strengthHtml += '<div class="password-requirements">';
-				strengthHtml += `<div class="${validation.errors.length ? 'text-danger' : 'text-success'}">�${validation.errors.length ? '✗' : '✓'} 8+ characters</div>`;
-				strengthHtml += `<div class="${validation.errors.uppercase ? 'text-danger' : 'text-success'}">�${validation.errors.uppercase ? '✗' : '✓'} Uppercase letter</div>`;
-				strengthHtml += `<div class="${validation.errors.number ? 'text-danger' : 'text-success'}">�${validation.errors.number ? '✗' : '✓'} Number</div>`;
-				strengthHtml += `<div class="${validation.errors.symbol ? 'text-danger' : 'text-success'}">�${validation.errors.symbol ? '✗' : '✓'} Symbol</div>`;
+				strengthHtml += `<div class="${validation.errors.length ? 'text-danger' : 'text-success'}">•${validation.errors.length ? '✗' : '✓'} 8+ characters</div>`;
+				strengthHtml += `<div class="${validation.errors.uppercase ? 'text-danger' : 'text-success'}">•${validation.errors.uppercase ? '✗' : '✓'} Uppercase letter</div>`;
+				strengthHtml += `<div class="${validation.errors.number ? 'text-danger' : 'text-success'}">•${validation.errors.number ? '✗' : '✓'} Number</div>`;
+				strengthHtml += `<div class="${validation.errors.symbol ? 'text-danger' : 'text-success'}">•${validation.errors.symbol ? '✗' : '✓'} Symbol</div>`;
 				strengthHtml += '</div>';
 			}
 			strengthDiv.html(strengthHtml);
@@ -352,6 +455,26 @@ if (isset($_SESSION['user_id'])) {
             window.location.href = 'logout.php';
         }
     }
+		
+		
+	// Add this inside your DOMContentLoaded event listener
+	$('#new_password').on('input', function() {
+		const password = $(this).val().trim();
+		if (password.length > 0) {
+			// Show repeat password field and adjust modal margin
+			$('.form-group label[for="repeat_password"], .form-group #repeat_password').show();
+			$('.modal-content').css('margin-top', '30px');
+		} else {
+			// Hide repeat password field and reset modal margin
+			$('.form-group label[for="repeat_password"], .form-group #repeat_password').hide();
+			$('.modal-content').css('margin-top', '80px');
+		}
+	});
+
+	// Add this when the document loads to initially hide the repeat password field
+	$(document).ready(function() {
+		$('.form-group label[for="repeat_password"], .form-group #repeat_password').hide();
+	});
     </script>
 </body>
 </html>
