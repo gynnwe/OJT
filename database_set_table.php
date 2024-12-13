@@ -24,7 +24,8 @@ try {
 		lastname VARCHAR(25) NOT NULL,
         username VARCHAR(10) NOT NULL,
         password VARCHAR(60) NOT NULL,
-		role ENUM('Admin', 'Assistant') NOT NULL
+		role ENUM('Admin', 'Assistant') NOT NULL,
+        deleted_id TINYINT(1) NOT NULL DEFAULT 0
     )";
 	
     $conn->exec($sql);
@@ -36,21 +37,31 @@ try {
     $defaultLastname = 'Admin';
     $defaultUsername = 'superadmin';
     $defaultPassword = password_hash('yourdefaultpassword', PASSWORD_DEFAULT); // Change 'yourdefaultpassword' as needed
-	$defaultRole = 'Admin';
+    $defaultRole = 'Admin';
 
-    $sql = "INSERT INTO user (email, firstname, lastname, username, password, role) 
-        VALUES (:email, :firstname, :lastname, :username, :password, :role)";
-
-    $stmt = $conn->prepare($sql);
+    // Check if admin already exists
+    $checkAdmin = "SELECT COUNT(*) FROM user WHERE email = :email";
+    $stmt = $conn->prepare($checkAdmin);
     $stmt->bindParam(':email', $defaultEmail);
-    $stmt->bindParam(':firstname', $defaultFirstname);
-    $stmt->bindParam(':lastname', $defaultLastname);
-    $stmt->bindParam(':username', $defaultUsername);
-    $stmt->bindParam(':password', $defaultPassword);
-    $stmt->bindParam(':role', $defaultRole);
     $stmt->execute();
+    
+    if ($stmt->fetchColumn() == 0) {
+        $sql = "INSERT INTO user (email, firstname, lastname, username, password, role, deleted_id) 
+            VALUES (:email, :firstname, :lastname, :username, :password, :role, 0)";
 
-    echo "Default admin created successfully<br>";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':email', $defaultEmail);
+        $stmt->bindParam(':firstname', $defaultFirstname);
+        $stmt->bindParam(':lastname', $defaultLastname);
+        $stmt->bindParam(':username', $defaultUsername);
+        $stmt->bindParam(':password', $defaultPassword);
+        $stmt->bindParam(':role', $defaultRole);
+        $stmt->execute();
+
+        echo "Default admin created successfully<br>";
+    } else {
+        echo "Default admin already exists<br>";
+    }
 
 // --- Create Location Table ---
 $sql = "CREATE TABLE IF NOT EXISTS location(

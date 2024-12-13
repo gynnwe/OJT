@@ -16,45 +16,105 @@ try {
 
     // Handle form submission
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        $email = $_POST['email'];
-        $firstname = $_POST['firstname'];
-        $lastname = $_POST['lastname'];
-        $user = $_POST['username'];
-        $pass = $_POST['psw'];
-        $pass_repeat = $_POST['psw-repeat'];
-        $role = 'Assistant';
+        if (isset($_POST['deleted_id'])) {
+            $delete_id = $_POST['deleted_id'];
+            $softDeleteSQL = "UPDATE user SET deleted_id = 1 WHERE admin_id = :deleted_id AND role != 'Admin'";
+            $stmt = $conn->prepare($softDeleteSQL);
+            $stmt->bindParam(':deleted_id', $delete_id);
+            $stmt->execute();
+            echo "Success";
+            exit;
+        }
 
-        if ($pass !== $pass_repeat) {
-            $error = "Passwords do not match.";
-        } else {
-            $hashed_password = password_hash($pass, PASSWORD_DEFAULT);
+        if (isset($_POST['email'])) {
+            $email = $_POST['email'];
+            $firstname = $_POST['firstname'];
+            $lastname = $_POST['lastname'];
+            $user = $_POST['username'];
+            $pass = $_POST['psw'];
+            $pass_repeat = $_POST['psw-repeat'];
+            $role = 'Assistant';
+            $user_id = isset($_POST['user_id']) ? $_POST['user_id'] : null;
 
-            $sql = "INSERT INTO user (email, firstname, lastname, username, password, role) 
-                   VALUES (:email, :firstname, :lastname, :username, :password, :role)";
-            $stmt = $conn->prepare($sql);
-
-            $stmt->bindParam(':email', $email);
-            $stmt->bindParam(':firstname', $firstname);
-            $stmt->bindParam(':lastname', $lastname);
-            $stmt->bindParam(':username', $user);
-            $stmt->bindParam(':password', $hashed_password);
-            $stmt->bindParam(':role', $role);
-
-            if ($stmt->execute()) {
-                $_SESSION['message'] = "Registration successful!";
-                header("Location: " . $_SERVER['PHP_SELF']);
-                exit;
+            if ($pass !== $pass_repeat) {
+                $error = "Passwords do not match.";
             } else {
-                $error = "Error registering user.";
+                // Check if email already exists (excluding the current user if editing)
+                $checkSQL = "SELECT COUNT(*) FROM user WHERE email = :email AND deleted_id = 0 AND (:user_id IS NULL OR admin_id != :user_id)";
+                $stmt = $conn->prepare($checkSQL);
+                $stmt->bindParam(':email', $email);
+                $stmt->bindParam(':user_id', $user_id);
+                $stmt->execute();
+                $count = $stmt->fetchColumn();
+
+                if ($count > 0) {
+                    $error = "Email already exists.";
+                } else {
+                    if ($user_id) {
+                        // Update existing user
+                        if (!empty($pass)) {
+                            // If password is provided, update it too
+                            $hashed_password = password_hash($pass, PASSWORD_DEFAULT);
+                            $sql = "UPDATE user SET email = :email, firstname = :firstname, lastname = :lastname, 
+                                   username = :username, password = :password WHERE admin_id = :user_id";
+                        } else {
+                            // If no password provided, keep the existing one
+                            $sql = "UPDATE user SET email = :email, firstname = :firstname, lastname = :lastname, 
+                                   username = :username WHERE admin_id = :user_id";
+                        }
+                        
+                        $stmt = $conn->prepare($sql);
+                        $stmt->bindParam(':email', $email);
+                        $stmt->bindParam(':firstname', $firstname);
+                        $stmt->bindParam(':lastname', $lastname);
+                        $stmt->bindParam(':username', $user);
+                        $stmt->bindParam(':user_id', $user_id);
+                        if (!empty($pass)) {
+                            $stmt->bindParam(':password', $hashed_password);
+                        }
+                    } else {
+                        // Insert new user
+                        $hashed_password = password_hash($pass, PASSWORD_DEFAULT);
+                        $sql = "INSERT INTO user (email, firstname, lastname, username, password, role, deleted_id) 
+                               VALUES (:email, :firstname, :lastname, :username, :password, :role, 0)";
+                        $stmt = $conn->prepare($sql);
+                        $stmt->bindParam(':email', $email);
+                        $stmt->bindParam(':firstname', $firstname);
+                        $stmt->bindParam(':lastname', $lastname);
+                        $stmt->bindParam(':username', $user);
+                        $stmt->bindParam(':password', $hashed_password);
+                        $stmt->bindParam(':role', $role);
+                    }
+
+                    if ($stmt->execute()) {
+                        $_SESSION['message'] = $user_id ? "User updated successfully!" : "Registration successful!";
+                        header("Location: " . $_SERVER['PHP_SELF']);
+                        exit;
+                    } else {
+                        $error = "Error " . ($user_id ? "updating" : "registering") . " user.";
+                    }
+                }
             }
         }
     }
 
     // Fetch users
-    $sql = "SELECT * FROM user";
+    $sql = "SELECT * FROM user WHERE deleted_id = 0 OR deleted_id IS NULL 
+            ORDER BY CASE WHEN role = 'Admin' THEN 0 ELSE 1 END, admin_id ASC";
     $stmt = $conn->prepare($sql);
     $stmt->execute();
     $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Debug information
+    if (empty($users)) {
+        echo "<!-- Debug: No users found in query -->";
+        // Check if any users exist at all
+        $checkSql = "SELECT COUNT(*) FROM user";
+        $checkStmt = $conn->prepare($checkSql);
+        $checkStmt->execute();
+        $totalUsers = $checkStmt->fetchColumn();
+        echo "<!-- Debug: Total users in database: " . $totalUsers . " -->";
+    }
 
 } catch(PDOException $e) {
     $error = "Error: " . $e->getMessage();
@@ -66,7 +126,6 @@ if (isset($_SESSION['message'])) {
     unset($_SESSION['message']);
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -354,6 +413,46 @@ if (isset($_SESSION['message'])) {
 
 		.page-link {
 			color: #474747 !important; }
+		
+		.table th, .table td {
+			vertical-align: middle !important;
+		}
+		
+		.table th:nth-child(1), /* Email column */
+		.table td:nth-child(1) {
+			max-width: 200px;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
+		
+		.table th:nth-child(2), /* First name column */
+		.table td:nth-child(2),
+		.table th:nth-child(3), /* Last name column */
+		.table td:nth-child(3) {
+			width: 20%;
+		}
+		
+		.table th:nth-child(4), /* Username column */
+		.table td:nth-child(4) {
+			width: 15%;
+		}
+		
+		.table th:nth-child(5), /* Actions column */
+		.table td:nth-child(5) {
+			width: 100px;
+			text-align: center;
+		}
+
+		.action-buttons {
+			white-space: nowrap;
+		}
+
+		.action-buttons img {
+			width: 20px;
+			cursor: pointer;
+			margin: 0 3px;
+		}
 	</style>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
@@ -369,24 +468,21 @@ if (isset($_SESSION['message'])) {
             <form method="POST">
                 <h1>Register a User</h1>
                 <hr class="section-divider1">
-
+                <input type="hidden" name="user_id" id="user_id">
                 <input type="email" placeholder="Enter e-mail" name="email" id="email" required>
                 <input type="text" placeholder="Enter your first name" name="firstname" id="firstname" required>
                 <input type="text" placeholder="Enter your last name" name="lastname" id="lastname" required>
-                <input type="text" placeholder="Enter username" name="username" id="username" required>
-
+                <input type="text" placeholder="Enter your username" name="username" id="username" required>
                 <div class="password-container">
-                    <input type="password" placeholder="Enter Password" name="psw" id="psw" required>
+                    <input type="password" placeholder="Enter password" name="psw" id="psw" required>
                     <i class="bi bi-eye password-toggle" id="togglePassword"></i>
                 </div>
-
                 <div class="password-container">
-                    <input type="password" placeholder="Repeat Password" name="psw-repeat" id="psw-repeat" required>
+                    <input type="password" placeholder="Repeat password" name="psw-repeat" id="psw-repeat" required>
                     <i class="bi bi-eye password-toggle" id="toggleRepeatPassword"></i>
                 </div>
                 <hr class="section-divider2">
-
-                <button type="submit" class="registerbtn">Register</button>
+                <button type="submit" class="registerbtn" id="submitBtn">Register</button>
             </form>
         </div>
 	
@@ -395,10 +491,10 @@ if (isset($_SESSION['message'])) {
             <hr class="section-divider3">
             <div class="form-inline">
                 <select id="filterBy" class="form-control mr-2">
-                    <option value="id">Email</option>
-                    <option value="building">First Name</option>
-                    <option value="office">Last Name</option>
-                    <option value="room">Username</option>
+                    <option value="email">Email</option>
+                    <option value="firstname">First Name</option>
+                    <option value="lastname">Last Name</option>
+                    <option value="username">Username</option>
                 </select>
                 <input type="text" id="searchInput" class="form-control" placeholder="Search...">
             </div>
@@ -424,7 +520,6 @@ if (isset($_SESSION['message'])) {
 				// Slice the users array to get only the entries for the current page
 				$currentUsers = array_slice($users, $startIndex, $maxRows);
 				?>
-
 				<table class="table table-striped">
 					<thead>
 						<tr>
@@ -432,31 +527,44 @@ if (isset($_SESSION['message'])) {
 							<th>First Name</th>
 							<th>Last Name</th>
 							<th>Username</th>
+							<th>Actions</th>
 						</tr>
 					</thead>
 					<tbody id="locationTableBody">
 						<?php 
 						if ($totalEntries === 0): ?>
-							<tr class="no-users"><td colspan="4">No users available.</td></tr>
+							<tr class="no-users"><td colspan="5">No users available.</td></tr>
 							<?php 
 							// Add empty rows to make a total of 7
 							for ($j = 1; $j < $maxRows; $j++): ?>
-								<tr class="empty-row"><td colspan="4"></td></tr>
+								<tr class="empty-row"><td colspan="5"></td></tr>
 							<?php endfor; 
 						else:
 							// Display users for the current page
 							foreach ($currentUsers as $user): ?>
-								<tr id="row-<?php echo htmlspecialchars($user['email']); ?>">
-									<td><?php echo htmlspecialchars($user['email']); ?></td>
+								<tr id="row-<?php echo htmlspecialchars($user['admin_id']); ?>">
+									<td title="<?php echo htmlspecialchars($user['email']); ?>"><?php echo htmlspecialchars($user['email']); ?></td>
 									<td><?php echo htmlspecialchars($user['firstname']); ?></td>
 									<td><?php echo htmlspecialchars($user['lastname']); ?></td>
 									<td><?php echo htmlspecialchars($user['username']); ?></td>
+									<td class="action-buttons">
+										<a href="#" onclick="editUser(<?php echo $user['admin_id']; ?>, '<?php echo htmlspecialchars($user['email']); ?>', 
+                                           '<?php echo htmlspecialchars($user['firstname']); ?>', '<?php echo htmlspecialchars($user['lastname']); ?>', 
+                                           '<?php echo htmlspecialchars($user['username']); ?>')">
+                                            <img src="edit.png" alt="Edit">
+                                        </a>
+                                        <?php if ($user['role'] === 'Assistant'): ?>
+                                            <a href="#" onclick="softDelete(<?php echo $user['admin_id']; ?>)">
+                                                <img src="delete.png" alt="Delete">
+                                            </a>
+                                        <?php endif; ?>
+									</td>
 								</tr>
 							<?php endforeach;
 
 							// Add empty rows if there are fewer than 7 entries on this page
 							for ($j = count($currentUsers); $j < $maxRows; $j++): ?>
-								<tr class="empty-row"><td colspan="4"></td></tr> <!-- Empty row with class -->
+								<tr class="empty-row"><td colspan="5"></td></tr>
 							<?php endfor;
 						endif; ?>
 					</tbody>
@@ -469,7 +577,6 @@ if (isset($_SESSION['message'])) {
 						<?php else: ?>
 							<li class="page-item disabled"><span class="page-link">Previous</span></li>
 						<?php endif; ?>
-
 						<?php if ($currentPage < $totalPages): ?>
 							<li class="page-item"><a class="page-link" href="?page=<?php echo $currentPage + 1; ?>">Next</a></li>
 						<?php else: ?>
@@ -494,7 +601,99 @@ if (isset($_SESSION['message'])) {
 	                    $(this).remove();
 	                });
 	            }
+
+                // Search functionality
+                $('#searchInput').on('keyup', function() {
+                    const searchValue = $(this).val().toLowerCase();
+                    const filterBy = $('#filterBy').val();
+                    
+                    $('#locationTableBody tr:not(.empty-row)').each(function() {
+                        const row = $(this);
+                        let text = '';
+                        
+                        // Get text from the appropriate column based on filter
+                        switch(filterBy) {
+                            case 'email':
+                                text = row.find('td:eq(0)').text();
+                                break;
+                            case 'firstname':
+                                text = row.find('td:eq(1)').text();
+                                break;
+                            case 'lastname':
+                                text = row.find('td:eq(2)').text();
+                                break;
+                            case 'username':
+                                text = row.find('td:eq(3)').text();
+                                break;
+                        }
+                        
+                        // Show/hide row based on search match
+                        if (text.toLowerCase().includes(searchValue)) {
+                            row.show();
+                        } else {
+                            row.hide();
+                        }
+                    });
+                });
+
+                // Trigger search when filter changes
+                $('#filterBy').on('change', function() {
+                    $('#searchInput').trigger('keyup');
+                });
 	        });
-	 </script>
+
+	        function editUser(id, email, firstname, lastname, username) {
+	            document.getElementById('user_id').value = id;
+	            document.getElementById('email').value = email;
+	            document.getElementById('firstname').value = firstname;
+	            document.getElementById('lastname').value = lastname;
+	            document.getElementById('username').value = username;
+	            
+	            // Make password fields optional when editing
+	            document.getElementById('psw').removeAttribute('required');
+	            document.getElementById('psw-repeat').removeAttribute('required');
+	            
+	            // Change button text
+	            document.getElementById('submitBtn').textContent = 'Update User';
+	            
+	            // Scroll to form
+	            document.querySelector('.add-edit-card').scrollIntoView({ behavior: 'smooth' });
+	        }
+
+	        function softDelete(id) {
+	            if (confirm('Are you sure you want to delete this user?')) {
+	                $.ajax({
+	                    url: 'add_users.php',
+	                    type: 'POST',
+	                    data: { deleted_id: id },
+	                    success: function(response) {
+	                        if (response.trim() === "Success") {
+	                            document.getElementById('row-' + id).style.display = 'none';
+	                        } else {
+	                            alert('Failed to delete the user.');
+	                        }
+	                    }
+	                });
+	            }
+	        }
+
+	        // Reset form when adding new user
+	        function resetForm() {
+	            document.getElementById('user_id').value = '';
+	            document.getElementById('psw').setAttribute('required', '');
+	            document.getElementById('psw-repeat').setAttribute('required', '');
+	            document.getElementById('submitBtn').textContent = 'Register';
+	        }
+
+	        // Add reset when clicking Register button in nav
+	        document.addEventListener('DOMContentLoaded', function() {
+	            const navLinks = document.querySelectorAll('nav a');
+	            navLinks.forEach(link => {
+	                if (link.textContent.includes('Register')) {
+	                    link.addEventListener('click', resetForm);
+	                }
+	            });
+	        });
+	    </script>
 </body>
 </html>
