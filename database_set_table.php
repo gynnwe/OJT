@@ -1,7 +1,7 @@
 <?php
 $servername = "localhost";
-$username = "root"; 
-$password = ""; 
+$username = "root";
+$password = "";
 
 try {
     // Create connection
@@ -27,7 +27,7 @@ try {
 		role ENUM('Admin', 'Assistant') NOT NULL,
         deleted_id TINYINT(1) NOT NULL DEFAULT 0
     )";
-	
+
     $conn->exec($sql);
     echo "User Table created successfully<br>";
 
@@ -44,7 +44,7 @@ try {
     $stmt = $conn->prepare($checkAdmin);
     $stmt->bindParam(':email', $defaultEmail);
     $stmt->execute();
-    
+
     if ($stmt->fetchColumn() == 0) {
         $sql = "INSERT INTO user (email, firstname, lastname, username, password, role, deleted_id) 
             VALUES (:email, :firstname, :lastname, :username, :password, :role, 0)";
@@ -63,42 +63,42 @@ try {
         echo "Default admin already exists<br>";
     }
 
-// --- Create Location Table ---
-$sql = "CREATE TABLE IF NOT EXISTS location(
+    // --- Create Location Table ---
+    $sql = "CREATE TABLE IF NOT EXISTS location(
     location_id INT(7) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     building VARCHAR(50) NOT NULL,
     office VARCHAR(50) NOT NULL,
     room VARCHAR(50) NOT NULL,
     deleted_id TINYINT(1) NOT NULL DEFAULT 0
 )";
-$conn->exec($sql);
-echo "Location Table created successfully<br>";
+    $conn->exec($sql);
+    echo "Location Table created successfully<br>";
 
-	
-	// --- Create Equipment Type Table ---
+
+    // --- Create Equipment Type Table ---
     $sql = "CREATE TABLE IF NOT EXISTS equipment_type (
         equip_type_id INT(7) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 		equip_type_name VARCHAR(15) NOT NULL,
 		deleted_id TINYINT(1) NOT NULL DEFAULT 0
-    )";	
-	
+    )";
+
     $conn->exec($sql);
     echo "Equipment Type Table created successfully<br>";
-	
-	// --- Create Model Table ---
+
+    // --- Create Model Table ---
     $sql = "CREATE TABLE IF NOT EXISTS model (
         model_id INT(7) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 		equip_type_id INT(7) UNSIGNED NOT NULL,
 		model_name VARCHAR(20) NOT NULL,
 		deleted_id TINYINT(1) NOT NULL DEFAULT 0,
 		FOREIGN KEY (equip_type_id) REFERENCES equipment_type(equip_type_id)
-    )";	
-	
+    )";
+
     $conn->exec($sql);
     echo "Model Table created successfully<br>";
-	
+
     // --- Create Equipment Table ---
-$sql = "CREATE TABLE IF NOT EXISTS equipment (
+    $sql = "CREATE TABLE IF NOT EXISTS equipment (
     equipment_id INT(7) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     location_id INT(7) UNSIGNED NOT NULL,
     equip_type_id INT(7) UNSIGNED NOT NULL,
@@ -113,11 +113,11 @@ $sql = "CREATE TABLE IF NOT EXISTS equipment (
     FOREIGN KEY (model_id) REFERENCES model(model_id)
 )";
 
-$conn->exec($sql);
-echo "Equipment Table created successfully<br>";
+    $conn->exec($sql);
+    echo "Equipment Table created successfully<br>";
 
 
-	// --- Create Location Details Table ---
+    // --- Create Location Details Table ---
     $sql = "CREATE TABLE IF NOT EXISTS location_details (
         id INT(7) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
         location_id INT(7) UNSIGNED NOT NULL,
@@ -125,33 +125,33 @@ echo "Equipment Table created successfully<br>";
 		date DATETIME NOT NULL,
 		FOREIGN KEY (location_id) REFERENCES location(location_id),
 		FOREIGN KEY (equipment_id) REFERENCES equipment(equipment_id)
-    )";	
-	
+    )";
+
     $conn->exec($sql);
     echo "Location Details Table created successfully<br>";
-	
-	// --- Create Personnel Table ---
-	$sql = "CREATE TABLE IF NOT EXISTS personnel (
+
+    // --- Create Personnel Table ---
+    $sql = "CREATE TABLE IF NOT EXISTS personnel (
         personnel_id INT(7) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
         firstname VARCHAR(25) NOT NULL,
 		lastname VARCHAR(25) NOT NULL,
 		office VARCHAR(50) NOT NULL,
 		deleted_id TINYINT(1) NOT NULL DEFAULT 0
     )";
-	
-	$conn->exec($sql);
+
+    $conn->exec($sql);
     echo "Personnel Table created successfully<br>";
-	
-	// --- Create Remarks Table ---
+
+    // --- Create Remarks Table ---
     $sql = "CREATE TABLE IF NOT EXISTS remarks (
         remarks_id INT(7) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 		remarks_name VARCHAR(20) NOT NULL,
 		deleted_id TINYINT(1) NOT NULL DEFAULT 0
-    )";	
-	
+    )";
+
     $conn->exec($sql);
     echo "Remarks Table created successfully<br>";
-	
+
     // --- ICT Maintenance Logs Table ---
     $sql = "CREATE TABLE IF NOT EXISTS ict_maintenance_logs (
         jo_number VARCHAR(100) PRIMARY KEY,
@@ -164,23 +164,25 @@ echo "Equipment Table created successfully<br>";
 		FOREIGN KEY (equipment_id) REFERENCES equipment(equipment_id),		
 		FOREIGN KEY (remarks_id) REFERENCES remarks(remarks_id)		
     )";
-	
+
     $conn->exec($sql);
     echo "ICT Maintenance Logs Table created successfully<br>";
 
-	// --- Create Maintenance Plan ICT Table ---
-	$sql = "CREATE TABLE IF NOT EXISTS maintenance_plan (
+    // --- Create Maintenance Plan ICT Table ---
+    $sql = "CREATE TABLE IF NOT EXISTS maintenance_plan (
         id INT(7) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
         admin_id INT(7) UNSIGNED NOT NULL,
-		year YEAR NOT NULL,
-		date_prepared DATE NOT NULL,
+        year YEAR NOT NULL,
+        date_prepared DATE NOT NULL,
         count INT(5) NOT NULL,
-		FOREIGN KEY (admin_id) REFERENCES user(admin_id)
+        status ENUM('pending', 'submitted') NOT NULL DEFAULT 'pending',
+        FOREIGN KEY (admin_id) REFERENCES user(admin_id)
     )";
-	
-	$conn->exec($sql);
+
+
+    $conn->exec($sql);
     echo "Maintenance Plan Table created successfully<br>";
-	
+
     // --- Create Equipment Baseline Table ---
     $sql = "CREATE TABLE IF NOT EXISTS equipment_baseline (
         id INT(7) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -192,12 +194,12 @@ echo "Equipment Table created successfully<br>";
         FOREIGN KEY (equipment_id) REFERENCES equipment(equipment_id),
 		FOREIGN KEY (maintenance_plan_id) REFERENCES maintenance_plan(id)
     )";
-	
+
     $conn->exec($sql);
     echo "Equipment Baseline Table created successfully<br>";
-	
-	// --- Create Plan Details Table ---
-	$sql = "CREATE TABLE IF NOT EXISTS plan_details (
+
+    // --- Create Plan Details Table ---
+    $sql = "CREATE TABLE IF NOT EXISTS plan_details (
         id INT(7) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
         maintenance_plan_id INT(7) UNSIGNED NOT NULL,
         month ENUM('January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December') NOT NULL,
@@ -208,13 +210,11 @@ echo "Equipment Table created successfully<br>";
         FOREIGN KEY (maintenance_plan_id) REFERENCES maintenance_plan(id),
         FOREIGN KEY (equip_type_id) REFERENCES equipment_type(equip_type_id)
     )";
-	
-	$conn->exec($sql);
+
+    $conn->exec($sql);
     echo "Plan Details Table created successfully<br>";
-	
 } catch (PDOException $e) {
     echo "Error: " . $e->getMessage();
 }
 
 $conn = null;
-?>
