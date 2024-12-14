@@ -22,6 +22,7 @@ try {
             $stmt = $conn->prepare($softDeleteSQL);
             $stmt->bindParam(':deleted_id', $delete_id);
             $stmt->execute();
+            $stmt->execute();
             echo "Success";
             exit;
         }
@@ -125,6 +126,7 @@ if (isset($_SESSION['message'])) {
     $message = $_SESSION['message'];
     unset($_SESSION['message']);
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -328,8 +330,7 @@ if (isset($_SESSION['message'])) {
 			border: none !important; 
 			/*height: 38.35px;*/
 			display: inline-block;
-			padding: 7px 10px;
-			padding-top: 7.5px;
+			padding: 11px 10px !important;
 		}
 
 		.table td img {
@@ -377,7 +378,8 @@ if (isset($_SESSION['message'])) {
 			border-radius: 14px; 
 			display: block;
 			width: 100%;
-			margin-top: 5px;
+			margin-top: 3.5px;
+			height: 42px;
 		}
 
 		.table tbody tr:hover {
@@ -404,11 +406,11 @@ if (isset($_SESSION['message'])) {
 		.pagination .page-link {
 			border: none; 
 			font-size: 0.8rem; 
-			padding: 4px 8px; 
+			padding: 2px 8px; 
 		}
 		
 		.pagination .page-link:hover {
-			color: #b86e63;
+			color: #b86e63 !important;
 		}
 
 		.page-link {
@@ -455,7 +457,7 @@ if (isset($_SESSION['message'])) {
 		}
 	</style>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </head>
@@ -548,16 +550,20 @@ if (isset($_SESSION['message'])) {
 									<td><?php echo htmlspecialchars($user['lastname']); ?></td>
 									<td><?php echo htmlspecialchars($user['username']); ?></td>
 									<td class="action-buttons">
-										<a href="#" onclick="editUser(<?php echo $user['admin_id']; ?>, '<?php echo htmlspecialchars($user['email']); ?>', 
-                                           '<?php echo htmlspecialchars($user['firstname']); ?>', '<?php echo htmlspecialchars($user['lastname']); ?>', 
-                                           '<?php echo htmlspecialchars($user['username']); ?>')">
-                                            <img src="edit.png" alt="Edit">
-                                        </a>
-                                        <?php if ($user['role'] === 'Assistant'): ?>
-                                            <a href="#" onclick="softDelete(<?php echo $user['admin_id']; ?>)">
-                                                <img src="delete.png" alt="Delete">
-                                            </a>
-                                        <?php endif; ?>
+										<a href="#" onclick="editUser(<?php echo $user['admin_id']; ?>, '<?php 		echo htmlspecialchars($user['email']); ?>', 
+										   '<?php echo htmlspecialchars($user['firstname']); ?>', '<?php echo htmlspecialchars($user['lastname']); ?>', 
+										   '<?php echo htmlspecialchars($user['username']); ?>')">
+											<img src="edit.png" alt="Edit">
+										</a>
+										<?php if ($user === reset($currentUsers) && $user['role'] === 'Admin'): ?>
+											<a href="#" style="opacity: 0.35; pointer-events: none;">
+												<img src="delete.png" alt="Delete">
+											</a>
+										<?php elseif ($user['role'] === 'Assistant'): ?>
+											<a href="#" onclick="softDelete(<?php echo $user['admin_id']; ?>)">
+												<img src="delete.png" alt="Delete">
+											</a>
+										<?php endif; ?>
 									</td>
 								</tr>
 							<?php endforeach;
@@ -694,6 +700,7 @@ if (isset($_SESSION['message'])) {
 	                }
 	            });
 	        });
+
 	    </script>
 </body>
 </html>
