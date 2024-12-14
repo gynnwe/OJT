@@ -669,7 +669,7 @@ if (isset($_SESSION['message'])) {
 					</button>
 				</div>
 				<div class="modal-body">
-					<p>Password must be at least 8 characters long with at least 1 uppercase letter, number, and symbol.</p>
+					<p>The password must meet the following criteria:</p>
 					<ul>
 						<li>8+ characters</li>
 						<li>Uppercase letter</li>
