@@ -89,249 +89,331 @@ try {
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.3/font/bootstrap-icons.min.css" rel="stylesheet">
-</head>
-<style>
-/* Styles for Equipment Maintenance Form */
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f8f9fa;
-    color: #333;
-    margin: 0;
-    padding: 0;
-}
 
-.container {
-    max-width: 1200px;
-    margin: 10px auto;
-    padding: 8px;
-    background-color: #fff;
-    box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-}
+    <style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #f7f7f7;
+        margin: 0;
+        padding: 0;
+        color: #333;
+    }
 
-h3 {
-    font-size: 1.1em;
-    color: #343a40;
-    margin-top: 8px;
-    margin-bottom: 8px;
-}
+    /* Container for the entire page */
+    .main-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 16px;
+    }
 
-label {
-    font-weight: bold;
-    margin-top: 4px;
-    font-size: 0.85em;
-}
+    /* Top section containing two side-by-side cards */
+    .top-section {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        margin-bottom: 24px;
+    }
 
-.form-control, .form-select {
-    margin-bottom: 4px;
-    padding: 5px;
-    border-radius: 4px;
-    border: 1px solid #ced4da;
-    font-size: 0.85em;
-}
+    .card-section {
+        flex: 1;
+        background: #fff;
+        padding: 16px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        min-width: 300px;
+    }
 
-.btn {
-    padding: 5px 12px;
-    border-radius: 4px;
-    font-weight: bold;
-    font-size: 0.85em;
-}
+    .left-card {
+        max-width: 400px;
+    }
 
-.btn-primary {
-    background-color: #b53236;
-    border: none;
-}
+    .right-card {
+        flex: 1.5;
+    }
 
-.btn-primary:hover {
-    background-color: #a12c30;
-}
+    /* Headings */
+    h3 {
+        font-size: 1.1em;
+        color: #343a40;
+        margin-bottom: 16px;
+        font-weight: bold;
+    }
 
-.btn-secondary {
-    background-color: #6c757d;
-    border: none;
-}
+    /* Form Labels */
+    label {
+        display: block;
+        font-weight: bold;
+        font-size: 0.85em;
+        margin-bottom: 4px;
+        color: #333;
+    }
 
-.btn-secondary:hover {
-    background-color: #5c636a;
-}
-
-.table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 6px;
-    font-size: 0.8em;
-}
-
-.table th, .table td {
-    border: 1px solid #dee2e6;
-    padding: 5px;
-    text-align: left;
-}
-
-.table th {
-    background-color: #e9ecef;
-    font-weight: bold;
-}
-
-#selected_equipment {
-    margin-top: 6px;
-    font-weight: bold;
-    color: #495057;
-    font-size: 0.85em;
-}
-
-button {
-    cursor: pointer;
-}
-
-/* Dropdown and input field styling */
-input[type="text"], input[type="date"], select {
-    width: 100%;
-    box-sizing: border-box;
-}
-
-/* For responsiveness */
-@media (max-width: 768px) {
-    .container {
+    /* Inputs and selects */
+    .form-control, .form-select, textarea {
+        font-size: 0.85em;
+        border-radius: 4px;
+        border: 1px solid #ced4da;
+        margin-bottom: 8px;
         padding: 6px;
     }
 
-    .btn {
+    textarea {
+        resize: vertical;
+    }
+
+    /* Buttons */
+    .btn-primary {
+        background-color: #b53236 !important;
+        border: none !important;
+    }
+
+    .btn-primary:hover {
+        background-color: #a12c30 !important;
+    }
+
+    .btn-secondary {
+        background-color: #6c757d !important;
+        border: none !important;
+    }
+
+    .btn-secondary:hover {
+        background-color: #5c636a !important;
+    }
+
+    .btn-select {
+        background-color: #fff;
+        border: 2px solid #b53236;
+        color: #b53236;
+        font-weight: bold;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 0.8em;
+        cursor: pointer;
+    }
+
+    .btn-select:hover {
+        background-color: #b53236;
+        color: #fff;
+    }
+
+    /* Selected Equipment label */
+    .selected-equipment-label {
+        font-weight: bold;
+        margin-bottom: 12px;
+        font-size: 0.9em;
+        color: #495057;
+    }
+
+    /* Tables */
+    .table {
         width: 100%;
-        margin-bottom: 4px;
+        border-collapse: collapse;
+        font-size: 0.85em;
     }
 
     .table th, .table td {
-        padding: 4px;
+        border: 1px solid #dee2e6;
+        padding: 8px;
+        vertical-align: middle;
     }
-}
-</style>
+
+    .table th {
+        background-color: #e9ecef;
+        font-weight: bold;
+        white-space: nowrap;
+    }
+
+    /* Equipment list within right card */
+    .equipment-list {
+        margin-top: 8px;
+    }
+
+    /* Maintenance Logs Section */
+    .maintenance-logs-section {
+        background: #fff;
+        padding: 16px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    @media (max-width: 992px) {
+        .top-section {
+            flex-direction: column;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .btn {
+            width: 100%;
+            margin-bottom: 8px;
+        }
+
+        .form-control, .form-select {
+            font-size: 0.9em;
+        }
+
+        .btn-select {
+            width: 100%;
+        }
+    }
+    </style>
+</head>
 <body>
-    <div class="container mt-5">
-        <!-- Filter Equipment by Type -->
-        <form method="GET" action="equipment_maintenance.php">
-            <label for="equipment_type_filter">Filter by Equipment Type:</label>
-            <select id="equipment_type_filter" name="equipment_type" class="form-select" onchange="this.form.submit()">
-                <option value="">All</option>
-                <?php foreach ($equipment_types as $type): ?>
-                    <option value="<?php echo htmlspecialchars($type['equip_type_id']); ?>" <?php echo ($type['equip_type_id'] == $selectedTypeId) ? 'selected' : ''; ?>>
-                        <?php echo htmlspecialchars($type['equip_type_name']); ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
+    <!-- PHP variables are assumed to be defined elsewhere:
+         $equipment_types, $selectedTypeId, $searchTerm,
+         $equipment, $remarks_options, $personnel_options, $maintenanceLogs -->
 
-            <!-- Search Filter -->
-            <label for="search_term" class="mt-3">Search by Equipment Name or Property Number:</label>
-            <div class="input-group mb-3">
-                <input type="text" id="search_term" name="search_term" class="form-control" placeholder="Enter keyword" value="<?php echo htmlspecialchars($searchTerm); ?>">
-                <button type="submit" class="btn btn-danger">Search</button>
+    <div class="main-container mt-4">
+        
+        <!-- Top Section: Left (Log Maintenance) and Right (Select Registered Equipment) -->
+        <div class="top-section">
+            <!-- Log Maintenance Form Card -->
+            <div class="card-section left-card">
+                <h3>Log Maintenance</h3>
+                <form action="maintenance_process.php" method="POST" onsubmit="incrementJobOrder()">
+                    <div class="mb-3">
+                        <label for="jo_number">Job Order:</label>
+                        <input type="text" name="jo_number" id="jo_number" class="form-control" required readonly>
+                    </div>
+
+                    <div id="selected_equipment" class="selected-equipment-label">Selected Equipments</div>
+
+                    <div class="mb-3">
+                        <label for="actions_taken">Actions Taken:</label>
+                        <textarea name="actions_taken" id="actions_taken" class="form-control" required maxlength="40" placeholder="Required"></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="remarks">Remark:</label>
+                        <select name="remarks" id="remarks" class="form-select" required>
+                            <?php foreach ($remarks_options as $remark): ?>
+                                <option value="<?php echo htmlspecialchars($remark['remarks_id']); ?>">
+                                    <?php echo htmlspecialchars($remark['remarks_name']); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="personnel">Personnel:</label>
+                        <select name="personnel_id" id="personnel" class="form-select" required>
+                            <?php if (!empty($personnel_options)): ?>
+                                <?php foreach ($personnel_options as $person): ?>
+                                    <option value="<?php echo htmlspecialchars($person['personnel_id']); ?>">
+                                        <?php echo htmlspecialchars($person['firstname'] . " " . $person['lastname'] . " - " . $person['office']); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <option value="">No personnel added.</option>
+                            <?php endif; ?>
+                        </select>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="maintaindate">Date:</label>
+                        <input type="date" name="maintaindate" id="maintaindate" class="form-control" required max="<?php echo date('Y-m-d'); ?>">
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">Log Maintenance</button>
+                        <button type="button" class="btn btn-secondary" onclick="window.location.href='equipment_maintenance.php'">Cancel</button>
+                    </div>
+                </form>
             </div>
-        </form>
 
-        <!-- Display Equipment -->
-        <h3 class="mt-4">List of Equipment</h3>
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Equipment Name</th>
-                    <th>Property Number</th>
-                    <th>Status</th>
-                    <th>Date Purchased</th>
-                    <th>Select</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php if (!empty($equipment)): ?>
-                    <?php foreach ($equipment as $item): ?>
-                        <tr>
-                            <td><?php echo htmlspecialchars($item['equip_name']); ?></td>
-                            <td><?php echo htmlspecialchars($item['property_num']); ?></td>
-                            <td><?php echo htmlspecialchars($item['status']); ?></td>
-                            <td><?php echo htmlspecialchars($item['date_purchased']); ?></td>
-                            <td>
-                                <button type="button" class="btn btn-primary" onclick="generateJobOrderAndUpdate('<?php echo htmlspecialchars($item['equipment_id']); ?>', '<?php echo htmlspecialchars($item['equip_name']); ?>')">
-                                    Select
-                                </button>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <tr><td colspan="5">No equipment found.</td></tr>
-                <?php endif; ?>
-            </tbody>
-        </table>
+            <!-- Right Panel: Select Registered Equipment -->
+            <div class="card-section right-card">
+                <h3>Select Registered Equipment to Log for Maintenance</h3>
+                <!-- Filter Equipment by Type -->
+                <form method="GET" action="equipment_maintenance.php" class="mb-3">
+                    <div class="mb-3">
+                        <label for="equipment_type_filter">Filter by Equipment Type</label>
+                        <select id="equipment_type_filter" name="equipment_type" class="form-select" onchange="this.form.submit()">
+                            <option value="">All</option>
+                            <?php foreach ($equipment_types as $type): ?>
+                                <option value="<?php echo htmlspecialchars($type['equip_type_id']); ?>" <?php echo ($type['equip_type_id'] == $selectedTypeId) ? 'selected' : ''; ?>>
+                                    <?php echo htmlspecialchars($type['equip_type_name']); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
 
-        <!-- Maintenance Form -->
-        <h3>Log Maintenance</h3>
-        <form action="maintenance_process.php" method="POST" onsubmit="incrementJobOrder()">
-            <label for="jo_number">Job Order:</label>
-            <input type="text" name="jo_number" id="jo_number" class="form-control mb-3" required readonly>
+                    <label for="search_term" class="mb-2">Search</label>
+                    <div class="input-group mb-3">
+                        <input type="text" id="search_term" name="search_term" class="form-control" placeholder="Enter keyword" value="<?php echo htmlspecialchars($searchTerm); ?>">
+                        <button type="submit" class="btn btn-danger">Search</button>
+                    </div>
+                </form>
 
-            <div id="selected_equipment">Selected Equipment:</div>
+                <!-- Display Equipment -->
+                <div class="equipment-list">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Equipment Name</th>
+                                <th>Property Number</th>
+                                <th>Status</th>
+                                <th>Date Purchased</th>
+                                <th>Select</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php if (!empty($equipment)): ?>
+                                <?php foreach ($equipment as $item): ?>
+                                    <tr>
+                                        <td><?php echo htmlspecialchars($item['equip_name']); ?></td>
+                                        <td><?php echo htmlspecialchars($item['property_num']); ?></td>
+                                        <td><?php echo htmlspecialchars($item['status']); ?></td>
+                                        <td><?php echo htmlspecialchars($item['date_purchased']); ?></td>
+                                        <td>
+                                            <button type="button" class="btn-select" 
+                                                onclick="generateJobOrderAndUpdate('<?php echo htmlspecialchars($item['equipment_id']); ?>', '<?php echo htmlspecialchars($item['equip_name']); ?>')">
+                                                SELECT
+                                            </button>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <tr><td colspan="5">No equipment found.</td></tr>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
 
-            <label for="actions_taken">Actions Taken:</label>
-<textarea name="actions_taken" id="actions_taken" class="form-control mb-3" required maxlength="40" 
-          placeholder="Required"></textarea>
-          <label for="remarks">Remarks:</label>
-            <select name="remarks" id="remarks" class="form-control mb-3" required>
-                <?php foreach ($remarks_options as $remark): ?>
-                    <option value="<?php echo htmlspecialchars($remark['remarks_id']); ?>">
-                        <?php echo htmlspecialchars($remark['remarks_name']); ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
-
-            <label for="personnel">Personnel:</label>
-            <select name="personnel_id" id="personnel" class="form-control mb-3" required>
-                <?php if (!empty($personnel_options)): ?>
-                    <?php foreach ($personnel_options as $personnel): ?>
-                        <option value="<?php echo htmlspecialchars($personnel['personnel_id']); ?>">
-                            <?php echo htmlspecialchars($personnel['firstname'] . " " . $personnel['lastname'] . " - " . $personnel['office']); ?>
-                        </option>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <option value="">No personnel added.</option>
-                <?php endif; ?>
-            </select>
-            
-            <label for="maintaindate">Date:</label>
-            <input type="date" name="maintaindate" id="maintaindate" class="form-control mb-3" required max="<?php echo date('Y-m-d'); ?>">
-
-            <button type="submit" class="btn btn-primary">Log Maintenance</button>
-            <button type="button" class="btn btn-secondary" onclick="window.location.href='equipment_maintenance.php'">Cancel</button>
-        </form>
-
-        <!-- Maintenance Logs Section -->
-        <h3>Maintenance Logs</h3>
-        <table border="1" class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Equipment Name</th>
-                    <th>Maintenance Date</th>
-                    <th>Job Order Number</th>
-                    <th>Actions Taken</th>
-                    <th>Remarks</th>
-                    <th>Responsible Personnel</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php if (!empty($maintenanceLogs)): ?>
-                    <?php foreach ($maintenanceLogs as $log): ?>
-                        <tr>
-                            <td><?php echo htmlspecialchars($log['equipment_name']); ?></td>
-                            <td><?php echo htmlspecialchars($log['maintenance_date']); ?></td>
-                            <td><?php echo htmlspecialchars($log['jo_number']); ?></td>
-                            <td><?php echo htmlspecialchars($log['actions_taken']); ?></td>
-                            <td><?php echo htmlspecialchars($log['remarks']); ?></td>
-                            <td><?php echo htmlspecialchars($log['firstname'] . ' ' . $log['lastname']); ?></td>
-                        </tr>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <tr><td colspan="6">No maintenance logs found.</td></tr>
-                <?php endif; ?>
-            </tbody>
-        </table>
-
+        <!-- Maintenance Logs -->
+        <div class="maintenance-logs-section">
+            <h3>Maintenance Logs</h3>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Equipment Name</th>
+                        <th>Maintenance Date</th>
+                        <th>Job Order Number</th>
+                        <th>Actions Taken</th>
+                        <th>Remarks</th>
+                        <th>Responsible Personnel</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if (!empty($maintenanceLogs)): ?>
+                        <?php foreach ($maintenanceLogs as $log): ?>
+                            <tr>
+                                <td><?php echo htmlspecialchars($log['equipment_name']); ?></td>
+                                <td><?php echo htmlspecialchars($log['maintenance_date']); ?></td>
+                                <td><?php echo htmlspecialchars($log['jo_number']); ?></td>
+                                <td><?php echo htmlspecialchars($log['actions_taken']); ?></td>
+                                <td><?php echo htmlspecialchars($log['remarks']); ?></td>
+                                <td><?php echo htmlspecialchars($log['firstname'] . ' ' . $log['lastname']); ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <tr><td colspan="6">No maintenance logs found.</td></tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <!-- JavaScript -->
@@ -348,11 +430,14 @@ input[type="text"], input[type="date"], select {
             const jobOrder = `CIC${year}${month}${jobOrderNum}`;
             document.getElementById('jo_number').value = jobOrder;
 
-            const hiddenInput = document.createElement('input');
-            hiddenInput.type = 'hidden';
-            hiddenInput.name = 'equipment_id';
+            let hiddenInput = document.querySelector('input[name="equipment_id"]');
+            if (!hiddenInput) {
+                hiddenInput = document.createElement('input');
+                hiddenInput.type = 'hidden';
+                hiddenInput.name = 'equipment_id';
+                selectedEquipmentDiv.appendChild(hiddenInput);
+            }
             hiddenInput.value = equipmentId;
-            selectedEquipmentDiv.appendChild(hiddenInput);
         }
 
         function incrementJobOrder() {
@@ -363,9 +448,7 @@ input[type="text"], input[type="date"], select {
             jobOrderNum++;
             localStorage.setItem(`jobOrderNum_${year}_${month}`, jobOrderNum);
         }
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
+
         window.onload = function() {
             const dateInput = document.getElementById("maintaindate");
             function setMaxDate() {
@@ -376,5 +459,6 @@ input[type="text"], input[type="date"], select {
             dateInput.addEventListener("focus", setMaxDate);
         };
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
