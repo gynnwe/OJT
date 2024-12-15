@@ -8,9 +8,6 @@ function loadPage(url, pageTitle) {
         if (this.status === 200) {
             document.getElementById('content-area').innerHTML = this.responseText;
             document.getElementById('current-page').innerText = pageTitle;
-
-            // Call the function that initializes model dropdown after loading new content
-            initializeModelDropdown();
         } else {
             console.log("Error loading page: " + this.status);
         }
@@ -35,44 +32,59 @@ function initializeModelDropdown() {
     const equipmentTypeSelect = document.getElementById('equipment_type');
     const modelNameSelect = document.getElementById('model_name');
 
-    equipmentTypeSelect.addEventListener('change', function() {
+    if (!equipmentTypeSelect || !modelNameSelect) return;
+
+    // Remove any existing event listeners by cloning
+    const newEquipmentTypeSelect = equipmentTypeSelect.cloneNode(true);
+    equipmentTypeSelect.parentNode.replaceChild(newEquipmentTypeSelect, equipmentTypeSelect);
+
+    newEquipmentTypeSelect.addEventListener('change', function() {
         const equipTypeId = this.value;
 
-        // Clear previous models
-        modelNameSelect.innerHTML = '';
+        // Clear all existing options
+        while (modelNameSelect.firstChild) {
+            modelNameSelect.removeChild(modelNameSelect.firstChild);
+        }
+
+        // Add default option
+        const defaultOption = document.createElement('option');
+        defaultOption.value = '';
+        defaultOption.textContent = 'Brand/Model Name';
+        defaultOption.disabled = true;
+        defaultOption.selected = true;
+        modelNameSelect.appendChild(defaultOption);
 
         if (equipTypeId) {
-            const xhr = new XMLHttpRequest();
-            xhr.open('GET', 'equipment_input_ict.php?equip_type_id=' + equipTypeId, true);
-            xhr.onload = function() {
-                if (this.status === 200) {
-                    const models = JSON.parse(this.responseText);
-                    if (models.length > 0) {
-                        models.forEach(function(model) {
-                            const option = document.createElement('option');
-                            option.value = model.model_id;
-                            option.textContent = model.model_name;
-                            modelNameSelect.appendChild(option);
-                        });
-                    } else {
+            fetch(`equipment_input_ict.php?equip_type_id=${equipTypeId}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Use a Map to ensure unique models
+                    const uniqueModels = new Map();
+                    data.forEach(model => {
+                        if (!uniqueModels.has(model.model_id)) {
+                            uniqueModels.set(model.model_id, model);
+                        }
+                    });
+
+                    // Add unique models to select
+                    uniqueModels.forEach(model => {
                         const option = document.createElement('option');
-                        option.value = '';
-                        option.textContent = 'No models available';
+                        option.value = model.model_id;
+                        option.textContent = model.model_name;
                         modelNameSelect.appendChild(option);
-                    }
-                } else {
-                    alert('Error fetching models.');
-                }
-            };
-            xhr.onerror = function() {
-                alert('Request error');
-            };
-            xhr.send();
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching models:', error);
+                    const errorOption = document.createElement('option');
+                    errorOption.value = '';
+                    errorOption.textContent = 'Error loading models';
+                    errorOption.disabled = true;
+                    modelNameSelect.appendChild(errorOption);
+                });
         }
     });
 }
 
-// Call this function on window load
-window.onload = function() {
-    initializeModelDropdown(); // Initialize when the window is loaded
-};
+// Initialize when the window is loaded
+document.addEventListener('DOMContentLoaded', initializeModelDropdown);

@@ -108,6 +108,7 @@ try {
     status ENUM('Serviceable', 'Non-serviceable') NOT NULL,
     date_purchased DATE NOT NULL,
     date_added DATE NOT NULL DEFAULT CURRENT_DATE,
+    deleted_id TINYINT(1) NOT NULL DEFAULT 0,
     FOREIGN KEY (location_id) REFERENCES location(location_id),
     FOREIGN KEY (equip_type_id) REFERENCES equipment_type(equip_type_id),
     FOREIGN KEY (model_id) REFERENCES model(model_id)
