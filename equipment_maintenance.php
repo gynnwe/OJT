@@ -99,14 +99,12 @@ try {
         color: #333;
     }
 
-    /* Container for the entire page */
     .main-container {
         max-width: 1400px;
         margin: 0 auto;
         padding: 16px;
     }
 
-    /* Top section containing two side-by-side cards */
     .top-section {
         display: flex;
         flex-wrap: wrap;
@@ -115,10 +113,9 @@ try {
     }
 
     .card-section {
-        flex: 1;
         background: #fff;
         padding: 16px;
-        border-radius: 8px;
+        border-radius: 20px;
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         min-width: 300px;
     }
@@ -131,40 +128,56 @@ try {
         flex: 1.5;
     }
 
-    /* Headings */
     h3 {
-        font-size: 1.1em;
+        font-size: 0.90em;
         color: #343a40;
         margin-bottom: 16px;
         font-weight: bold;
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 8px;
     }
 
-    /* Form Labels */
     label {
-        display: block;
+        font-weight: normal !important;
+    }
+
+    .log-maintenance-form .mb-3, .log-maintenance-form .mb-4 {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .log-maintenance-form label {
+        width: 150px;
         font-weight: bold;
         font-size: 0.85em;
-        margin-bottom: 4px;
+        margin-bottom: 0;
         color: #333;
     }
 
-    /* Inputs and selects */
-    .form-control, .form-select, textarea {
+    .form-control, .form-select, textarea, input[type="date"], input[type="text"], input[type="search"] {
         font-size: 0.85em;
-        border-radius: 4px;
+        border-radius: 20px; 
         border: 1px solid #ced4da;
-        margin-bottom: 8px;
         padding: 6px;
+        width: 100%; /* Uniform width */
+        box-sizing: border-box;
+    }
+
+    /* Make all dropdowns grey */
+    .form-select {
+        background-color: #e9ecef;
     }
 
     textarea {
         resize: vertical;
+        flex: 1;
     }
 
-    /* Buttons */
     .btn-primary {
         background-color: #b53236 !important;
         border: none !important;
+        border-radius: 20px;
     }
 
     .btn-primary:hover {
@@ -174,6 +187,7 @@ try {
     .btn-secondary {
         background-color: #6c757d !important;
         border: none !important;
+        border-radius: 20px;
     }
 
     .btn-secondary:hover {
@@ -181,96 +195,135 @@ try {
     }
 
     .btn-select {
-        background-color: #fff;
-        border: 2px solid #b53236;
-        color: #b53236;
+        background-color: #b53236;
+        color: #fff;
         font-weight: bold;
-        padding: 4px 8px;
-        border-radius: 4px;
+        padding: 4px 12px;
+        border-radius: 20px;
         font-size: 0.8em;
         cursor: pointer;
+        border: none;
     }
 
     .btn-select:hover {
-        background-color: #b53236;
+        background-color: #a12c30;
         color: #fff;
     }
 
-    /* Selected Equipment label */
     .selected-equipment-label {
-        font-weight: bold;
-        margin-bottom: 12px;
+        font-weight: normal;
         font-size: 0.9em;
-        color: #495057;
+        color: #333;
+        margin-bottom: 16px;
     }
 
-    /* Tables */
-    .table {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 0.85em;
-    }
-
-    .table th, .table td {
-        border: 1px solid #dee2e6;
-        padding: 8px;
-        vertical-align: middle;
-    }
-
-    .table th {
-        background-color: #e9ecef;
+    .selected-equipment-item {
+        background-color: #b53236;
         font-weight: bold;
-        white-space: nowrap;
+        font-size: 0.80em;
+        color: #fff;
+        padding: 2px 6px;
+        border-radius: 20px;
+        margin-left: 8px;
+        display: inline-block;
     }
 
-    /* Equipment list within right card */
-    .equipment-list {
-        margin-top: 8px;
+    .filter-search-row {
+        display: flex;
+        gap: 16px;
+        align-items: end;
+        margin-bottom: 16px;
     }
 
-    /* Maintenance Logs Section */
     .maintenance-logs-section {
         background: #fff;
         padding: 16px;
-        border-radius: 8px;
+        border-radius: 20px;
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        margin-top: 24px;
     }
 
-    @media (max-width: 992px) {
-        .top-section {
-            flex-direction: column;
-        }
+    .maintenance-logs-section h3 {
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 8px;
+        margin-bottom: 16px;
     }
 
-    @media (max-width: 768px) {
-        .btn {
-            width: 100%;
-            margin-bottom: 8px;
-        }
-
-        .form-control, .form-select {
-            font-size: 0.9em;
-        }
-
-        .btn-select {
-            width: 100%;
-        }
+    .equipment-list-title {
+        padding: 8px 0;
+        margin-bottom: 8px;
+        margin-top: 8px;
+        font-weight: bold;
+        font-size: 1em;
     }
+
+    .log-buttons {
+        display: flex;
+        justify-content: end;
+        gap: 8px;
+    }
+
+    /* Table styling */
+    /* Set table-layout:fixed so that column widths align between header and body tables */
+    .header-table, .body-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0 10px;
+        table-layout: fixed;
+    }
+
+    .header-table thead th {
+        border: none;
+        background: none;
+        font-weight: bold;
+        font-size: 0.85em;
+        text-align: left;
+        color: #343a40;
+        padding-bottom: 4px;
+    }
+
+    .body-table tbody tr {
+        background: #fff;
+        font-size: 0.80em;
+        border-radius: 20px;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    }
+
+    .body-table tbody tr td {
+        vertical-align: middle;
+        padding: 8px;
+    }
+
+    .body-table tbody tr td:first-child {
+        border-top-left-radius: 8px;
+        border-bottom-left-radius: 8px;
+    }
+
+    .body-table tbody tr td:last-child {
+        border-top-right-radius: 8px;
+        border-bottom-right-radius: 8px;
+    }
+
+    /* Scrollable area for the body only */
+    .scroll-container {
+        max-height: 200px; /* Adjust as needed */
+        overflow-y: auto;
+    }
+
     </style>
 </head>
 <body>
-    <!-- PHP variables are assumed to be defined elsewhere:
+    <!-- PHP variables assumed to be defined elsewhere:
          $equipment_types, $selectedTypeId, $searchTerm,
          $equipment, $remarks_options, $personnel_options, $maintenanceLogs -->
 
     <div class="main-container mt-4">
         
-        <!-- Top Section: Left (Log Maintenance) and Right (Select Registered Equipment) -->
         <div class="top-section">
             <!-- Log Maintenance Form Card -->
             <div class="card-section left-card">
                 <h3>Log Maintenance</h3>
-                <form action="maintenance_process.php" method="POST" onsubmit="incrementJobOrder()">
+                <form action="maintenance_process.php" method="POST" onsubmit="incrementJobOrder()" class="log-maintenance-form">
                     <div class="mb-3">
                         <label for="jo_number">Job Order:</label>
                         <input type="text" name="jo_number" id="jo_number" class="form-control" required readonly>
@@ -314,7 +367,7 @@ try {
                         <input type="date" name="maintaindate" id="maintaindate" class="form-control" required max="<?php echo date('Y-m-d'); ?>">
                     </div>
 
-                    <div class="d-flex gap-2">
+                    <div class="log-buttons">
                         <button type="submit" class="btn btn-primary">Log Maintenance</button>
                         <button type="button" class="btn btn-secondary" onclick="window.location.href='equipment_maintenance.php'">Cancel</button>
                     </div>
@@ -324,10 +377,9 @@ try {
             <!-- Right Panel: Select Registered Equipment -->
             <div class="card-section right-card">
                 <h3>Select Registered Equipment to Log for Maintenance</h3>
-                <!-- Filter Equipment by Type -->
-                <form method="GET" action="equipment_maintenance.php" class="mb-3">
-                    <div class="mb-3">
-                        <label for="equipment_type_filter">Filter by Equipment Type</label>
+                <form method="GET" action="equipment_maintenance.php" class="filter-search-row">
+                    <div style="flex:1;">
+                        <label for="equipment_type_filter" style="display:block; font-weight:bold; font-size:0.85em; margin-bottom:4px;">Filter by Equipment Type</label>
                         <select id="equipment_type_filter" name="equipment_type" class="form-select" onchange="this.form.submit()">
                             <option value="">All</option>
                             <?php foreach ($equipment_types as $type): ?>
@@ -337,26 +389,28 @@ try {
                             <?php endforeach; ?>
                         </select>
                     </div>
-
-                    <label for="search_term" class="mb-2">Search</label>
-                    <div class="input-group mb-3">
-                        <input type="text" id="search_term" name="search_term" class="form-control" placeholder="Enter keyword" value="<?php echo htmlspecialchars($searchTerm); ?>">
-                        <button type="submit" class="btn btn-danger">Search</button>
+                    
+                    <div style="flex:1;">
+                        <input type="text" id="search_term" name="search_term" class="form-control" placeholder="Search" value="<?php echo htmlspecialchars($searchTerm); ?>">
                     </div>
                 </form>
 
-                <!-- Display Equipment -->
-                <div class="equipment-list">
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>Equipment Name</th>
-                                <th>Property Number</th>
-                                <th>Status</th>
-                                <th>Date Purchased</th>
-                                <th>Select</th>
-                            </tr>
-                        </thead>
+                <div class="equipment-list-title">List of Equipments</div>
+
+                <!-- Table with fixed header and scrollable body -->
+                <table class="header-table">
+                    <thead>
+                        <tr>
+                            <th>Equipment Name</th>
+                            <th>Property Number</th>
+                            <th>Status</th>
+                            <th>Date Purchased</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                </table>
+                <div class="scroll-container">
+                    <table class="body-table">
                         <tbody>
                             <?php if (!empty($equipment)): ?>
                                 <?php foreach ($equipment as $item): ?>
@@ -379,13 +433,14 @@ try {
                         </tbody>
                     </table>
                 </div>
+
             </div>
         </div>
 
         <!-- Maintenance Logs -->
         <div class="maintenance-logs-section">
             <h3>Maintenance Logs</h3>
-            <table class="table table-bordered">
+            <table class="table header-table">
                 <thead>
                     <tr>
                         <th>Equipment Name</th>
@@ -396,6 +451,9 @@ try {
                         <th>Responsible Personnel</th>
                     </tr>
                 </thead>
+                </table>
+                <div class="scroll-container">
+                    <table class="body-table">
                 <tbody>
                     <?php if (!empty($maintenanceLogs)): ?>
                         <?php foreach ($maintenanceLogs as $log): ?>
@@ -416,11 +474,10 @@ try {
         </div>
     </div>
 
-    <!-- JavaScript -->
     <script>
         function generateJobOrderAndUpdate(equipmentId, equipmentName) {
             const selectedEquipmentDiv = document.getElementById('selected_equipment');
-            selectedEquipmentDiv.innerHTML = `Selected Equipment: ${equipmentName} (ID: ${equipmentId})`;
+            selectedEquipmentDiv.innerHTML = 'Selected Equipments <span class="selected-equipment-item">' + equipmentName + ' (ID: ' + equipmentId + ')</span>';
 
             const date = new Date();
             const year = date.getFullYear();
