@@ -11,7 +11,6 @@ $password = "";
 $dbname = "ictmms";
 
 try {
-    // Connect to the database
     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
@@ -53,6 +52,7 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register Equipment</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+	<script src="scripts.js" defer ></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600&display=swap');
         @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
@@ -92,27 +92,46 @@ try {
             font-size: 14px !important;
         }
 
-        .form-control,
-        .form-select {
+        .form-control, .form-select {
             width: 100%;
-            border: 2px solid #646464;
-            border-radius: 14px;
-            color: #646464;
             font-size: 12px;
-            padding: 10px;
             margin-bottom: 15px;
         }
-
-        #filterBy {
-            background-color: #d1d1d1 !important;
+		
+		.form-select {
+			background-color: #d1d1d1 !important;
 			border: none !important;
-            padding: 5px !important;
 			color: #646464 !important;
-        }
+			border-radius: 14px;
+		}
+		
+		.register-card .form-select {
+			padding: 10px !important;
+		}
+		
+		.form-control {
+			border: 2px solid #646464;
+            border-radius: 14px;
+            color: #646464;
+		}
+		
+		.register-card .form-control {
+			padding: 17px 10px 17px 13px !important;
+		}
+		
+		.list-card .form-control {
+			padding: 10px !important;
+			width: 250px !important;
+		}
 
+		.list-card .form-select {
+			padding: 7px !important;
+			width: 250px !important;
+		}
+		
         .form-control::placeholder,
         .form-select::placeholder {
-            color: #646464;
+            color: #646464 !important;
         }
 
         button.btn-submit {
@@ -127,6 +146,13 @@ try {
             cursor: pointer;
             margin-bottom: 10px;
         }
+		
+		h5 {
+			color: #3A3A3A;
+			font-weight: bold !important;
+			font-size: 13px !important;
+			padding-top: 2px;
+		}
 
         button.btn-submit:hover {
             background-color: #8b0000;
@@ -138,46 +164,12 @@ try {
             margin-bottom: 10px;
         }
 
-        .table-responsive {
-            border-radius: 10px;
-            overflow: hidden;
-        }
-
-        .table {
-            width: 100%;
-            border: none;
-            font-size: 12px;
-        }
-
-        .table th,
-        .table td {
-            color: #646464;
-            padding: 10px;
-            text-align: left;
-        }
-
-        .pagination {
-            justify-content: flex-end;
-            margin: 0;
-        }
-
-        .pagination .page-link {
-            color: #8B8B8B;
-            border: none;
-            font-size: 12px;
-            padding: 0 8px;
-        }
-
-        .pagination .page-item .page-link:hover {
-            color: #a31723;
-            text-decoration: underline;
-        }
-
         .section-divider1 {
             border: none;
             height: 1px;
             background-color: #ddd;
-            margin: 10px 0;
+            margin-top: 8px;
+			margin-bottom: 19px;
         }
 
         .section-divider2 {
@@ -186,6 +178,33 @@ try {
             background-color: #ddd;
             margin: 20px 0;
         }
+		
+		.table-responsive {
+			border-radius: 10px;
+			overflow: hidden;
+		}
+
+		.table {
+			width: 100%;
+			border: none;
+		}
+
+		.table th,
+		.table td {
+			color: #646464;
+			padding: 10px;
+			text-align: left;
+			font-size: 12px;
+		}
+
+		.table th {
+			font-weight: normal;
+		}
+
+		.table tbody tr:hover {
+			background-color: #ebebeb !important;
+		}
+
     </style>
 </head>
 
@@ -227,7 +246,7 @@ try {
                 <input type="text" name="property_num" id="property_num" class="form-control" placeholder="Property Number" required>
 
                 <select name="model_id" id="model_name" class="form-select" required>
-                    <option value="" disabled selected>Model Name</option>
+                    <option value="" disabled selected>Brand/Model Name</option>
                     <!-- Options will be populated dynamically based on selected equipment type -->
                 </select>
 
@@ -253,7 +272,7 @@ try {
                     <option value="monitor">Monitor</option>
                     <option value="printer">Printer</option>
                 </select>
-                <input type="text" class="form-control" placeholder="Search by name">
+                <input type="text" class="form-control" placeholder="Search by Name">
             </div>
             <div class="table-responsive">
                 <table class="table table-striped">
@@ -263,6 +282,7 @@ try {
                             <th>Property Number</th>
                             <th>Status</th>
                             <th>Date</th>
+							<th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -283,12 +303,6 @@ try {
                     </tbody>
                 </table>
             </div>
-            <nav>
-                <ul class="pagination">
-                    <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-                    <li class="page-item"><a class="page-link" href="#">Next</a></li>
-                </ul>
-            </nav>
         </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

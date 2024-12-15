@@ -187,15 +187,21 @@
 
     <script>
         const togglePassword = document.getElementById('togglePassword');
-        const passwordField = document.getElementById('password');
+        const passwordField = document.getElementById('psw');
 
         togglePassword.addEventListener('click', function() {
+            // Toggle the type attribute of the password field
             const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
             passwordField.setAttribute('type', type);
 
             // Toggle the eye icon classes between bi-eye and bi-eye-slash
-            this.classList.toggle('bi-eye');
-            this.classList.toggle('bi-eye-slash');
+            if (type === 'password') {
+                this.classList.remove('bi-eye-slash');
+                this.classList.add('bi-eye');
+            } else {
+                this.classList.remove('bi-eye');
+                this.classList.add('bi-eye-slash');
+            }
         });
     </script>
 </body>

@@ -14,13 +14,13 @@ try {
     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    // Handle form submission
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (isset($_POST['deleted_id'])) {
             $delete_id = $_POST['deleted_id'];
             $softDeleteSQL = "UPDATE user SET deleted_id = 1 WHERE admin_id = :deleted_id AND role != 'Admin'";
             $stmt = $conn->prepare($softDeleteSQL);
             $stmt->bindParam(':deleted_id', $delete_id);
+            $stmt->execute();
             $stmt->execute();
             echo "Success";
             exit;
@@ -125,6 +125,7 @@ if (isset($_SESSION['message'])) {
     $message = $_SESSION['message'];
     unset($_SESSION['message']);
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -328,8 +329,7 @@ if (isset($_SESSION['message'])) {
 			border: none !important; 
 			/*height: 38.35px;*/
 			display: inline-block;
-			padding: 7px 10px;
-			padding-top: 7.5px;
+			padding: 11px 10px !important;
 		}
 
 		.table td img {
@@ -377,7 +377,8 @@ if (isset($_SESSION['message'])) {
 			border-radius: 14px; 
 			display: block;
 			width: 100%;
-			margin-top: 5px;
+			margin-top: 3.5px;
+			height: 42px;
 		}
 
 		.table tbody tr:hover {
@@ -404,11 +405,11 @@ if (isset($_SESSION['message'])) {
 		.pagination .page-link {
 			border: none; 
 			font-size: 0.8rem; 
-			padding: 4px 8px; 
+			padding: 2px 8px; 
 		}
 		
 		.pagination .page-link:hover {
-			color: #b86e63;
+			color: #b86e63 !important;
 		}
 
 		.page-link {
@@ -418,7 +419,7 @@ if (isset($_SESSION['message'])) {
 			vertical-align: middle !important;
 		}
 		
-		.table th:nth-child(1), /* Email column */
+		.table th:nth-child(1),
 		.table td:nth-child(1) {
 			max-width: 200px;
 			overflow: hidden;
@@ -426,19 +427,19 @@ if (isset($_SESSION['message'])) {
 			white-space: nowrap;
 		}
 		
-		.table th:nth-child(2), /* First name column */
+		.table th:nth-child(2), 
 		.table td:nth-child(2),
-		.table th:nth-child(3), /* Last name column */
+		.table th:nth-child(3), 
 		.table td:nth-child(3) {
 			width: 20%;
 		}
 		
-		.table th:nth-child(4), /* Username column */
+		.table th:nth-child(4), 
 		.table td:nth-child(4) {
 			width: 15%;
 		}
 		
-		.table th:nth-child(5), /* Actions column */
+		.table th:nth-child(5), 
 		.table td:nth-child(5) {
 			width: 100px;
 			text-align: center;
@@ -453,9 +454,82 @@ if (isset($_SESSION['message'])) {
 			cursor: pointer;
 			margin: 0 3px;
 		}
+
+		.modal-content {
+			background-color: #ffffff;
+			border-radius: 24px !important;
+			box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1) !important;
+			border: none !important;
+			padding: 15px;
+			max-width: 400px;
+			margin: auto;
+			margin-top: 160px;
+		}
+
+		.modal-header {
+			border-bottom: none;
+			margin-top: -15px;
+			padding: 15px;
+		}
+
+		.modal-header h5 {
+			color: #3A3A3A;
+			font-weight: bold;
+			font-size: 13px;
+			padding-top: 4px;
+		}
+
+		.modal-body {
+			padding: 20px;
+		}
+
+		.modal-footer {
+			border-top: none;
+		}
+
+		.modal-body p {
+			margin-bottom: 10px;
+			font-size: 12px;
+		}
+
+		.modal-body ul {
+			padding-left: 20px; 
+			margin-bottom: 0px;
+		}
+
+		.section-divider {
+			border: none;
+			height: 1px;
+			background-color: #ddd;
+			margin-top: 5px; 
+			margin-bottom: 10px;
+		}
+
+		.modal-footer button {
+			width: 130px; 
+			height: 33px;
+			background-color: #a81519;
+			color: white; 
+			font-weight: bold; 
+			font-size: 12px;
+			border: none;
+			border-radius: 14px;
+			margin-top: 0px;
+			margin-bottom: -13px;
+		}
+
+		.modal-footer button:hover {
+			background-color: #E3595C;
+		}
+		
+		.modal-body ul li {
+			color: #dc3545;
+			font-size: 12px;
+			margin-left: 40px;
+		}
 	</style>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </head>
@@ -505,19 +579,15 @@ if (isset($_SESSION['message'])) {
 				
 				
 				<?php
-				// Assuming $users is your array of users
-				$maxRows = 7; // Maximum rows per page
-				$totalEntries = count($users); // Total number of entries
-				$totalPages = ceil($totalEntries / $maxRows); // Total number of pages
+				$maxRows = 7; 
+				$totalEntries = count($users);
+				$totalPages = ceil($totalEntries / $maxRows);
 
-				// Get the current page from query parameters, default to 1
 				$currentPage = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-				$currentPage = max(1, min($currentPage, $totalPages)); // Ensure current page is within valid range
+				$currentPage = max(1, min($currentPage, $totalPages)); 
 
-				// Calculate the starting index for the current page
 				$startIndex = ($currentPage - 1) * $maxRows;
 
-				// Slice the users array to get only the entries for the current page
 				$currentUsers = array_slice($users, $startIndex, $maxRows);
 				?>
 				<table class="table table-striped">
@@ -535,12 +605,10 @@ if (isset($_SESSION['message'])) {
 						if ($totalEntries === 0): ?>
 							<tr class="no-users"><td colspan="5">No users available.</td></tr>
 							<?php 
-							// Add empty rows to make a total of 7
 							for ($j = 1; $j < $maxRows; $j++): ?>
 								<tr class="empty-row"><td colspan="5"></td></tr>
 							<?php endfor; 
 						else:
-							// Display users for the current page
 							foreach ($currentUsers as $user): ?>
 								<tr id="row-<?php echo htmlspecialchars($user['admin_id']); ?>">
 									<td title="<?php echo htmlspecialchars($user['email']); ?>"><?php echo htmlspecialchars($user['email']); ?></td>
@@ -548,21 +616,24 @@ if (isset($_SESSION['message'])) {
 									<td><?php echo htmlspecialchars($user['lastname']); ?></td>
 									<td><?php echo htmlspecialchars($user['username']); ?></td>
 									<td class="action-buttons">
-										<a href="#" onclick="editUser(<?php echo $user['admin_id']; ?>, '<?php echo htmlspecialchars($user['email']); ?>', 
-                                           '<?php echo htmlspecialchars($user['firstname']); ?>', '<?php echo htmlspecialchars($user['lastname']); ?>', 
-                                           '<?php echo htmlspecialchars($user['username']); ?>')">
-                                            <img src="edit.png" alt="Edit">
-                                        </a>
-                                        <?php if ($user['role'] === 'Assistant'): ?>
-                                            <a href="#" onclick="softDelete(<?php echo $user['admin_id']; ?>)">
-                                                <img src="delete.png" alt="Delete">
-                                            </a>
-                                        <?php endif; ?>
+										<a href="#" onclick="editUser(<?php echo $user['admin_id']; ?>, '<?php 		echo htmlspecialchars($user['email']); ?>', 
+										   '<?php echo htmlspecialchars($user['firstname']); ?>', '<?php echo htmlspecialchars($user['lastname']); ?>', 
+										   '<?php echo htmlspecialchars($user['username']); ?>')">
+											<img src="edit.png" alt="Edit">
+										</a>
+										<?php if ($user === reset($currentUsers) && $user['role'] === 'Admin'): ?>
+											<a href="#" style="opacity: 0.35; pointer-events: none;">
+												<img src="delete.png" alt="Delete">
+											</a>
+										<?php elseif ($user['role'] === 'Assistant'): ?>
+											<a href="#" onclick="softDelete(<?php echo $user['admin_id']; ?>)">
+												<img src="delete.png" alt="Delete">
+											</a>
+										<?php endif; ?>
 									</td>
 								</tr>
 							<?php endforeach;
 
-							// Add empty rows if there are fewer than 7 entries on this page
 							for ($j = count($currentUsers); $j < $maxRows; $j++): ?>
 								<tr class="empty-row"><td colspan="5"></td></tr>
 							<?php endfor;
@@ -587,6 +658,31 @@ if (isset($_SESSION['message'])) {
 			</div>		
         	</div>
 	</div>
+
+	<div class="modal fade" id="passwordErrorModal" tabindex="-1" aria-labelledby="passwordErrorModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="passwordErrorModalLabel">Invalid Password</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<p>The password must meet the following criteria:</p>
+					<ul>
+						<li>8+ characters</li>
+						<li>Uppercase letter</li>
+						<li>Number</li>
+						<li>Symbol</li>
+					</ul>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
 	<script>
 	        $(document).ready(function() {
 	            const successAlert = $('#successAlert');
@@ -602,6 +698,36 @@ if (isset($_SESSION['message'])) {
 	                });
 	            }
 
+				// Password validation
+			$('form').on('submit', function(e) {
+				const password = $('#psw').val().trim();
+				const validation = validatePassword(password);
+
+				// Check if password is valid
+				if (!validation.valid) {
+					e.preventDefault(); // Prevent form submission
+					$('#passwordErrorModal').modal('show'); // Show the modal
+					return;
+				}
+			});
+
+			function validatePassword(password) {
+				const minLength = password.length >= 8;
+				const hasUpperCase = /[A-Z]/.test(password);
+				const hasNumber = /[0-9]/.test(password);
+				const hasSymbol = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+				return {
+					valid: minLength && hasUpperCase && hasNumber && hasSymbol,
+					errors: {
+						length: !minLength,
+						uppercase: !hasUpperCase,
+						number: !hasNumber,
+						symbol: !hasSymbol
+					}
+				};
+			}
+				
                 // Search functionality
                 $('#searchInput').on('keyup', function() {
                     const searchValue = $(this).val().toLowerCase();
@@ -694,6 +820,7 @@ if (isset($_SESSION['message'])) {
 	                }
 	            });
 	        });
+
 	    </script>
 </body>
 </html>
