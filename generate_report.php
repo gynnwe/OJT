@@ -132,10 +132,10 @@ foreach ($logs as $log) {
     $pdf->SetXY(70, $startY);
     $pdf->Write(0, $log['actions_taken']); // Actions Taken
 
-    $pdf->SetXY(144, $startY);
+    $pdf->SetXY(142, $startY);
     $pdf->Write(0, $log['remarks']); // Remarks
 
-    $pdf->SetXY(170, $startY);
+    $pdf->SetXY(165, $startY);
     $pdf->Write(0, $log['firstname'] . ' ' . $log['lastname']); // Responsible Personnel
 
     // Move to the next row
