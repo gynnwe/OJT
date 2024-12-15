@@ -316,8 +316,6 @@ try {
     <!-- PHP variables assumed to be defined elsewhere:
          $equipment_types, $selectedTypeId, $searchTerm,
          $equipment, $remarks_options, $personnel_options, $maintenanceLogs -->
-
-    <div class="main-container mt-4">
         
         <div class="top-section">
             <!-- Log Maintenance Form Card -->
@@ -436,6 +434,25 @@ try {
 
             </div>
         </div>
+        <div class="mb-3 d-flex align-items-end gap-3">
+    <div style="flex: 0.3;">
+        <label for="column_filter" style="font-weight: bold;">Filter By:</label>
+        <select id="column_filter" class="form-select">
+            <option value="all">All Columns</option>
+            <option value="0">Equipment Name</option>
+            <option value="1">Maintenance Date</option>
+            <option value="2">Job Order Number</option>
+            <option value="3">Actions Taken</option>
+            <option value="4">Remarks</option>
+            <option value="5">Responsible Personnel</option>
+        </select>
+    </div>
+    <div style="flex: 1;">
+        <label for="search_logs" style="font-weight: bold;">Search Logs:</label>
+        <input type="text" id="search_logs" class="form-control" placeholder="Search Maintenance Logs">
+    </div>
+</div>
+
 
         <!-- Maintenance Logs -->
         <div class="maintenance-logs-section">
@@ -516,6 +533,37 @@ try {
             dateInput.addEventListener("focus", setMaxDate);
         };
     </script>
+
+<script>
+document.getElementById('search_logs').addEventListener('input', filterLogs);
+document.getElementById('column_filter').addEventListener('change', filterLogs);
+
+function filterLogs() {
+    const searchValue = document.getElementById('search_logs').value.toLowerCase();
+    const columnIndex = document.getElementById('column_filter').value;
+    const rows = document.querySelectorAll('.body-table tbody tr');
+
+    rows.forEach(row => {
+        let match = false;
+
+        if (columnIndex === "all") {
+            row.querySelectorAll('td').forEach(cell => {
+                if (cell.textContent.toLowerCase().includes(searchValue)) {
+                    match = true;
+                }
+            });
+        } else {
+            const cell = row.querySelectorAll('td')[columnIndex];
+            if (cell && cell.textContent.toLowerCase().includes(searchValue)) {
+                match = true;
+            }
+        }
+
+        row.style.display = match ? '' : 'none';
+    });
+}
+</script>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
