@@ -542,5 +542,42 @@ if (isset($_SESSION['message'])) {
             }
         }
     </script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const modelInput = document.getElementById("model_name");
+
+    // Allow only letters, numbers, spaces, and hyphens while typing
+    modelInput.addEventListener("input", function () {
+        // Remove invalid characters (anything other than letters, numbers, spaces, or hyphens)
+        modelInput.value = modelInput.value.replace(/[^A-Za-z0-9\s-]/g, "");
+
+        // Restrict to 50 characters
+        if (modelInput.value.length > 50) {
+            modelInput.value = modelInput.value.slice(0, 50);
+        }
+
+        // Auto-capitalize the first letter of each word
+        modelInput.value = modelInput.value
+            .toLowerCase()
+            .replace(/\b\w/g, char => char.toUpperCase());
+    });
+
+    // Prevent pasting invalid content
+    modelInput.addEventListener("paste", function (e) {
+        e.preventDefault();
+        const pastedText = e.clipboardData.getData("text");
+
+        // Clean pasted text and enforce character limit
+        const cleanedText = pastedText.replace(/[^A-Za-z0-9\s-]/g, "").slice(0, 50);
+
+        // Auto-capitalize pasted content
+        modelInput.value += cleanedText
+            .toLowerCase()
+            .replace(/\b\w/g, char => char.toUpperCase());
+    });
+});
+</script>
+
 </body>
 </html>

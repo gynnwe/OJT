@@ -546,5 +546,45 @@ if (isset($_SESSION['message'])) {
             });
         });
     </script>
+
+	<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const buildingInput = document.getElementById("building");
+    const officeInput = document.getElementById("office");
+    const roomInput = document.getElementById("room");
+
+    // Attach the same validation logic for all fields
+    [buildingInput, officeInput, roomInput].forEach(input => {
+        input.addEventListener("input", function () {
+            // Allow only letters, numbers, spaces, and hyphens
+            input.value = input.value.replace(/[^A-Za-z0-9\s-]/g, "");
+
+            // Restrict to 50 characters
+            if (input.value.length > 50) {
+                input.value = input.value.slice(0, 50);
+            }
+
+            // Auto-capitalize the first letter of each word
+            input.value = input.value
+                .toLowerCase()
+                .replace(/\b\w/g, char => char.toUpperCase());
+        });
+
+        // Prevent pasting invalid content
+        input.addEventListener("paste", function (e) {
+            e.preventDefault();
+            const pastedText = e.clipboardData.getData("text");
+            const cleanedText = pastedText
+                .replace(/[^A-Za-z0-9\s-]/g, "")
+                .slice(0, 50);
+
+            input.value += cleanedText
+                .toLowerCase()
+                .replace(/\b\w/g, char => char.toUpperCase());
+        });
+    });
+});
+</script>
+
 </body>
 </html>
