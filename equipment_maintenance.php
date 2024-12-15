@@ -1,6 +1,6 @@
 <?php
-error_reporting(E_ALL); 
-ini_set('display_errors', 1); 
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
 session_start();
 if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
@@ -45,7 +45,7 @@ try {
     $stmtRemarks = $conn->prepare($sqlRemarks);
     $stmtRemarks->execute();
     $remarks_options = $stmtRemarks->fetchAll(PDO::FETCH_ASSOC);
-    
+
     // Fetch all non-deleted Personnel for the dropdown
     $sqlPersonnel = "SELECT personnel_id, firstname, lastname, office FROM personnel WHERE deleted_id = 0";
     $stmtPersonnel = $conn->prepare($sqlPersonnel);
@@ -74,7 +74,7 @@ try {
     $stmtLogs = $conn->prepare($sqlLogs);
     $stmtLogs->execute();
     $maintenanceLogs = $stmtLogs->fetchAll(PDO::FETCH_ASSOC);
-    
+
 } catch (PDOException $e) {
     echo "Error: " . $e->getMessage();
 }
@@ -82,395 +82,416 @@ try {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ICT Equipment Maintenance</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.3/font/bootstrap-icons.min.css"
+        rel="stylesheet">
 
     <style>
-    body {
-        font-family: Arial, sans-serif;
-        background: #f7f7f7;
-        margin: 0;
-        padding: 0;
-        color: #333;
-    }
+        body {
+            font-family: Arial, sans-serif;
+            background: #f7f7f7;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
 
-    .main-container {
-        max-width: 1400px;
-        margin: 0 auto;
-        padding: 16px;
-    }
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 16px;
+        }
 
-    .top-section {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 16px;
-        margin-bottom: 24px;
-    }
+        .top-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
 
-    .card-section {
-        background: #fff;
-        padding: 16px;
-        border-radius: 20px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        min-width: 300px;
-    }
+        .card-section {
+            background: #fff;
+            padding: 16px;
+            border-radius: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            min-width: 300px;
+        }
 
-    .left-card {
-        max-width: 400px;
-    }
+        .left-card {
+            max-width: 400px;
+        }
 
-    .right-card {
-        flex: 1.5;
-    }
+        .right-card {
+            flex: 1.5;
+        }
 
-    h3 {
-        font-size: 0.90em;
-        color: #343a40;
-        margin-bottom: 16px;
-        font-weight: bold;
-        border-bottom: 1px solid #ccc;
-        padding-bottom: 8px;
-    }
+        h3 {
+            font-size: 0.90em;
+            color: #343a40;
+            margin-bottom: 16px;
+            font-weight: bold;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 8px;
+        }
 
-    label {
-        font-weight: normal !important;
-    }
+        label {
+            font-weight: normal !important;
+        }
 
-    .log-maintenance-form .mb-3, .log-maintenance-form .mb-4 {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
+        .log-maintenance-form .mb-3,
+        .log-maintenance-form .mb-4 {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
 
-    .log-maintenance-form label {
-        width: 150px;
-        font-weight: bold;
-        font-size: 0.85em;
-        margin-bottom: 0;
-        color: #333;
-    }
+        .log-maintenance-form label {
+            width: 150px;
+            font-weight: bold;
+            font-size: 0.85em;
+            margin-bottom: 0;
+            color: #333;
+        }
 
-    .form-control, .form-select, textarea, input[type="date"], input[type="text"], input[type="search"] {
-        font-size: 0.85em;
-        border-radius: 20px; 
-        border: 1px solid #ced4da;
-        padding: 6px;
-        width: 100%; /* Uniform width */
-        box-sizing: border-box;
-    }
+        .form-control,
+        .form-select,
+        textarea,
+        input[type="date"],
+        input[type="text"],
+        input[type="search"] {
+            font-size: 0.85em;
+            border-radius: 20px;
+            border: 1px solid #ced4da;
+            padding: 6px;
+            width: 100%;
+            /* Uniform width */
+            box-sizing: border-box;
+        }
 
-    /* Make all dropdowns grey */
-    .form-select {
-        background-color: #e9ecef;
-    }
+        /* Make all dropdowns grey */
+        .form-select {
+            background-color: #e9ecef;
+        }
 
-    textarea {
-        resize: vertical;
-        flex: 1;
-    }
+        textarea {
+            resize: vertical;
+            flex: 1;
+        }
 
-    .btn-primary {
-        background-color: #b53236 !important;
-        border: none !important;
-        border-radius: 20px;
-    }
+        .btn-primary {
+            background-color: #b53236 !important;
+            border: none !important;
+            border-radius: 20px;
+        }
 
-    .btn-primary:hover {
-        background-color: #a12c30 !important;
-    }
+        .btn-primary:hover {
+            background-color: #a12c30 !important;
+        }
 
-    .btn-secondary {
-        background-color: #6c757d !important;
-        border: none !important;
-        border-radius: 20px;
-    }
+        .btn-secondary {
+            background-color: #6c757d !important;
+            border: none !important;
+            border-radius: 20px;
+        }
 
-    .btn-secondary:hover {
-        background-color: #5c636a !important;
-    }
+        .btn-secondary:hover {
+            background-color: #5c636a !important;
+        }
 
-    .btn-select {
-        background-color: #b53236;
-        color: #fff;
-        font-weight: bold;
-        padding: 4px 12px;
-        border-radius: 20px;
-        font-size: 0.8em;
-        cursor: pointer;
-        border: none;
-    }
+        .btn-select {
+            background-color: #b53236;
+            color: #fff;
+            font-weight: bold;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            cursor: pointer;
+            border: none;
+        }
 
-    .btn-select:hover {
-        background-color: #a12c30;
-        color: #fff;
-    }
+        .btn-select:hover {
+            background-color: #a12c30;
+            color: #fff;
+        }
 
-    .selected-equipment-label {
-        font-weight: normal;
-        font-size: 0.9em;
-        color: #333;
-        margin-bottom: 16px;
-    }
+        .selected-equipment-label {
+            font-weight: normal;
+            font-size: 0.9em;
+            color: #333;
+            margin-bottom: 16px;
+        }
 
-    .selected-equipment-item {
-        background-color: #b53236;
-        font-weight: bold;
-        font-size: 0.80em;
-        color: #fff;
-        padding: 2px 6px;
-        border-radius: 20px;
-        margin-left: 8px;
-        display: inline-block;
-    }
+        .selected-equipment-item {
+            background-color: #b53236;
+            font-weight: bold;
+            font-size: 0.80em;
+            color: #fff;
+            padding: 2px 6px;
+            border-radius: 20px;
+            margin-left: 8px;
+            display: inline-block;
+        }
 
-    .filter-search-row {
-        display: flex;
-        gap: 16px;
-        align-items: end;
-        margin-bottom: 16px;
-    }
+        .filter-search-row {
+            display: flex;
+            gap: 16px;
+            align-items: end;
+            margin-bottom: 16px;
+        }
 
-    .maintenance-logs-section {
-        background: #fff;
-        padding: 16px;
-        border-radius: 20px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        margin-top: 24px;
-    }
+        .maintenance-logs-section {
+            background: #fff;
+            padding: 16px;
+            border-radius: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-top: 24px;
+        }
 
-    .maintenance-logs-section h3 {
-        border-bottom: 1px solid #ccc;
-        padding-bottom: 8px;
-        margin-bottom: 16px;
-    }
+        .maintenance-logs-section h3 {
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 8px;
+            margin-bottom: 16px;
+        }
 
-    .equipment-list-title {
-        padding: 8px 0;
-        margin-bottom: 8px;
-        margin-top: 8px;
-        font-weight: bold;
-        font-size: 1em;
-    }
+        .equipment-list-title {
+            padding: 8px 0;
+            margin-bottom: 8px;
+            margin-top: 8px;
+            font-weight: bold;
+            font-size: 1em;
+        }
 
-    .log-buttons {
-        display: flex;
-        justify-content: end;
-        gap: 8px;
-    }
+        .log-buttons {
+            display: flex;
+            justify-content: end;
+            gap: 8px;
+        }
 
-    /* Table styling */
-    /* Set table-layout:fixed so that column widths align between header and body tables */
-    .header-table, .body-table {
-        width: 100%;
-        border-collapse: separate;
-        border-spacing: 0 10px;
-        table-layout: fixed;
-    }
+        /* Table styling */
+        /* Set table-layout:fixed so that column widths align between header and body tables */
+        .header-table,
+        .body-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 10px;
+            table-layout: fixed;
+        }
 
-    .header-table thead th {
-        border: none;
-        background: none;
-        font-weight: bold;
-        font-size: 0.85em;
-        text-align: left;
-        color: #343a40;
-        padding-bottom: 4px;
-    }
+        .header-table thead th {
+            border: none;
+            background: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            text-align: left;
+            color: #343a40;
+            padding-bottom: 4px;
+        }
 
-    .body-table tbody tr {
-        background: #fff;
-        font-size: 0.80em;
-        border-radius: 20px;
-        box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-    }
+        .body-table tbody tr {
+            background: #fff;
+            font-size: 0.80em;
+            border-radius: 20px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
 
-    .body-table tbody tr td {
-        vertical-align: middle;
-        padding: 8px;
-    }
+        .body-table tbody tr td {
+            vertical-align: middle;
+            padding: 8px;
+        }
 
-    .body-table tbody tr td:first-child {
-        border-top-left-radius: 8px;
-        border-bottom-left-radius: 8px;
-    }
+        .body-table tbody tr td:first-child {
+            border-top-left-radius: 8px;
+            border-bottom-left-radius: 8px;
+        }
 
-    .body-table tbody tr td:last-child {
-        border-top-right-radius: 8px;
-        border-bottom-right-radius: 8px;
-    }
+        .body-table tbody tr td:last-child {
+            border-top-right-radius: 8px;
+            border-bottom-right-radius: 8px;
+        }
 
-    /* Scrollable area for the body only */
-    .scroll-container {
-        max-height: 200px; /* Adjust as needed */
-        overflow-y: auto;
-    }
-
+        /* Scrollable area for the body only */
+        .scroll-container {
+            max-height: 200px;
+            /* Adjust as needed */
+            overflow-y: auto;
+        }
     </style>
 </head>
+
 <body>
     <!-- PHP variables assumed to be defined elsewhere:
          $equipment_types, $selectedTypeId, $searchTerm,
          $equipment, $remarks_options, $personnel_options, $maintenanceLogs -->
-        
-        <div class="top-section">
-            <!-- Log Maintenance Form Card -->
-            <div class="card-section left-card">
-                <h3>Log Maintenance</h3>
-                <form action="maintenance_process.php" method="POST" onsubmit="incrementJobOrder()" class="log-maintenance-form">
-                    <div class="mb-3">
-                        <label for="jo_number">Job Order:</label>
-                        <input type="text" name="jo_number" id="jo_number" class="form-control" required readonly>
-                    </div>
 
-                    <div id="selected_equipment" class="selected-equipment-label">Selected Equipments</div>
-
-                    <div class="mb-3">
-                        <label for="actions_taken">Actions Taken:</label>
-                        <textarea name="actions_taken" id="actions_taken" class="form-control" required maxlength="40" placeholder="Required"></textarea>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="remarks">Remark:</label>
-                        <select name="remarks" id="remarks" class="form-select" required>
-                            <?php foreach ($remarks_options as $remark): ?>
-                                <option value="<?php echo htmlspecialchars($remark['remarks_id']); ?>">
-                                    <?php echo htmlspecialchars($remark['remarks_name']); ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="personnel">Personnel:</label>
-                        <select name="personnel_id" id="personnel" class="form-select" required>
-                            <?php if (!empty($personnel_options)): ?>
-                                <?php foreach ($personnel_options as $person): ?>
-                                    <option value="<?php echo htmlspecialchars($person['personnel_id']); ?>">
-                                        <?php echo htmlspecialchars($person['firstname'] . " " . $person['lastname'] . " - " . $person['office']); ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            <?php else: ?>
-                                <option value="">No personnel added.</option>
-                            <?php endif; ?>
-                        </select>
-                    </div>
-
-                    <div class="mb-4">
-                        <label for="maintaindate">Date:</label>
-                        <input type="date" name="maintaindate" id="maintaindate" class="form-control" required max="<?php echo date('Y-m-d'); ?>">
-                    </div>
-
-                    <div class="log-buttons">
-                        <button type="submit" class="btn btn-primary">Log Maintenance</button>
-                        <button type="button" class="btn btn-secondary" onclick="window.location.href='equipment_maintenance.php'">Cancel</button>
-                    </div>
-                </form>
-            </div>
-
-            <!-- Right Panel: Select Registered Equipment -->
-            <div class="card-section right-card">
-                <h3>Select Registered Equipment to Log for Maintenance</h3>
-                <form method="GET" action="equipment_maintenance.php" class="filter-search-row">
-                    <div style="flex:1;">
-                        <label for="equipment_type_filter" style="display:block; font-weight:bold; font-size:0.85em; margin-bottom:4px;">Filter by Equipment Type</label>
-                        <select id="equipment_type_filter" name="equipment_type" class="form-select" onchange="this.form.submit()">
-                            <option value="">All</option>
-                            <?php foreach ($equipment_types as $type): ?>
-                                <option value="<?php echo htmlspecialchars($type['equip_type_id']); ?>" <?php echo ($type['equip_type_id'] == $selectedTypeId) ? 'selected' : ''; ?>>
-                                    <?php echo htmlspecialchars($type['equip_type_name']); ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                    
-                    <div style="flex:1;">
-                        <input type="text" id="search_term" name="search_term" class="form-control" placeholder="Search" value="<?php echo htmlspecialchars($searchTerm); ?>">
-                    </div>
-                </form>
-
-                <div class="equipment-list-title">List of Equipments</div>
-
-                <!-- Table with fixed header and scrollable body -->
-                <table class="header-table">
-                    <thead>
-                        <tr>
-                            <th>Equipment Name</th>
-                            <th>Property Number</th>
-                            <th>Status</th>
-                            <th>Date Purchased</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                </table>
-                <div class="scroll-container">
-                    <table class="body-table">
-                        <tbody>
-                            <?php if (!empty($equipment)): ?>
-                                <?php foreach ($equipment as $item): ?>
-                                    <tr>
-                                        <td><?php echo htmlspecialchars($item['equip_name']); ?></td>
-                                        <td><?php echo htmlspecialchars($item['property_num']); ?></td>
-                                        <td><?php echo htmlspecialchars($item['status']); ?></td>
-                                        <td><?php echo htmlspecialchars($item['date_purchased']); ?></td>
-                                        <td>
-                                            <button type="button" class="btn-select" 
-                                                onclick="generateJobOrderAndUpdate('<?php echo htmlspecialchars($item['equipment_id']); ?>', '<?php echo htmlspecialchars($item['equip_name']); ?>')">
-                                                SELECT
-                                            </button>
-                                        </td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            <?php else: ?>
-                                <tr><td colspan="5">No equipment found.</td></tr>
-                            <?php endif; ?>
-                        </tbody>
-                    </table>
+    <div class="top-section">
+        <!-- Log Maintenance Form Card -->
+        <div class="card-section left-card">
+            <h3>Log Maintenance</h3>
+            <form action="maintenance_process.php" method="POST" onsubmit="incrementJobOrder()"
+                class="log-maintenance-form">
+                <div class="mb-3">
+                    <label for="jo_number">Job Order:</label>
+                    <input type="text" name="jo_number" id="jo_number" class="form-control" required readonly>
                 </div>
 
-            </div>
+                <div id="selected_equipment" class="selected-equipment-label">Selected Equipments</div>
+
+                <div class="mb-3">
+                    <label for="actions_taken">Actions Taken:</label>
+                    <textarea name="actions_taken" id="actions_taken" class="form-control" required maxlength="40"
+                        placeholder="Required"></textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label for="remarks">Remark:</label>
+                    <select name="remarks" id="remarks" class="form-select" required>
+                        <?php foreach ($remarks_options as $remark): ?>
+                            <option value="<?php echo htmlspecialchars($remark['remarks_id']); ?>">
+                                <?php echo htmlspecialchars($remark['remarks_name']); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="personnel">Personnel:</label>
+                    <select name="personnel_id" id="personnel" class="form-select" required>
+                        <?php if (!empty($personnel_options)): ?>
+                            <?php foreach ($personnel_options as $person): ?>
+                                <option value="<?php echo htmlspecialchars($person['personnel_id']); ?>">
+                                    <?php echo htmlspecialchars($person['firstname'] . " " . $person['lastname'] . " - " . $person['office']); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <option value="">No personnel added.</option>
+                        <?php endif; ?>
+                    </select>
+                </div>
+
+                <div class="mb-4">
+                    <label for="maintaindate">Date:</label>
+                    <input type="date" name="maintaindate" id="maintaindate" class="form-control" required
+                        max="<?php echo date('Y-m-d'); ?>">
+                </div>
+
+                <div class="log-buttons">
+                    <button type="submit" class="btn btn-primary">Log Maintenance</button>
+                    <button type="button" class="btn btn-secondary"
+                        onclick="window.location.href='equipment_maintenance.php'">Cancel</button>
+                </div>
+            </form>
         </div>
-        <div class="mb-3 d-flex align-items-end gap-3">
-    <div style="flex: 0.3;">
-        <label for="column_filter" style="font-weight: bold;">Filter By:</label>
-        <select id="column_filter" class="form-select">
-            <option value="all">All Columns</option>
-            <option value="0">Equipment Name</option>
-            <option value="1">Maintenance Date</option>
-            <option value="2">Job Order Number</option>
-            <option value="3">Actions Taken</option>
-            <option value="4">Remarks</option>
-            <option value="5">Responsible Personnel</option>
-        </select>
-    </div>
-    <div style="flex: 1;">
-        <label for="search_logs" style="font-weight: bold;">Search Logs:</label>
-        <input type="text" id="search_logs" class="form-control" placeholder="Search Maintenance Logs">
-    </div>
-</div>
 
+        <!-- Right Panel: Select Registered Equipment -->
+        <div class="card-section right-card">
+            <h3>Select Registered Equipment to Log for Maintenance</h3>
+            <form method="GET" action="equipment_maintenance.php" class="filter-search-row">
+                <div style="flex:1;">
+                    <label for="equipment_type_filter"
+                        style="display:block; font-weight:bold; font-size:0.85em; margin-bottom:4px;">Filter by
+                        Equipment Type</label>
+                    <select id="equipment_type_filter" name="equipment_type" class="form-select"
+                        onchange="this.form.submit()">
+                        <option value="">All</option>
+                        <?php foreach ($equipment_types as $type): ?>
+                            <option value="<?php echo htmlspecialchars($type['equip_type_id']); ?>" <?php echo ($type['equip_type_id'] == $selectedTypeId) ? 'selected' : ''; ?>>
+                                <?php echo htmlspecialchars($type['equip_type_name']); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
 
-        <!-- Maintenance Logs -->
-        <div class="maintenance-logs-section">
-            <h3>Maintenance Logs</h3>
-            <table class="table header-table">
+                <div style="flex:1;">
+                    <input type="text" id="search_term" name="search_term" class="form-control" placeholder="Search"
+                        value="<?php echo htmlspecialchars($searchTerm); ?>">
+                </div>
+            </form>
+
+            <div class="equipment-list-title">List of Equipments</div>
+
+            <!-- Table with fixed header and scrollable body -->
+            <table class="header-table">
                 <thead>
                     <tr>
                         <th>Equipment Name</th>
-                        <th>Maintenance Date</th>
-                        <th>Job Order Number</th>
-                        <th>Actions Taken</th>
-                        <th>Remarks</th>
-                        <th>Responsible Personnel</th>
+                        <th>Property Number</th>
+                        <th>Status</th>
+                        <th>Date Purchased</th>
+                        <th></th>
                     </tr>
                 </thead>
+            </table>
+            <div class="scroll-container">
+                <table class="body-table">
+                    <tbody>
+                        <?php if (!empty($equipment)): ?>
+                            <?php foreach ($equipment as $item): ?>
+                                <tr>
+                                    <td><?php echo htmlspecialchars($item['equip_name']); ?></td>
+                                    <td><?php echo htmlspecialchars($item['property_num']); ?></td>
+                                    <td><?php echo htmlspecialchars($item['status']); ?></td>
+                                    <td><?php echo htmlspecialchars($item['date_purchased']); ?></td>
+                                    <td>
+                                        <button type="button" class="btn-select"
+                                            onclick="generateJobOrderAndUpdate('<?php echo htmlspecialchars($item['equipment_id']); ?>', '<?php echo htmlspecialchars($item['equip_name']); ?>')">
+                                            SELECT
+                                        </button>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <tr>
+                                <td colspan="5">No equipment found.</td>
+                            </tr>
+                        <?php endif; ?>
+                    </tbody>
                 </table>
-                <div class="scroll-container">
-                    <table class="body-table">
+            </div>
+
+        </div>
+    </div>
+    <div class="mb-3 d-flex align-items-end gap-3">
+        <div style="flex: 0.3;">
+            <label for="column_filter" style="font-weight: bold;">Filter By:</label>
+            <select id="column_filter" class="form-select">
+                <option value="all">All Columns</option>
+                <option value="0">Equipment Name</option>
+                <option value="1">Maintenance Date</option>
+                <option value="2">Job Order Number</option>
+                <option value="3">Actions Taken</option>
+                <option value="4">Remarks</option>
+                <option value="5">Responsible Personnel</option>
+            </select>
+        </div>
+        <div style="flex: 1;">
+            <label for="search_logs" style="font-weight: bold;">Search Logs:</label>
+            <input type="text" id="search_logs" class="form-control" placeholder="Search Maintenance Logs">
+        </div>
+    </div>
+
+
+    <!-- Maintenance Logs -->
+    <div class="maintenance-logs-section">
+        <h3>Maintenance Logs</h3>
+        <table class="table header-table">
+            <thead>
+                <tr>
+                    <th>Equipment Name</th>
+                    <th>Maintenance Date</th>
+                    <th>Job Order Number</th>
+                    <th>Actions Taken</th>
+                    <th>Remarks</th>
+                    <th>Responsible Personnel</th>
+                </tr>
+            </thead>
+        </table>
+        <div class="scroll-container">
+            <table class="body-table">
                 <tbody>
                     <?php if (!empty($maintenanceLogs)): ?>
                         <?php foreach ($maintenanceLogs as $log): ?>
@@ -484,7 +505,9 @@ try {
                             </tr>
                         <?php endforeach; ?>
                     <?php else: ?>
-                        <tr><td colspan="6">No maintenance logs found.</td></tr>
+                        <tr>
+                            <td colspan="6">No maintenance logs found.</td>
+                        </tr>
                     <?php endif; ?>
                 </tbody>
             </table>
@@ -523,7 +546,7 @@ try {
             localStorage.setItem(`jobOrderNum_${year}_${month}`, jobOrderNum);
         }
 
-        window.onload = function() {
+        window.onload = function () {
             const dateInput = document.getElementById("maintaindate");
             function setMaxDate() {
                 const today = new Date().toISOString().split("T")[0];
@@ -534,36 +557,37 @@ try {
         };
     </script>
 
-<script>
-document.getElementById('search_logs').addEventListener('input', filterLogs);
-document.getElementById('column_filter').addEventListener('change', filterLogs);
+    <script>
+        document.getElementById('search_logs').addEventListener('input', filterLogs);
+        document.getElementById('column_filter').addEventListener('change', filterLogs);
 
-function filterLogs() {
-    const searchValue = document.getElementById('search_logs').value.toLowerCase();
-    const columnIndex = document.getElementById('column_filter').value;
-    const rows = document.querySelectorAll('.body-table tbody tr');
+        function filterLogs() {
+            const searchValue = document.getElementById('search_logs').value.toLowerCase();
+            const columnIndex = document.getElementById('column_filter').value;
+            const rows = document.querySelectorAll('.body-table tbody tr');
 
-    rows.forEach(row => {
-        let match = false;
+            rows.forEach(row => {
+                let match = false;
 
-        if (columnIndex === "all") {
-            row.querySelectorAll('td').forEach(cell => {
-                if (cell.textContent.toLowerCase().includes(searchValue)) {
-                    match = true;
+                if (columnIndex === "all") {
+                    row.querySelectorAll('td').forEach(cell => {
+                        if (cell.textContent.toLowerCase().includes(searchValue)) {
+                            match = true;
+                        }
+                    });
+                } else {
+                    const cell = row.querySelectorAll('td')[columnIndex];
+                    if (cell && cell.textContent.toLowerCase().includes(searchValue)) {
+                        match = true;
+                    }
                 }
-            });
-        } else {
-            const cell = row.querySelectorAll('td')[columnIndex];
-            if (cell && cell.textContent.toLowerCase().includes(searchValue)) {
-                match = true;
-            }
-        }
 
-        row.style.display = match ? '' : 'none';
-    });
-}
-</script>
+                row.style.display = match ? '' : 'none';
+            });
+        }
+    </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
