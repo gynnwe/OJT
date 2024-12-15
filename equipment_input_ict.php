@@ -529,5 +529,46 @@ try {
             });
         });
     </script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Equipment Name Validation
+        const equipNameInput = document.getElementById('equip_name');
+        equipNameInput.addEventListener('input', function () {
+            let value = this.value;
+
+            // Allow only letters, spaces, and hyphens
+            value = value.replace(/[^a-zA-Z\s-]/g, '');
+
+            // Prevent consecutive spaces or hyphens
+            value = value.replace(/(\s{2,}|\-{2,})/g, ' ');
+
+            // Auto-capitalize the first letter of each word
+            value = value.replace(/\b\w/g, (char) => char.toUpperCase());
+
+            // Restrict length to 50 characters
+            this.value = value.slice(0, 50);
+        });
+
+        // Property Number Validation
+        const propertyNumInput = document.getElementById('property_num');
+        propertyNumInput.addEventListener('input', function () {
+            let value = this.value;
+
+            // Allow letters, numbers, dashes, and slashes
+            value = value.replace(/[^a-zA-Z0-9\/-]/g, '');
+
+            // Prevent consecutive dashes or slashes
+            value = value.replace(/(\/{2,}|\-{2,})/g, '-');
+
+            // Auto-capitalize letters
+            value = value.toUpperCase();
+
+            // Restrict length to 30 characters
+            this.value = value.slice(0, 30);
+        });
+    });
+</script>
+
 </body>
 </html>
