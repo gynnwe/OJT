@@ -5,7 +5,6 @@ $password = "";
 $dbname = "ictmms";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Collect form data
     $location_id = $_POST['location_id'];
     $equipment_type = $_POST['equipment_type'];
     $equip_name = $_POST['equip_name'];
@@ -15,7 +14,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $date_purchased = $_POST['date_purchased'];
 
     try {
-        // Connect to the database
         $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
@@ -27,7 +25,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         if ($location_stmt->rowCount() === 0) {
             // Location ID doesn't exist
-            echo "<script>alert('This location doesn\'t exist. Please enter a valid location ID.'); window.location.href='equipment_input_ict.php';</script>";
+			$_SESSION['error'] = "Please enter a valid Location ID.";
+			header("Location: equipment_input_ict.php");
+    		exit;
         } else {
             // Check if Property Number already exists
             $prop_check_sql = "SELECT property_num FROM equipment WHERE property_num = :property_num";
@@ -36,8 +36,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $prop_stmt->execute();
 
             if ($prop_stmt->rowCount() > 0) {
-                // Property number already exists
-                echo "<script>alert('Equipment with this property number already exists.'); window.location.href='equipment_input_ict.php';</script>";
+				header("Location: equipment_input_ict.php");
+    			exit;
             } else {
                 // Insert into equipment if location and property are valid
                 $sql = "INSERT INTO equipment (location_id, equip_type_id, model_id, equip_name, property_num, status, date_purchased) 
@@ -55,13 +55,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         
                 // Execute statement and check success
                 if ($stmt->execute()) {
-                    echo "<script>alert('Equipment data inserted successfully!'); window.location.href='equipment_input_ict.php';</script>";
+                    $_SESSION['message'] = "Equipment registered successfully.";
+					header("Location: equipment_input_ict.php");
+    				exit;
                 } else {
-                    echo "<script>alert('Failed to insert equipment data.'); window.location.href='equipment_input_ict.php';</script>";
+                    header("Location: equipment_input_ict.php");
+					exit;
                 }
             }
         }
-
     } catch (PDOException $e) {
         echo "Error: " . $e->getMessage();
     }
