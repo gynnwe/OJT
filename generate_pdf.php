@@ -168,6 +168,7 @@ $col4SubWidth = $col4Width / 12;
 $rowHeight = 12.8;
 $splitRowHeight = $rowHeight / 2;
 
+
 // Dynamic Table
 $alreadyRendered = false;
 
@@ -199,22 +200,23 @@ foreach ($groupedDetails as $equipType => $details) {
     $pdf->Cell($col1Width, $splitRowHeight * 2, '1', 1, 0, 'C'); // Merged No.
     $pdf->Cell($col2Width, $splitRowHeight * 2, $equipType, 1, 0, 'C'); // Merged Equipment Type
 
-    // First row: Hardware - Plan
-    $pdf->Cell($col3Width, $splitRowHeight, 'Hardware', 1, 0, 'C'); // Areas: Hardware
+    // First Row: "Hardware" (Plan)
+    $pdf->SetFont('arial', '', 9);
+    $pdf->Cell($col3Width, $splitRowHeight, 'Hardware', 1, 0, 'C'); // Hardware row label
     foreach ($details as $detail) {
-        $value = $detail['target'] ?? ''; // Display "Plan" values
+        $value = $detail['target'] ?? ''; // Fetch Plan value
         $pdf->Cell($col4SubWidth, $splitRowHeight, $value, 1, 0, 'C');
     }
     $pdf->Ln();
 
-    // Second row: Software - Implemented
-    $pdf->SetX(19 + $col1Width + $col2Width); // Move cursor to align with the "Areas" column
-    $pdf->Cell($col3Width, $splitRowHeight, 'Software', 1, 0, 'C'); // Areas: Software
+    // Second Row: "Software" (Implemented)
+    $pdf->SetX(19 + $col1Width + $col2Width); // Align with "Areas"
+    $pdf->Cell($col3Width, $splitRowHeight, 'Software', 1, 0, 'C'); // Software row label
     foreach ($details as $detail) {
-        $value = $detail['implemented'] ?? ''; // Display "Implemented" values
+        $value = $detail['implemented'] ?? ''; // Fetch Implemented value
         $pdf->Cell($col4SubWidth, $splitRowHeight, $value, 1, 0, 'C');
     }
-    $pdf->Ln(5); // Spacing after table
+    $pdf->Ln(5); // Add spacing after table
 }
 
 // Insert image into the first column
