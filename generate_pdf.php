@@ -55,7 +55,7 @@ $pdf->SetY($pdf->GetY() - 1);
 $pdf->SetFont('arialbd', 'B', 14);
 $pdf->MultiCell($pageWidth, 1, 'ANNUAL PREVENTIVE MAINTENANCE PLAN FOR ICT EQUIPMENT', 0, 'C', 0, 1);
 $pdf->SetFont('arial', '', 12);
-$pdf->Cell($pageWidth, 1, 'Year ____________', 0, 1, 'C');
+$pdf->Cell($pageWidth, 1, 'Year ____________', 0, 1, 'C'); // Put the year here
 $pdf->SetFont('arial', '', 10);
 $pdf->Cell($pageWidth, 15, 'Name of Office/College/School/Unit: ______________________________                      Campus: ______________________________', 0, 1, 'L');
 $pdf->Ln(0.5);
@@ -69,7 +69,7 @@ $rowHeight = 12.8;
 $splitRowHeight = $rowHeight / 2;
 $tableData = [
     ["No.", "Equipment Type/Name", "Areas to be Maintained / Checked", ""],
-    ["1", "", "", ""]
+    ["1", "", "", ""] // beside "1", that's where you put the Equipment Type/Name (On the 2nd data)
 ];
 
 foreach ($tableData as $key => $row) {
