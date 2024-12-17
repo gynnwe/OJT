@@ -102,7 +102,7 @@ $pdf->MultiCell($pageWidth, 1, 'ANNUAL PREVENTIVE MAINTENANCE PLAN FOR ICT EQUIP
 
 // Add the second line of text: "Year ____________"
 $pdf->SetFont('arial', '', 12); // Set to Arial Regular, size 12
-$pdf->Cell($pageWidth, 1, 'Year ____________', 0, 1, 'C');
+$pdf->Cell($pageWidth, 1, 'Year ____________', 0, 1, 'C'); // The Year from maintenance_plan_view.php must be inputted on the blank page.
 
 // Add text below the single column cell
 $pdf->SetFont('arial', '', 10); // Set font to Arial Regular, size 10
@@ -126,7 +126,7 @@ $splitRowHeight = $rowHeight / 2; // Half row height
 // Define text for each cell in the table
 $tableData = [
     ["No.", "Equipment Type/Name", "Areas to be Maintained / Checked", ""], // Header row
-    ["1", "", "", ""] // Placeholder row
+    ["1", "", "", ""] // On the 2nd " ", this is the part where you will input the equipment name from maintenance_plan_view.php
 ];
 
 // Draw the table
@@ -169,6 +169,7 @@ foreach ($tableData as $key => $row) {
         $pdf->Ln();
     } else {
         // 1st part: Add "Plan" in the first column of 13 cells
+        // this is the part where you need to fill out the blank cells in Plan from Maintenance_plan_view.php on each month
         $pdf->SetX(19 + $col1Width + $col2Width);
         $pdf->Cell($col3Width, $splitRowHeight, 'Hardware', 1, 0, 'C');
 
@@ -182,6 +183,7 @@ foreach ($tableData as $key => $row) {
         $pdf->Ln();
 
         // 2nd part: Add "Implemented" in the first column of 13 cells
+        // this is the part where you need to fill out the blank cells in Implemented from Maintenance_plan_view.php o each month
         $pdf->SetX(19 + $col1Width + $col2Width);
         $pdf->Cell($col3Width, $splitRowHeight, 'Software', 1, 0, 'C');
 
