@@ -1,49 +1,5 @@
 <?php
 require_once 'tcpdf/tcpdf.php'; // Ensure this path is correct
-error_reporting(0); // Suppress error reporting to avoid breaking PDF generation
-
-
-
-// Database connection
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "ictmms";
-
-try {
-    $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-    // Fetch Plan ID from POST
-    $planId = $_POST['plan_id'] ?? null;
-    if (!$planId)
-        die("No Plan ID provided.");
-
-    // Fetch Year
-    $stmtPlan = $conn->prepare("SELECT year FROM maintenance_plan WHERE id = :planId");
-    $stmtPlan->execute([':planId' => $planId]);
-    $plan = $stmtPlan->fetch(PDO::FETCH_ASSOC);
-    $year = $plan['year'] ?? 'N/A';
-
-    // Fetch Plan Details Grouped by Equipment Type
-    $stmtDetails = $conn->prepare("
-            SELECT pd.*, et.equip_type_name 
-            FROM plan_details pd
-            JOIN equipment_type et ON pd.equip_type_id = et.equip_type_id
-            WHERE pd.maintenance_plan_id = :planId
-            ORDER BY et.equip_type_id, pd.month
-        ");
-    $stmtDetails->execute([':planId' => $planId]);
-    $planDetails = $stmtDetails->fetchAll(PDO::FETCH_ASSOC);
-
-    // Group data by equipment type
-    $groupedDetails = [];
-    foreach ($planDetails as $detail) {
-        $groupedDetails[$detail['equip_type_name']][] = $detail;
-    }
-} catch (Exception $e) {
-    die("Database Error: " . $e->getMessage());
-}
 
 
 class CustomPDF extends TCPDF
@@ -145,8 +101,8 @@ $pdf->SetFont('arialbd', 'B', 14); // Arial Bold with size 14
 $pdf->MultiCell($pageWidth, 1, 'ANNUAL PREVENTIVE MAINTENANCE PLAN FOR ICT EQUIPMENT', 0, 'C', 0, 1);
 
 // Add the second line of text: "Year ____________"
-$pdf->SetFont('arial', '', 12);
-$pdf->Cell($pageWidth, 1, "Year: $year", 0, 1, 'C');
+$pdf->SetFont('arial', '', 12); // Set to Arial Regular, size 12
+$pdf->Cell($pageWidth, 1, 'Year ____________', 0, 1, 'C');
 
 // Add text below the single column cell
 $pdf->SetFont('arial', '', 10); // Set font to Arial Regular, size 10
@@ -159,59 +115,86 @@ $pdf->Ln(0.5); // Adjust spacing as needed
 $pdf->SetFont('arial', '', 10);
 
 // Define dimensions for the table
-// Table Dimensions
-$col1Width = 9.3;
-$col2Width = 40.3;
-$col3Width = 57.0;
-$col4Width = 157.5;
-$col4SubWidth = $col4Width / 12;
-$rowHeight = 12.8;
-$splitRowHeight = $rowHeight / 2;
+$col1Width = 9.3;    // 0.93 cm = 9.3 mm
+$col2Width = 40.3;   // 4.03 cm = 40.3 mm
+$col3Width = 57.0;   // 5.7 cm = 57 mm
+$col4Width = 157.5;  // Total width for 4th column
+$col4SubWidth = $col4Width / 13; // Divide the 4th column into 12 smaller cells
+$rowHeight = 12.8;   // Full row height
+$splitRowHeight = $rowHeight / 2; // Half row height
 
+// Define text for each cell in the table
+$tableData = [
+    ["No.", "Equipment Type/Name", "Areas to be Maintained / Checked", ""], // Header row
+    ["1", "", "", ""] // Placeholder row
+];
 
-// Dynamic Table
-// Dynamic Table
-$rowNum = 1;
-foreach ($groupedDetails as $equipType => $details) {
-    // Table Header
-    $pdf->SetFont('arial', 'B', 10);
-    $pdf->Cell($col1Width, $rowHeight, 'No.', 1, 0, 'C');
-    $pdf->Cell($col2Width, $rowHeight, 'Equipment Type/Name', 1, 0, 'C');
-    $pdf->Cell($col3Width, $rowHeight, 'Areas to be Maintained / Checked', 1, 0, 'C');
-    $pdf->Cell($col4Width, $splitRowHeight, 'Schedule', 1, 1, 'C');
+// Draw the table
+foreach ($tableData as $key => $row) {
+    // Draw the 1st column
+    $pdf->Cell($col1Width, $rowHeight, $row[0], 1, 0, 'C');
 
-    // Month Headers
-    $pdf->SetX(19 + $col1Width + $col2Width + $col3Width);
-    foreach (['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'] as $month) {
-        $pdf->Cell($col4SubWidth, $splitRowHeight, $month, 1, 0, 'C');
+    // Draw the 2nd column
+    $pdf->Cell($col2Width, $rowHeight, $row[1], 1, 0, 'C');
+
+    if ($key === 0) {
+        // Draw the 3rd column
+        $pdf->Cell($col3Width, $rowHeight, $row[2], 1, 0, 'C');
+
+        // 4th Column: Divide vertically with top and bottom interchanged
+        $currentX = $pdf->GetX();
+        $currentY = $pdf->GetY();
+
+        // Top half: Single cell
+        $pdf->Cell($col4Width, $splitRowHeight, 'Schedule', 1, 0, 'C');
+        $pdf->Ln();
+
+        // Bottom half: Adjust first column and redistribute remaining width
+        $pdf->SetX($currentX); // Reset X position
+
+        // Adjust widths
+        $firstColWidth = $col4SubWidth + 20; // Increase first column width
+        $remainingColWidth = ($col4Width - $firstColWidth) / 12;
+
+        // First cell: Blank but adjusted width
+        $pdf->Cell($firstColWidth, $splitRowHeight, '', 1, 0, 'C');
+
+        // Array of months
+        $months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+        // Populate months in the remaining 12 cells
+        foreach ($months as $month) {
+            $pdf->Cell($remainingColWidth, $splitRowHeight, $month, 1, 0, 'C');
+        }
+        $pdf->Ln();
+    } else {
+        // 1st part: Add "Plan" in the first column of 13 cells
+        $pdf->SetX(19 + $col1Width + $col2Width);
+        $pdf->Cell($col3Width, $splitRowHeight, 'Hardware', 1, 0, 'C');
+
+        for ($i = 0; $i < 13; $i++) {
+            if ($i === 0) {
+                $pdf->Cell($firstColWidth, $splitRowHeight, 'Plan', 1, 0, 'C'); // Larger first cell
+            } else {
+                $pdf->Cell($remainingColWidth, $splitRowHeight, '', 1, 0, 'C'); // Adjusted remaining cells
+            }
+        }
+        $pdf->Ln();
+
+        // 2nd part: Add "Implemented" in the first column of 13 cells
+        $pdf->SetX(19 + $col1Width + $col2Width);
+        $pdf->Cell($col3Width, $splitRowHeight, 'Software', 1, 0, 'C');
+
+        for ($i = 0; $i < 13; $i++) {
+            if ($i === 0) {
+                $pdf->Cell($firstColWidth, $splitRowHeight, 'Implemented', 1, 0, 'C'); // Larger first cell
+            } else {
+                $pdf->Cell($remainingColWidth, $splitRowHeight, '', 1, 0, 'C'); // Adjusted remaining cells
+            }
+        }
+        $pdf->Ln();
     }
-    $pdf->Ln();
-
-    // Merged Cells for Equipment
-    $pdf->SetX(19);
-    $pdf->Cell($col1Width, $splitRowHeight * 2, $rowNum, 1, 0, 'C'); // Row number
-    $pdf->Cell($col2Width, $splitRowHeight * 2, $equipType, 1, 0, 'C'); // Equipment type
-
-    // Hardware Row (Plan)
-    $pdf->Cell($col3Width, $splitRowHeight, 'Hardware', 1, 0, 'C');
-    foreach ($details as $detail) {
-        $planValue = isset($detail['target']) ? $detail['target'] : ''; // Default to empty
-        $pdf->Cell($col4SubWidth, $splitRowHeight, $planValue, 1, 0, 'C');
-    }
-    $pdf->Ln();
-
-    // Software Row (Implemented)
-    $pdf->SetX(19 + $col1Width + $col2Width);
-    $pdf->Cell($col3Width, $splitRowHeight, 'Software', 1, 0, 'C');
-    foreach ($details as $detail) {
-        $implementedValue = isset($detail['implemented']) ? $detail['implemented'] : ''; // Default to empty
-        $pdf->Cell($col4SubWidth, $splitRowHeight, $implementedValue, 1, 0, 'C');
-    }
-    $pdf->Ln(5);
-
-    $rowNum++;
 }
-
 
 // Insert image into the first column
 $imagePath = 'C:/xampp/htdocs/OJT/assets/usep-logo.jpg';
@@ -326,14 +309,6 @@ for ($i = 0; $i < 1; $i++) {
 
 
 // Close and output PDF
-// Ensure no output here
-header('Content-Type: application/pdf'); // Explicitly set the PDF header
-if (ob_get_length()) {
-    ob_clean(); // Clean output buffer
-}
-
 define('OUTPUT_PATH', __DIR__ . '/'); // Save in current directory
 $pdf->Output(OUTPUT_PATH . 'tcpdf_custom_footer_with_table.pdf', 'I');
-exit();
-
 ?>
