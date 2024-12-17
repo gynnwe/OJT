@@ -1,6 +1,48 @@
 <?php
 require_once 'tcpdf/tcpdf.php';
 
+// === Backend: Fetch Year and Equipment Type/Name from Database ===
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "ictmms";
+
+try {
+    // Connect to the database
+    $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    // Check for plan_id passed via POST
+    if (!empty($_POST['plan_id'])) {
+        $planId = $_POST['plan_id'];
+
+        // Fetch Year and Equipment Type/Name using the provided Plan ID
+        $query = "
+            SELECT mp.year, et.equip_type_name 
+            FROM maintenance_plan mp
+            JOIN plan_details pd ON mp.id = pd.maintenance_plan_id
+            JOIN equipment_type et ON pd.equip_type_id = et.equip_type_id
+            WHERE mp.id = :planId
+            LIMIT 1";
+        $stmt = $conn->prepare($query);
+        $stmt->bindParam(':planId', $planId, PDO::PARAM_INT);
+        $stmt->execute();
+        $data = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        // Store fetched values into variables
+        if ($data) {
+            $year = $data['year'];
+            $equipmentType = $data['equip_type_name'];
+        } else {
+            throw new Exception("No data found for the provided Plan ID.");
+        }
+    } else {
+        throw new Exception("Plan ID is missing.");
+    }
+} catch (Exception $e) {
+    die("Error: " . $e->getMessage());
+}
+
 class CustomPDF extends TCPDF
 {
     public function Header() {}
@@ -54,8 +96,8 @@ $pdf->SetXY($centerX, $centerY + 3);
 $pdf->SetY($pdf->GetY() - 1);
 $pdf->SetFont('arialbd', 'B', 14);
 $pdf->MultiCell($pageWidth, 1, 'ANNUAL PREVENTIVE MAINTENANCE PLAN FOR ICT EQUIPMENT', 0, 'C', 0, 1);
-$pdf->SetFont('arial', '', 12);
-$pdf->Cell($pageWidth, 1, 'Year ____________', 0, 1, 'C'); // Put the year here
+$pdf->SetFont('arial', 'U', 12);
+$pdf->Cell($pageWidth, 5, 'Year ' . $year, 0, 1, 'C');
 $pdf->SetFont('arial', '', 10);
 $pdf->Cell($pageWidth, 15, 'Name of Office/College/School/Unit: ______________________________                      Campus: ______________________________', 0, 1, 'L');
 $pdf->Ln(0.5);
@@ -69,7 +111,7 @@ $rowHeight = 12.8;
 $splitRowHeight = $rowHeight / 2;
 $tableData = [
     ["No.", "Equipment Type/Name", "Areas to be Maintained / Checked", ""],
-    ["1", "", "", ""] // beside "1", that's where you put the Equipment Type/Name (On the 2nd data)
+    ["1", $equipmentType, "", ""]
 ];
 
 foreach ($tableData as $key => $row) {
@@ -149,7 +191,7 @@ $pdf->Ln(6);
 $pdf->Ln(10);
 $rowHeight = 35.9;
 $colWidth = 132.1;
-$pdf->Ln(49);
+$pdf->Ln(100);
 
 for ($i = 0; $i < 1; $i++) {
     $currentX = $pdf->GetX();
