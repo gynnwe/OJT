@@ -170,17 +170,9 @@ $splitRowHeight = $rowHeight / 2;
 
 
 // Dynamic Table
-$alreadyRendered = false;
-
+// Dynamic Table
+$rowNum = 1;
 foreach ($groupedDetails as $equipType => $details) {
-    if ($alreadyRendered) break; // Prevent duplicate rendering
-    $alreadyRendered = true;
-
-    // Add a new page if close to the bottom
-    if ($pdf->getY() > 200) {
-        $pdf->AddPage();
-    }
-
     // Table Header
     $pdf->SetFont('arial', 'B', 10);
     $pdf->Cell($col1Width, $rowHeight, 'No.', 1, 0, 'C');
@@ -188,36 +180,38 @@ foreach ($groupedDetails as $equipType => $details) {
     $pdf->Cell($col3Width, $rowHeight, 'Areas to be Maintained / Checked', 1, 0, 'C');
     $pdf->Cell($col4Width, $splitRowHeight, 'Schedule', 1, 1, 'C');
 
-    // Months Header
+    // Month Headers
     $pdf->SetX(19 + $col1Width + $col2Width + $col3Width);
     foreach (['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'] as $month) {
         $pdf->Cell($col4SubWidth, $splitRowHeight, $month, 1, 0, 'C');
     }
     $pdf->Ln();
 
-    // Merge "No." and "Equipment Type/Name" cells
+    // Merged Cells for Equipment
     $pdf->SetX(19);
-    $pdf->Cell($col1Width, $splitRowHeight * 2, '1', 1, 0, 'C'); // Merged No.
-    $pdf->Cell($col2Width, $splitRowHeight * 2, $equipType, 1, 0, 'C'); // Merged Equipment Type
+    $pdf->Cell($col1Width, $splitRowHeight * 2, $rowNum, 1, 0, 'C'); // Row number
+    $pdf->Cell($col2Width, $splitRowHeight * 2, $equipType, 1, 0, 'C'); // Equipment type
 
-    // First Row: "Hardware" (Plan)
-    $pdf->SetFont('arial', '', 9);
-    $pdf->Cell($col3Width, $splitRowHeight, 'Hardware', 1, 0, 'C'); // Hardware row label
+    // Hardware Row (Plan)
+    $pdf->Cell($col3Width, $splitRowHeight, 'Hardware', 1, 0, 'C');
     foreach ($details as $detail) {
-        $value = $detail['target'] ?? ''; // Fetch Plan value
-        $pdf->Cell($col4SubWidth, $splitRowHeight, $value, 1, 0, 'C');
+        $planValue = isset($detail['target']) ? $detail['target'] : ''; // Default to empty
+        $pdf->Cell($col4SubWidth, $splitRowHeight, $planValue, 1, 0, 'C');
     }
     $pdf->Ln();
 
-    // Second Row: "Software" (Implemented)
-    $pdf->SetX(19 + $col1Width + $col2Width); // Align with "Areas"
-    $pdf->Cell($col3Width, $splitRowHeight, 'Software', 1, 0, 'C'); // Software row label
+    // Software Row (Implemented)
+    $pdf->SetX(19 + $col1Width + $col2Width);
+    $pdf->Cell($col3Width, $splitRowHeight, 'Software', 1, 0, 'C');
     foreach ($details as $detail) {
-        $value = $detail['implemented'] ?? ''; // Fetch Implemented value
-        $pdf->Cell($col4SubWidth, $splitRowHeight, $value, 1, 0, 'C');
+        $implementedValue = isset($detail['implemented']) ? $detail['implemented'] : ''; // Default to empty
+        $pdf->Cell($col4SubWidth, $splitRowHeight, $implementedValue, 1, 0, 'C');
     }
-    $pdf->Ln(5); // Add spacing after table
+    $pdf->Ln(5);
+
+    $rowNum++;
 }
+
 
 // Insert image into the first column
 $imagePath = 'C:/xampp/htdocs/OJT/assets/usep-logo.jpg';
