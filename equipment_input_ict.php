@@ -21,7 +21,7 @@ try {
         $stmt = $conn->prepare($sql);
         $stmt->bindParam(':equipment_id', $equipment_id);
         $stmt->execute();
-		$_SESSION['message'] = "Equipment deleted successfully.";
+        $_SESSION['message'] = "Equipment deleted successfully.";
         header("Location: " . $_SERVER['PHP_SELF']);
         exit;
     }
@@ -47,7 +47,7 @@ try {
         $stmt->bindParam(':date_purchased', $_POST['date_purchased']);
         $stmt->bindParam(':equipment_id', $_POST['equipment_id']);
         $stmt->execute();
-		$_SESSION['message'] = "Equipment updated successfully.";
+        $_SESSION['message'] = "Equipment updated successfully.";
         header("Location: " . $_SERVER['PHP_SELF']);
         exit;
     }
@@ -80,7 +80,7 @@ try {
             LEFT JOIN model m ON e.model_id = m.model_id 
             LEFT JOIN location l ON e.location_id = l.location_id 
             WHERE e.deleted_id = 0 
-            ORDER BY e.equipment_id DESC";
+            ORDER BY e.equipment_id ASC";
     $stmt = $conn->prepare($sql);
     $stmt->execute();
     $registered_equipments = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -97,10 +97,68 @@ try {
         exit;
     }
 
+    // New code from equipment_process.php starts here
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        $location_id = $_POST['location_id'];
+        $equipment_type = $_POST['equipment_type'];
+        $equip_name = $_POST['equip_name'];
+        $model_id = $_POST['model_id'];
+        $property_num = $_POST['property_num'];
+        $status = $_POST['status'];
+        $date_purchased = $_POST['date_purchased'];
+
+        // Check if location_id exists
+        $location_check_sql = "SELECT location_id FROM location WHERE location_id = :location_id";
+        $location_stmt = $conn->prepare($location_check_sql);
+        $location_stmt->bindParam(':location_id', $location_id);
+        $location_stmt->execute();
+
+        if ($location_stmt->rowCount() === 0) {
+            // Location ID doesn't exist
+            $_SESSION['message'] = "Please enter a valid Location ID.";
+            header("Location: " . $_SERVER['PHP_SELF']);
+            exit;
+        } else {
+            // Check if Property Number already exists
+            $prop_check_sql = "SELECT property_num FROM equipment WHERE property_num = :property_num";
+            $prop_stmt = $conn->prepare($prop_check_sql);
+            $prop_stmt->bindParam(':property_num', $property_num);
+            $prop_stmt->execute();
+
+            if ($prop_stmt->rowCount() > 0) {
+    $_SESSION['error'] = "Property Number already exists.";            header("Location: " . $_SERVER['PHP_SELF']);
+                exit;
+            } else {
+                // Insert into equipment if location and property are valid
+                $sql = "INSERT INTO equipment (location_id, equip_type_id, model_id, equip_name, property_num, status, date_purchased) 
+                        VALUES (:location_id, :equipment_type, :model_id, :equip_name, :property_num, :status, :date_purchased)";
+                
+                $stmt = $conn->prepare($sql);
+                // Bind parameters to prevent SQL injection
+                $stmt->bindParam(':location_id', $location_id);
+                $stmt->bindParam(':equipment_type', $equipment_type);
+                $stmt->bindParam(':model_id', $model_id);
+                $stmt->bindParam(':equip_name', $equip_name);
+                $stmt->bindParam(':property_num', $property_num);
+                $stmt->bindParam(':status', $status);
+                $stmt->bindParam(':date_purchased', $date_purchased);
+        
+                // Execute statement and check success
+                if ($stmt->execute()) {
+                    $_SESSION['message'] = "Equipment registered successfully.";
+                    header("Location: " . $_SERVER['PHP_SELF']);
+                    exit;
+                } else {
+                    header("Location: " . $_SERVER['PHP_SELF']);
+                    exit;
+                }
+            }
+        }
+    }
 } catch (PDOException $e) {
     $_SESSION['error'] = "Database error: " . $e->getMessage(); // Set error message
     header("Location: " . $_SERVER['PHP_SELF']);
-	exit;
+    exit;
 }
 ?>
 
@@ -437,7 +495,7 @@ try {
 			</div>
 			<?php endif; ?>
 			
-            <form action="<?php echo isset($edit_equipment) ? 'equipment_input_ict.php' : 'equipment_process.php'; ?>" method="POST">
+            <form action="equipment_input_ict.php" method="POST">
                 <?php if (isset($edit_equipment)): ?>
                     <input type="hidden" name="equipment_id" value="<?php echo $edit_equipment['equipment_id']; ?>">
                 <?php endif; ?>
