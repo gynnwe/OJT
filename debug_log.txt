@@ -1,0 +1,133 @@
+POST data at start: 
+array(4) {
+  ["year_maintained"]=>
+  string(4) "2024"
+  ["equipment_types"]=>
+  array(1) {
+    [0]=>
+    string(1) "2"
+  }
+  ["counts"]=>
+  array(1) {
+    [2]=>
+    array(12) {
+      ["January"]=>
+      string(6) "100.00"
+      ["February"]=>
+      string(5) "10.00"
+      ["March"]=>
+      string(5) "10.00"
+      ["April"]=>
+      string(5) "10.00"
+      ["May"]=>
+      string(5) "10.00"
+      ["June"]=>
+      string(5) "10.00"
+      ["July"]=>
+      string(5) "10.00"
+      ["August"]=>
+      string(5) "10.00"
+      ["September"]=>
+      string(5) "10.00"
+      ["October"]=>
+      string(4) "0.00"
+      ["November"]=>
+      string(4) "0.00"
+      ["December"]=>
+      string(4) "0.00"
+    }
+  }
+  ["plan_id"]=>
+  string(1) "2"
+}
+Plan ID and Year Maintained: 
+string(1) "2"
+string(4) "2024"
+Equipment Types: 
+array(1) {
+  [0]=>
+  string(1) "2"
+}
+Equipment Counts: 
+array(1) {
+  [2]=>
+  array(12) {
+    ["January"]=>
+    string(6) "100.00"
+    ["February"]=>
+    string(5) "10.00"
+    ["March"]=>
+    string(5) "10.00"
+    ["April"]=>
+    string(5) "10.00"
+    ["May"]=>
+    string(5) "10.00"
+    ["June"]=>
+    string(5) "10.00"
+    ["July"]=>
+    string(5) "10.00"
+    ["August"]=>
+    string(5) "10.00"
+    ["September"]=>
+    string(5) "10.00"
+    ["October"]=>
+    string(4) "0.00"
+    ["November"]=>
+    string(4) "0.00"
+    ["December"]=>
+    string(4) "0.00"
+  }
+}
+Current Equipment Type ID: 
+string(1) "2"
+Month Targets for Equipment Type 2: 
+array(12) {
+  ["January"]=>
+  string(6) "100.00"
+  ["February"]=>
+  string(5) "10.00"
+  ["March"]=>
+  string(5) "10.00"
+  ["April"]=>
+  string(5) "10.00"
+  ["May"]=>
+  string(5) "10.00"
+  ["June"]=>
+  string(5) "10.00"
+  ["July"]=>
+  string(5) "10.00"
+  ["August"]=>
+  string(5) "10.00"
+  ["September"]=>
+  string(5) "10.00"
+  ["October"]=>
+  string(4) "0.00"
+  ["November"]=>
+  string(4) "0.00"
+  ["December"]=>
+  string(4) "0.00"
+}
+Target for January: 
+float(100)
+Target for February: 
+float(10)
+Target for March: 
+float(10)
+Target for April: 
+float(10)
+Target for May: 
+float(10)
+Target for June: 
+float(10)
+Target for July: 
+float(10)
+Target for August: 
+float(10)
+Target for September: 
+float(10)
+Target for October: 
+float(0)
+Target for November: 
+float(0)
+Target for December: 
+float(0)

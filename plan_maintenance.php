@@ -199,12 +199,12 @@ $years = getYears($conn);
                         <div class="modal fade" id="editModal<?= $plan['id'] ?>" tabindex="-1" aria-labelledby="editModalLabel<?= $plan['id'] ?>" aria-hidden="true">
                             <div class="modal-dialog modal-lg">
                                 <div class="modal-content">
-                                    <form method="post" action="edit_plan_maintenance_process.php">
+                                    <form method="post" action="edit_plan_maintenance_process.php" id="editPlanForm<?= $plan['id'] ?>">
                                         <div class="modal-header">
                                             <h5 class="modal-title" id="editModalLabel<?= $plan['id'] ?>">Edit Maintenance Plan <?= htmlspecialchars($plan['id']) ?></h5>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
-                                        <div class="modal-body">
+                                        <div class="modal-body" id="equipmentContainer<?= $plan['id'] ?>">
                                             <!-- Year Dropdown -->
                                             <div class="mb-3">
                                                 <label for="year_maintained<?= $plan['id'] ?>" class="form-label">Select Year:</label>
@@ -224,7 +224,7 @@ $years = getYears($conn);
                                                 <div class="equipment-entry border p-3 mb-3">
                                                     <div class="d-flex justify-content-between align-items-center mb-2">
                                                         <h6>Equipment Type: <?= htmlspecialchars($detail['equip_type_name']) ?></h6>
-                                                        <button type="button" class="btn btn-danger btn-sm remove-equipment" style="display: none;">Remove</button>
+                                                        <!-- <button type="button" class="btn btn-danger btn-sm remove-equipment">Remove</button> -->
                                                     </div>
                                                     <div class="mb-3">
                                                         <select name="equipment_types[]" class="form-select" required hidden>
@@ -270,12 +270,14 @@ $years = getYears($conn);
                                                     </div>
                                                 </div>
                                             <?php endforeach; ?>
+                                        </div>
 
-                                            <!-- Add More Equipment Button -->
+                                        <!-- Add More Equipment Button -->
+                                        <!-- <div class="modal-body">
                                             <button type="button" class="btn btn-success" id="addMoreEquipment<?= $plan['id'] ?>">
                                                 Add Another Equipment Type
                                             </button>
-                                        </div>
+                                        </div> -->
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                             <input type="hidden" name="plan_id" value="<?= $plan['id'] ?>">
@@ -393,6 +395,191 @@ $years = getYears($conn);
                     e.target.closest('.equipment-entry').remove();
                 }
             });
+
+            <?php foreach ($maintenancePlans as $plan): ?>
+                    (function() {
+                        const planId = '<?= $plan['id'] ?>';
+                        const container = document.getElementById('equipmentContainer' + planId);
+                        const addButton = document.getElementById('addMoreEquipment' + planId);
+                        const form = document.getElementById('editPlanForm' + planId);
+                        const yearSelect = document.getElementById('year_maintained' + planId);
+
+                        // Debug function
+                        function logFormData() {
+                            const formData = new FormData(form);
+                            console.log("Form Data:");
+                            for (let [key, value] of formData.entries()) {
+                                console.log(`${key}: ${value}`);
+                            }
+                        }
+
+                        // Equipment type options HTML with data attributes
+                        const equipmentTypesOptions = `
+            <?php
+                $optionsHtml = '<option value="">--Select Equipment Type--</option>';
+                foreach ($equipmentTypes as $type) {
+                    $optionsHtml .= '<option value="' . htmlspecialchars($type['equip_type_id']) . '">' .
+                        htmlspecialchars($type['equip_type_name']) .
+                        '</option>';
+                }
+                echo str_replace("'", "\\'", $optionsHtml);
+            ?>
+        `;
+
+                        // Function to update equipment type options
+                        function updateEquipmentTypeOptions(currentContainer) {
+                            // Collect currently selected equipment type IDs
+                            const selectedTypes = Array.from(currentContainer.querySelectorAll('select[name="equipment_types[]"]'))
+                                .map(select => select.value)
+                                .filter(value => value !== '');
+
+                            // Update all equipment type selects in this container
+                            const equipmentSelects = currentContainer.querySelectorAll('select[name="equipment_types[]"]');
+
+                            equipmentSelects.forEach(select => {
+                                const currentValue = select.value;
+
+                                // Reset the options
+                                select.innerHTML = equipmentTypesOptions;
+
+                                // Disable already selected options
+                                selectedTypes.forEach(selectedType => {
+                                    if (selectedType !== currentValue) {
+                                        const optionToDisable = select.querySelector(`option[value="${selectedType}"]`);
+                                        if (optionToDisable) {
+                                            optionToDisable.disabled = true;
+                                        }
+                                    }
+                                });
+
+                                // Restore the current select's value
+                                select.value = currentValue;
+                            });
+                        }
+
+                        // Function to create a new equipment entry
+                        function createEquipmentEntry() {
+                            const newEntry = document.createElement('div');
+                            newEntry.className = 'equipment-entry border p-3 mb-3';
+                            newEntry.innerHTML = `
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <h6>Equipment Entry</h6>
+        <button type="button" class="btn btn-danger btn-sm remove-equipment">Remove</button>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Select Equipment Type:</label>
+        <select name="equipment_types[]" class="form-select" required>
+            ${equipmentTypesOptions}
+        </select>
+    </div>
+    <div class="row months-container">
+        <?php foreach ($months as $month): ?>
+            <div class="col-md-3 mb-3">
+                <label class="form-label"><?= $month ?></label>
+                <input type="number" 
+                       class="form-control"
+                       min="0"
+                       step="0.01"
+                       value="0"
+                       required>
+            </div>
+        <?php endforeach; ?>
+    </div>
+    `;
+
+                            // Add remove functionality to the new entry
+                            newEntry.querySelector('.remove-equipment').addEventListener('click', function() {
+                                newEntry.remove();
+                                updateEquipmentTypeOptions(container);
+                            });
+
+                            // Add change event listener to update equipment type and input names
+                            const equipmentSelect = newEntry.querySelector('select[name="equipment_types[]"]');
+                            const monthInputs = newEntry.querySelectorAll('.months-container input');
+
+                            equipmentSelect.addEventListener('change', function() {
+                                // Update input names with selected equipment type
+                                monthInputs.forEach(input => {
+                                    input.name = `counts[${this.value}][${input.closest('.col-md-3').querySelector('label').textContent}]`;
+                                });
+                                updateEquipmentTypeOptions(container);
+                            });
+
+                            return newEntry;
+                        }
+
+                        // Add new equipment type
+                        addButton.addEventListener('click', function() {
+                            const newEntry = createEquipmentEntry();
+                            container.appendChild(newEntry);
+                            updateEquipmentTypeOptions(container);
+                        });
+
+                        // Form submission validation and logging
+                        form.addEventListener('submit', function(event) {
+                            // Log form data before submission
+                            logFormData();
+
+                            // Ensure year is selected
+                            if (!yearSelect.value) {
+                                event.preventDefault();
+                                alert('Please select a year for the maintenance plan.');
+                                yearSelect.focus();
+                                return;
+                            }
+
+                            // Validate at least one equipment type is selected
+                            const equipmentTypes = container.querySelectorAll('select[name="equipment_types[]"]');
+                            const uniqueTypes = new Set();
+                            let isDuplicate = false;
+
+                            equipmentTypes.forEach(select => {
+                                if (select.value) {
+                                    if (uniqueTypes.has(select.value)) {
+                                        isDuplicate = true;
+                                        event.preventDefault();
+                                        alert('Duplicate equipment types are not allowed.');
+                                        select.focus();
+                                        return;
+                                    }
+                                    uniqueTypes.add(select.value);
+                                }
+                            });
+
+                            if (isDuplicate) return;
+
+                            // Ensure at least one equipment type
+                            if (uniqueTypes.size === 0) {
+                                event.preventDefault();
+                                alert('Please add at least one equipment type.');
+                                return;
+                            }
+                        });
+
+                        // Initial setup for existing entries
+                        updateEquipmentTypeOptions(container);
+
+                        // Delegate remove event for dynamically added entries
+                        container.addEventListener('click', function(event) {
+                            if (event.target.classList.contains('remove-equipment')) {
+                                // Ensure at least one equipment type remains
+                                if (container.querySelectorAll('.equipment-entry').length > 1) {
+                                    event.target.closest('.equipment-entry').remove();
+                                    updateEquipmentTypeOptions(container);
+                                } else {
+                                    alert('At least one equipment type must remain.');
+                                }
+                            }
+                        });
+
+                        // Add change event to existing selects
+                        container.querySelectorAll('select[name="equipment_types[]"]').forEach(select => {
+                            select.addEventListener('change', function() {
+                                updateEquipmentTypeOptions(container);
+                            });
+                        });
+                    })();
+            <?php endforeach; ?>
         });
     </script>
 </body>
