@@ -1,12 +1,23 @@
 <?php
 session_start();
-if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
-    header("location: login.php");
-    exit;
+if (!isset($_SESSION['user_id'])) {
+    header("Location: index.php");
+    exit();
 }
 
-// Set the timezone to Manila (Philippine Time)
 date_default_timezone_set('Asia/Manila');
+
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "ictmms";
+
+try {
+    $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch(PDOException $e) {
+    echo "Connection failed: " . $e->getMessage();
+}
 ?>
 
 <!DOCTYPE html>
@@ -14,161 +25,331 @@ date_default_timezone_set('Asia/Manila');
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modified Layout</title>
+    <title>Equipment Dashboard</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-		body {
-			background-color: transparent !important;
-		}
-        .mt-5 {
-            margin-top: 0 rem !important;
+        body {
+            background-color: transparent !important;
+            font-family: 'Inter', sans-serif;
         }
-        .placeholder {
-            background-color: #f8f9fa;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            height: 100px;
+        .content-wrapper {
+            padding: 30px;
+            background: transparent;
         }
-        .analytics {
-            height: 350px;
-        }
-
-        .performance {
-            height: 250px;
-        }
-
-        .calendar {
-            height: 150px;
-            background: #ffffff;
-            padding: 8px;
-            color: #333333;
+        .stats-card {
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.6);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            height: 140px;
             display: flex;
             flex-direction: column;
-            justify-content: center;
-        }
-
-        .assignments {
-            height: 450px; /* Larger box height */
-        }
-
-        .gap {
-            margin-bottom: 15px; /* Space between rows */
-        }
-
-        /* Use flexbox to control widths of the columns */
-        .row {
-            display: flex;
             justify-content: space-between;
+            font-weight: 600;
         }
-
-        .first-column,
-        .second-column {
-            max-width: 60%;
-            padding: 10px;
+        .number {
+            font-size: 60px;
+            line-height: 1;
+            color: #632121;
         }
-
-        .first-column {
-            flex: 0 0 60%; /* First column takes 60% width */
+        .total-equipment {
+            background-color: #632121 !important; 
+            color: white;
         }
-
-        .second-column {
-            flex: 1; /* Second column will take up remaining space */
+        .white-card {
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-
-        /* Calendar Styles */
+        .solid-card {
+            background: white !important;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .progress-chart {
+            min-height: 300px;
+        }
+        .activity-feed {
+            min-height: 200px;
+        }
+        .maintenance-goal {
+            min-height: 435px;
+        }
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 2px;
+            text-align: center;
+            font-size: 12px;
+        }
         .calendar-header {
-            text-align: left;
-            font-size: 1.4em; /* Reduced font size */
-            font-weight: bold;
-            margin-bottom: 8px; /* Reduced margin */
+            margin-bottom: 5px;
+            font-size: 1em;
         }
-
         .week {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            gap: 4px; /* Reduced gap */
-            margin-top: 4px; /* Added to reduce space above the grid */
+            gap: 2px;
+            font-size: 0.75em;
+            background: #632121;
+            border-radius: 8px;
+            padding: 4px;
+            margin-top: 8px;
+            color: white;
         }
-
         .day-block {
             text-align: center;
-            padding: 4px 0;
-            font-size: 0.8em;
+            padding: 2px 0;
             font-weight: 500;
         }
-
-        .today {
-            background-color: #991B1E;
-            color: #ffffff;
+        .today-column {
+            background-color: white;
+            color: black;
             font-weight: bold;
-            border-radius: 12px;
+            border-radius: 6px;
+        }
+        .calendar-column {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 4px;
+        }
+        .maintenance-text {
+
+        }
+        h6 {
+            font-weight: 600;
+            font-size: 1rem;
         }
     </style>
 </head>
 <body>
-    <div class="container mt-5">
-        <div class="row gap">
-            <!-- First Column -->
-            <div class="first-column">
-                <!-- Large Box in the First Row -->
-                <div class="placeholder analytics mb-3"></div>
-                <!-- Medium Box in the Second Row -->
-                <div class="placeholder performance"></div>
+    <div class="content-wrapper">
+        <!-- Stats Row -->
+        <div class="row">
+            <div class="col-md-3">
+                <div class="stats-card total-equipment">
+                    <div>Total Equipment</div>
+                    <?php
+                    $query = "SELECT COUNT(*) as total FROM equipment WHERE deleted_id = 0";
+                    $stmt = $conn->prepare($query);
+                    $stmt->execute();
+                    $total = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+                    ?>
+                    <div class="number" style="color: white;"><?php echo $total; ?></div>
+                </div>
             </div>
-
-            <!-- Second Column -->
-            <div class="second-column d-flex flex-column">
-                <!-- Calendar Box in the First Row -->
-                <div class="placeholder calendar mb-3">
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div>Serviceable Equipment</div>
+                    <?php
+                    $query = "SELECT COUNT(*) as serviceable FROM equipment WHERE status = 'Serviceable' AND deleted_id = 0";
+                    $stmt = $conn->prepare($query);
+                    $stmt->execute();
+                    $serviceable = $stmt->fetch(PDO::FETCH_ASSOC)['serviceable'];
+                    ?>
+                    <div class="number"><?php echo $serviceable; ?></div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div>Non-Serviceable Equipment</div>
+                    <?php
+                    $query = "SELECT COUNT(*) as nonserviceable FROM equipment WHERE status = 'Non-serviceable' AND deleted_id = 0";
+                    $stmt = $conn->prepare($query);
+                    $stmt->execute();
+                    $nonserviceable = $stmt->fetch(PDO::FETCH_ASSOC)['nonserviceable'];
+                    ?>
+                    <div class="number"><?php echo $nonserviceable; ?></div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
                     <?php
                     function renderCurrentWeek() {
-                        // Get current date info
                         $currentYear = date('Y');
                         $currentMonth = date('n');
                         $currentDay = date('j');
-                        $currentWeekDay = date('w'); // Day of the week (0 = Sunday, 6 = Saturday)
+                        $currentWeekDay = date('w');
 
-                        // Start and end of the current week
-                        $weekStart = $currentDay - $currentWeekDay; // Subtract weekday offset
-                        $weekEnd = $weekStart + 6; // Add 6 to get the week's end
+                        $weekStart = $currentDay - $currentWeekDay;
+                        $weekEnd = $weekStart + 6;
 
-                        // Get month name
                         $monthName = date('F Y');
-
-                        // Days of the week header
                         $daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-                        echo '<div class="calendar">';
                         echo '<div class="calendar-header">' . $monthName . '</div>';
                         echo '<div class="week">';
 
-                        // Render the current week
-                        for ($day = $weekStart; $day <= $weekEnd; $day++) {
-                            $date = mktime(0, 0, 0, $currentMonth, $day, $currentYear); // Build the date
-                            $dayOfMonth = date('j', $date); // Get day of the month
-                            $weekDayIndex = date('w', $date); // Get the weekday index for this date
-
-                            // Apply "today" class to the current day
-                            $class = ($dayOfMonth == $currentDay) ? 'day-block today' : 'day-block';
-                            echo '<div class="' . $class . '">';
-                            echo '<div>' . $daysOfWeek[$weekDayIndex] . '</div>'; // Day name
-                            echo '<div>' . $dayOfMonth . '</div>'; // Date
+                        for ($i = 0; $i < 7; $i++) {
+                            $isToday = ($i == $currentWeekDay) ? 'today-column' : '';
+                            echo '<div class="calendar-column ' . $isToday . '">';
+                            echo '<div class="day-block">' . $daysOfWeek[$i] . '</div>';
+                            
+                            $day = $weekStart + $i;
+                            $date = mktime(0, 0, 0, $currentMonth, $day, $currentYear);
+                            $dayOfMonth = date('j', $date);
+                            
+                            echo '<div class="day-block">' . $dayOfMonth . '</div>';
                             echo '</div>';
                         }
 
                         echo '</div>';
-                        echo '</div>';
                     }
 
-                    // Call the function to render the current week
                     renderCurrentWeek();
                     ?>
                 </div>
+            </div>
+        </div>
 
-                <!-- Large Box in the Second Row -->
-                <div class="placeholder assignments"></div>
+        <!-- Progress and Maintenance Section -->
+        <div class="row">
+            <div class="col-md-9">
+                <div class="white-card">
+                    <h6>Progress This Year</h6>
+                    <div id="progressChart" class="progress-chart"></div>
+                </div>
+                <div class="solid-card activity-feed">
+                    <h6>Recent Maintenance Activity Feed</h6>
+                    <?php
+                    // Fetch recent maintenance activities
+                    $query = "SELECT m.maintenance_date, e.equip_name, r.remarks_name 
+                              FROM `ict_maintenance_logs` m 
+                              JOIN equipment e ON m.equipment_id = e.equipment_id 
+                              JOIN remarks r ON m.remarks_id = r.remarks_id 
+                              ORDER BY m.maintenance_date DESC LIMIT 10";
+                    $stmt = $conn->prepare($query);
+                    $stmt->execute();
+                    $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                    // Display recent maintenance activities
+                    if (count($result) > 0) {
+                        echo '<table>';
+                        foreach ($result as $row) {
+                            echo '<tr>';
+                            // Format the date
+                            $formattedDate = date('F j, Y', strtotime($row['maintenance_date']));
+                            echo '<td>' . $formattedDate . ' &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>';
+                            // Wrap equip_name and remarks_name in a sentence with bold text
+                            echo '<td><strong>' . $row['equip_name'] . '</strong> maintenance is <strong>' . $row['remarks_name'] . '</strong>.'.'</td>';
+                            echo '</tr>';
+                        }
+                        echo '</table>';
+                    } else {
+                        echo '<p>No recent maintenance activities found.</p>';
+                    }
+                    ?>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="solid-card maintenance-goal">
+                    <?php
+                    // Fetch maintenance goals from the database
+                    $query = "SELECT pd.month, et.equip_type_name, pd.target, mp.year 
+                              FROM plan_details pd 
+                              JOIN maintenance_plan mp ON pd.maintenance_plan_id = mp.id 
+                              JOIN equipment_type et ON pd.equip_type_id = et.equip_type_id 
+                              WHERE mp.status = 'submitted' 
+                              AND mp.id = (SELECT MAX(id) FROM maintenance_plan WHERE status = 'submitted') 
+                              ORDER BY FIELD(pd.month, 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December')";
+                    $stmt = $conn->prepare($query);
+                    $stmt->execute();
+                    $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                    // Prepare data for displaying goals
+                    $goals = [];
+                    $year = '';
+                    foreach ($result as $row) {
+                        $goals[$row['month']][] = [
+                            'equipment_type' => $row['equip_type_name'],
+                            'planned_goal' => $row['target']
+                        ];
+                        $year = $row['year']; // Store the year from the first row
+                    }
+
+                    // Display Maintenance Goals
+                    if (!empty($goals)) {
+                        echo '<h6>Maintenance Goal Year ' . $year . '</h6>';
+                        echo '<div class="maintenance-goal">';
+                        foreach ($goals as $month => $equipment) {
+                            echo '<div class="month" onclick="toggleDropdown(this)">' . $month . ' &#9662;</div>';
+                            echo '<div class="dropdown-content" style="display:none;">';
+                            foreach ($equipment as $goal) {
+                                echo '<div>' . $goal['equipment_type'] . ': ' . $goal['planned_goal'] . '&nbsp;units</div>';
+                            }
+                            echo '</div>';
+                        }
+                        echo '</div>';
+                    } else {
+                        echo '<p>No maintenance goals found.</p>';
+                    }
+                    ?>
+                </div>
             </div>
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script>
+        var options = {
+            series: [{
+                name: 'Progress',
+                data: []
+            }],
+            chart: {
+                type: 'bar',
+                height: 200,
+                toolbar: {
+                    show: false
+                },
+                background: 'transparent'
+            },
+            colors: ['#632121', '#FFA500'],
+            plotOptions: {
+                bar: {
+                    borderRadius: 4,
+                    columnWidth: '60%',
+                }
+            },
+            grid: {
+                borderColor: '#e7e7e7',
+                strokeDashArray: 5
+            },
+            xaxis: {
+                categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                labels: {
+                    style: {
+                        colors: '#666'
+                    }
+                }
+            },
+            yaxis: {
+                labels: {
+                    style: {
+                        colors: '#666'
+                    }
+                }
+            }
+        };
+
+        var chart = new ApexCharts(document.querySelector("#progressChart"), options);
+        chart.render();
+    </script>
+    <script>
+        function toggleDropdown(element) {
+            var dropdownContent = element.nextElementSibling;
+            if (dropdownContent.style.display === "block") {
+                dropdownContent.style.display = "none";
+            } else {
+                dropdownContent.style.display = "block";
+            }
+        }
+    </script>
 </body>
 </html>
