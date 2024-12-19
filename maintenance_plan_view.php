@@ -96,7 +96,7 @@ try {
                     </thead>
                     <tbody>
                         <tr>
-                            <td><strong>Target</strong></td>
+                            <td><strong>Plan</strong></td>
                             <?php foreach ($details as $detail): ?>
                                 <td><?= htmlspecialchars((int)$detail['target']) ?></td>
                             <?php endforeach; ?>

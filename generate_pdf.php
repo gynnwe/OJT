@@ -127,6 +127,7 @@ foreach ($tableData as $key => $row) {
         $firstColWidth = $col4SubWidth + 20;
         $remainingColWidth = ($col4Width - $firstColWidth) / 12;
         $pdf->Cell($firstColWidth, $splitRowHeight, '', 1, 0, 'C');
+        // This is the row part that you need to insert the data. I know there is two dynamic table but let's deal wirth the 1st group table first
         $months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
         foreach ($months as $month) {
             $pdf->Cell($remainingColWidth, $splitRowHeight, $month, 1, 0, 'C');
