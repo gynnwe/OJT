@@ -176,7 +176,7 @@ try {
         year YEAR NOT NULL,
         date_prepared DATE NOT NULL,
         count INT(5) NOT NULL,
-        status ENUM('pending', 'submitted') NOT NULL DEFAULT 'pending',
+        status ENUM('pending', 'submitted', 'archive', 'trash') NOT NULL DEFAULT 'pending',
         FOREIGN KEY (admin_id) REFERENCES user(admin_id)
     )";
 

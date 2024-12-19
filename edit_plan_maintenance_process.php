@@ -20,6 +20,7 @@ try {
 
     $plan_id = $_POST['plan_id'];
     $year_maintained = $_POST['year_maintained'];
+    $total_target = 0;
 
     // Update the maintenance plan year
     $updatePlanQuery = "UPDATE maintenance_plan SET year = :year WHERE id = :plan_id";
@@ -71,6 +72,7 @@ try {
             // Use 0 as default if no target is set
             $target = isset($monthTargets[$month]) ? floatval($monthTargets[$month]) : 0;
 
+            $total_target += $target;
             $stmtInsertDetail->execute([
                 ':plan_id' => $plan_id,
                 ':month' => $month,
@@ -88,15 +90,11 @@ try {
     // Update the count of equipment types in the maintenance plan
     $countDetailsQuery = "
         UPDATE maintenance_plan 
-        SET count = (
-            SELECT COUNT(DISTINCT equip_type_id) 
-            FROM plan_details 
-            WHERE maintenance_plan_id = :plan_id
-        ) 
+        SET count = :count
         WHERE id = :plan_id
     ";
     $stmtUpdateCount = $conn->prepare($countDetailsQuery);
-    $stmtUpdateCount->execute([':plan_id' => $plan_id]);
+    $stmtUpdateCount->execute([':count' => $total_target,':plan_id' => $plan_id]);
 
     // Redirect with success message
     $_SESSION['success_message'] = "Maintenance plan successfully updated.";

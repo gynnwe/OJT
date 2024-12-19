@@ -151,29 +151,48 @@ $years = getYears($conn);
                 <tbody>
                     <?php foreach ($maintenancePlans as $plan): ?>
                         <tr>
-                            <td>Maintenance Plan <?= htmlspecialchars($plan['id']) ?></td>
-                            <td><?= htmlspecialchars($plan['year']) ?></td>
-                            <td><?= htmlspecialchars($plan['date_prepared']) ?></td>
-                            <td><?= htmlspecialchars($plan['count']) ?></td>
-                            <td><?= htmlspecialchars($plan['status']) ?></td>
-                            <td>
-                                <a href="maintenance_plan_view.php?plan_id=<?= $plan['id'] ?>" class="btn btn-info btn-sm">View Plan</a>
-                                <?php if ($plan['status'] === 'pending'): ?>
-                                    <button type="button"
-                                        class="btn btn-warning btn-sm"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#editModal<?= $plan['id'] ?>">
-                                        Edit
-                                    </button>
-                                    <button type="button"
-                                        class="btn btn-success btn-sm"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#submitModal<?= $plan['id'] ?>">
-                                        Submit
-                                    </button>
-                                <?php endif; ?>
-                            </td>
-                        </tr>
+        <td>Maintenance Plan <?= htmlspecialchars($plan['id']) ?></td>
+        <td><?= htmlspecialchars($plan['year']) ?></td>
+        <td><?= htmlspecialchars($plan['date_prepared']) ?></td>
+        <td><?= htmlspecialchars($plan['count']) ?></td>
+        <td><?= htmlspecialchars($plan['status']) ?></td>
+        <td>
+            <a href="maintenance_plan_view.php?plan_id=<?= $plan['id'] ?>" class="btn btn-info btn-sm">View Plan</a>
+            
+            <?php if ($plan['status'] === 'pending'): ?>
+                <button type="button"
+                    class="btn btn-warning btn-sm"
+                    data-bs-toggle="modal"
+                    data-bs-target="#editModal<?= $plan['id'] ?>">
+                    Edit
+                </button>
+                <button type="button"
+                    class="btn btn-success btn-sm"
+                    data-bs-toggle="modal"
+                    data-bs-target="#submitModal<?= $plan['id'] ?>">
+                    Submit
+                </button>
+            <?php endif; ?>
+
+            <?php if ($plan['status'] !== 'trash' && $plan['status'] !== 'submitted' && $plan['status'] !== 'archive'): ?>
+                <button type="button"
+                    class="btn btn-danger btn-sm"
+                    data-bs-toggle="modal"
+                    data-bs-target="#trashModal<?= $plan['id'] ?>">
+                    Trash
+                </button>
+            <?php endif; ?>
+
+            <?php if ($plan['status'] === 'trash'): ?>
+                <button type="button"
+                    class="btn btn-primary btn-sm"
+                    data-bs-toggle="modal"
+                    data-bs-target="#recoverModal<?= $plan['id'] ?>">
+                    Recover
+                </button>
+            <?php endif; ?>
+        </td>
+    </tr>
 
                         <!-- Modal -->
                         <div class="modal fade" id="submitModal<?= $plan['id'] ?>" tabindex="-1" aria-labelledby="modalLabel<?= $plan['id'] ?>" aria-hidden="true">
@@ -196,6 +215,52 @@ $years = getYears($conn);
                                 </div>
                             </div>
                         </div>
+                        
+    <!-- Trash Modal -->
+    <div class="modal fade" id="trashModal<?= $plan['id'] ?>" tabindex="-1" aria-labelledby="trashModalLabel<?= $plan['id'] ?>" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="trashModalLabel<?= $plan['id'] ?>">Move to Trash</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to move Maintenance Plan <?= htmlspecialchars($plan['id']) ?> to trash?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <form action="update_maintenance_status.php" method="POST" style="display: inline;">
+                        <input type="hidden" name="plan_id" value="<?= $plan['id'] ?>">
+                        <input type="hidden" name="status" value="trash">
+                        <button type="submit" class="btn btn-danger">Move to Trash</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recover Modal -->
+    <div class="modal fade" id="recoverModal<?= $plan['id'] ?>" tabindex="-1" aria-labelledby="recoverModalLabel<?= $plan['id'] ?>" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="recoverModalLabel<?= $plan['id'] ?>">Recover Maintenance Plan</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to recover Maintenance Plan <?= htmlspecialchars($plan['id']) ?>?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <form action="update_maintenance_status.php" method="POST" style="display: inline;">
+                        <input type="hidden" name="plan_id" value="<?= $plan['id'] ?>">
+                        <input type="hidden" name="status" value="pending">
+                        <button type="submit" class="btn btn-primary">Recover</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
                         <div class="modal fade" id="editModal<?= $plan['id'] ?>" tabindex="-1" aria-labelledby="editModalLabel<?= $plan['id'] ?>" aria-hidden="true">
                             <div class="modal-dialog modal-lg">
                                 <div class="modal-content">
@@ -366,35 +431,103 @@ $years = getYears($conn);
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             let equipmentCount = 0;
-            const container = document.getElementById('equipmentTypesContainer');
-            const addButton = document.getElementById('addMoreEquipment');
+    const container = document.getElementById('equipmentTypesContainer');
+    const addButton = document.getElementById('addMoreEquipment');
 
-            addButton.addEventListener('click', function() {
-                equipmentCount++;
-                const template = container.querySelector('.equipment-entry').cloneNode(true);
+    // Function to get all currently selected equipment types
+    function getSelectedEquipmentTypes() {
+        const selectedTypes = new Set();
+        container.querySelectorAll('select[name="equipment_types[]"]').forEach(select => {
+            if (select.value) {
+                selectedTypes.add(select.value);
+            }
+        });
+        return selectedTypes;
+    }
 
-                // Update name attributes for the new equipment entry
-                template.querySelectorAll('input[name^="counts[0]"]').forEach(input => {
-                    const month = input.name.match(/\[(\d+)\]$/)[1];
-                    input.name = `counts[${equipmentCount}][${month}]`;
-                    input.value = ''; // Clear the value
-                });
-
-                // Update equipment type select name
-                template.querySelector('select[name="equipment_types[]"]').selectedIndex = 0;
-
-                // Show remove button for additional entries
-                template.querySelector('.remove-equipment').style.display = 'block';
-
-                container.appendChild(template);
-            });
-
-            // Event delegation for remove buttons
-            container.addEventListener('click', function(e) {
-                if (e.target.classList.contains('remove-equipment')) {
-                    e.target.closest('.equipment-entry').remove();
+    // Function to update disabled states on all selects
+    function updateEquipmentSelects() {
+        const selectedTypes = getSelectedEquipmentTypes();
+        const allSelects = container.querySelectorAll('select[name="equipment_types[]"]');
+        
+        allSelects.forEach(select => {
+            const currentValue = select.value;
+            select.querySelectorAll('option').forEach(option => {
+                if (option.value && option.value !== currentValue) {
+                    option.disabled = selectedTypes.has(option.value);
                 }
             });
+        });
+    }
+
+    // Add change event listeners to initial select
+    container.querySelector('select[name="equipment_types[]"]').addEventListener('change', updateEquipmentSelects);
+
+    // Modified add button click handler
+    addButton.addEventListener('click', function() {
+        equipmentCount++;
+        const template = container.querySelector('.equipment-entry').cloneNode(true);
+
+        // Update name attributes for the new equipment entry
+        template.querySelectorAll('input[name^="counts[0]"]').forEach(input => {
+            const month = input.name.match(/\[(\d+)\]$/)[1];
+            input.name = `counts[${equipmentCount}][${month}]`;
+            input.value = ''; // Clear the value
+        });
+
+        // Reset and update the new select
+        const newSelect = template.querySelector('select[name="equipment_types[]"]');
+        newSelect.selectedIndex = 0;
+        
+        // Add change event listener to the new select
+        newSelect.addEventListener('change', updateEquipmentSelects);
+
+        // Show remove button for additional entries
+        template.querySelector('.remove-equipment').style.display = 'block';
+
+        container.appendChild(template);
+        
+        // Update disabled states after adding new entry
+        updateEquipmentSelects();
+    });
+
+    // Modified remove button handler
+    container.addEventListener('click', function(e) {
+        if (e.target.classList.contains('remove-equipment')) {
+            e.target.closest('.equipment-entry').remove();
+            // Update disabled states after removing an entry
+            updateEquipmentSelects();
+        }
+    });
+
+    // Form submission validation
+    const form = container.closest('form');
+    form.addEventListener('submit', function(event) {
+        const equipmentSelects = container.querySelectorAll('select[name="equipment_types[]"]');
+        const selectedTypes = new Set();
+        let hasEmptySelection = false;
+
+        equipmentSelects.forEach(select => {
+            if (!select.value) {
+                hasEmptySelection = true;
+            } else if (selectedTypes.has(select.value)) {
+                event.preventDefault();
+                alert('Duplicate equipment types are not allowed.');
+                select.focus();
+                return;
+            }
+            selectedTypes.add(select.value);
+        });
+
+        if (hasEmptySelection) {
+            event.preventDefault();
+            alert('Please select an equipment type for all entries.');
+            return;
+        }
+    });
+
+    // Initial update of selects
+    updateEquipmentSelects();
 
             <?php foreach ($maintenancePlans as $plan): ?>
                     (function() {
