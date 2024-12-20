@@ -2,10 +2,7 @@
 error_reporting(E_ALL); // Report all types of errors
 ini_set('display_errors', 1); // Display errors on the screen
 
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "ictmms";
+include 'conn.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Collect form data

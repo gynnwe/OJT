@@ -1,10 +1,7 @@
 <?php
 session_start();
 
-$servername = "localhost";
-$username = "root"; 
-$password = ""; 
-$dbname = "ictmms";
+include 'conn.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST['email'];

@@ -1,8 +1,5 @@
 <?php
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "ictmms";
+include 'conn.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $location_id = $_POST['location_id'];

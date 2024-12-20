@@ -2,10 +2,7 @@
 require_once 'tcpdf/tcpdf.php';
 
 // === Backend: Fetch Year and Equipment Type/Name from Database ===
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "ictmms";
+include 'conn.php';
 
 try {
     // Connect to the database

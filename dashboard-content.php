@@ -1,16 +1,12 @@
 <?php
 session_start();
-if (!isset($_SESSION['user_id'])) {
-    header("Location: index.php");
-    exit();
+if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
+    header("location: login.php");
+    exit;
 }
-
 date_default_timezone_set('Asia/Manila');
 
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "ictmms";
+include 'conn.php';
 
 try {
     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);

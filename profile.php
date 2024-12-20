@@ -5,10 +5,7 @@ ini_set('display_errors', 1);
 
 session_start();
 
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "ictmms";
+include 'conn.php';
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");

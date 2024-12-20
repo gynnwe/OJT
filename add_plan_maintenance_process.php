@@ -1,9 +1,6 @@
 <?php
 // Database connection
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "ictmms";
+include 'conn.php';
 
 try {
     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);

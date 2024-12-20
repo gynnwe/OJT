@@ -9,11 +9,8 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
 $user = null; // Initialize $user to null
 if (isset($_SESSION['user_id'])) {
     $user_id = $_SESSION['user_id'];
-    // Database connection details
-    $servername = "localhost";
-    $username = "root";
-    $password = "";
-    $dbname = "ictmms";
+    
+	include 'conn.php';
 
     try {
         // Create connection

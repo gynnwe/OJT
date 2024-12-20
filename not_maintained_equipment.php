@@ -1,8 +1,5 @@
 <?php
-$servername = "localhost";
-$username = "root"; 
-$password = ""; 
-$dbname = "ictmms";
+include 'conn.php';
 
 try {
     // Create connection

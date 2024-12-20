@@ -5,10 +5,7 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true || $_SESSION
     exit;
 }
 
-$servername = "localhost";
-$username = "root"; 
-$password = ""; 
-$dbname = "ictmms";
+include 'conn.php';
 
 try {
     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
