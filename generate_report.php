@@ -70,8 +70,8 @@ $font_path = $font_dir . '/oldenglishtextmt.ttf'; // Full path to your .ttf file
 $dompdf->getOptions()->set("fontDir", $font_dir); // Set font directory
 $dompdf->getOptions()->set("fontCache", $font_dir); // Set font cache directory
 
-// Register the custom font by its name
-$dompdf->getOptions()->set("defaultFont", "Old English Text MT");
+// Manually register the custom font
+$dompdf->getFontMetrics($font_path);
 
 // Prepare the HTML content
 $html = "
