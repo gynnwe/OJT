@@ -62,6 +62,9 @@ $html = "
 <head>
     <title>Maintenance Logs</title>
     <style>
+        @page {
+            margin: 1cm; /* Set 1 cm margins for all sides */
+        }
         body {
             font-family: Arial, sans-serif;
             font-size: 12px;
