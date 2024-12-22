@@ -100,7 +100,7 @@ $pdf->SetFont('calibri', '', 9); // Use Calibri font, size 11
 addEquipmentHeader($pdf, $logs);
 
 // Place Maintenance Logs
-$startY = 90.5; // Starting Y coordinate for the first row of the logs table
+$startY = 90.8; // Starting Y coordinate for the first row of the logs table
 $lineHeight = 5.1; // Height between rows
 $pageHeightLimit = 270; // Approximate usable height of the page (adjust based on your template)
 
