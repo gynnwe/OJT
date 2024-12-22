@@ -55,6 +55,18 @@ if (!$logs) {
     die('No records found for this property number.');
 }
 
+// Load custom font
+$options = new Options();
+$options->set("isHtml5ParserEnabled", true); // Enable HTML5 parser
+$options->set("isPhpEnabled", true); // Allow PHP inside HTML (e.g., for loading fonts)
+
+$dompdf = new Dompdf($options);
+
+// Register the custom font with DomPDF
+$font_path = 'C:/xampp/htdocs/OJT/assets/oldenglishtextmt.ttf'; // Full path to your .ttf file
+$dompdf->getOptions()->set("fontDir", "C:/xampp/htdocs/OJT/assets/"); // Set font directory
+$dompdf->getOptions()->set("fontCache", "C:/xampp/htdocs/OJT/assets/"); // Set font cache directory
+
 // Prepare the HTML content
 $html = "
 <!DOCTYPE html>
@@ -108,10 +120,13 @@ $html = "
             font-family: Arial, sans-serif;
             font-size: 9px;
             text-align: center;
+            line-height: 1;
         }
         .column-2 .title {
-            font-family: 'Old English Text MT';
+            font-family: 'Old English Text MT', serif;
             font-size: 16px;
+            text-align: center;
+            line-height: 1;
         }
         .column-3 {
             width: 2.42cm;
@@ -140,7 +155,7 @@ $html = "
     <table class='custom-table'>
         <tr>
             <td class='column-1'>
-                <img src='http://localhost/OJT/assets/usep-logo.png' style='width: 2.54cm; height: 2.54cm;'>
+                <img src='file:///C:/xampp/htdocs/OJT/assets/usep-logo.png' style='width: 2.54cm; height: 2.54cm;'>
             </td>
             <td class='column-2'>
                 <p>Republic of the Philippines</p>
@@ -201,11 +216,6 @@ $html .= "
 ";
 
 // Configure DOMPDF
-$options = new Options();
-$options->set('isRemoteEnabled', true); // Enable remote content if needed
-$dompdf = new Dompdf($options);
-
-// Load HTML content
 $dompdf->loadHtml($html);
 
 // Set paper size and orientation
