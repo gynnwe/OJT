@@ -62,16 +62,12 @@ $options->set("isPhpEnabled", true); // Allow PHP inside HTML (e.g., for loading
 
 $dompdf = new Dompdf($options);
 
-// Register the custom font with DomPDF manually
+// Set the font directory
 $font_dir = 'C:/xampp/htdocs/OJT/assets'; // Font directory path
-$font_path = $font_dir . '/oldenglishtextmt.ttf'; // Full path to your .ttf file
-
-// Add the font manually
-$dompdf->getOptions()->set("fontDir", $font_dir); // Set font directory
-$dompdf->getOptions()->set("fontCache", $font_dir); // Set font cache directory
 
 // Manually register the custom font
-$dompdf->getFontMetrics($font_path);
+$dompdf->getOptions()->set("fontDir", $font_dir); // Set font directory
+$dompdf->getOptions()->set("fontCache", $font_dir); // Set font cache directory
 
 // Convert image to Base64 encoding
 $imagePath = 'C:/xampp/htdocs/OJT/assets/images/usep-logo.png'; // Full image path
