@@ -62,11 +62,16 @@ $options->set("isPhpEnabled", true); // Allow PHP inside HTML (e.g., for loading
 
 $dompdf = new Dompdf($options);
 
-// Set the font directory and register the font
-$font_dir = 'C:/xampp/htdocs/OJT/assets/fonts'; // Font directory path
+// Register the custom font with DomPDF manually
+$font_dir = 'C:/xampp/htdocs/OJT/assets'; // Font directory path
 $font_path = $font_dir . '/oldenglishtextmt.ttf'; // Full path to your .ttf file
+
+// Add the font manually
 $dompdf->getOptions()->set("fontDir", $font_dir); // Set font directory
 $dompdf->getOptions()->set("fontCache", $font_dir); // Set font cache directory
+
+// Register the custom font by its name
+$dompdf->getOptions()->set("defaultFont", "Old English Text MT");
 
 // Prepare the HTML content
 $html = "
