@@ -245,20 +245,21 @@ $html = "
                 <p>Website: <a href='http://www.usep.edu.ph' class='link'>www.usep.edu.ph</a></p>
                 <p>Email: <a href='mailto:president@usep.edu.ph' class='link'>president@usep.edu.ph</a></p>
             </td>
-            <td class='column-3'>
-                <div class='row-divider'>Form No.</div>
-                <div class='row-divider'>Issue Status</div>
-                <div class='row-divider'>Revision No.</div>
-                <div class='row-divider'>Date Effective</div>
-                <div class='row-divider' style='border-bottom: none;'>Approved by</div>
-            </td>
-            <td class='column-4'>
-                <div class='row-divider'>FM-USeP-ICT-04</div>
-                <div class='row-divider'>01</div>
-                <div class='row-divider'>00</div>
-                <div class='row-divider'>23 December 2022</div>
-                <div class='row-divider' style='border-bottom: none;'>President</div>
-            </td>
+ <td class='column-3'>
+    <div class='row-divider' style='padding-left: 10px;'>Form No.</div>
+    <div class='row-divider' style='padding-left: 10px;'>Issue Status</div>
+    <div class='row-divider' style='padding-left: 10px;'>Revision No.</div>
+    <div class='row-divider' style='padding-left: 10px;'>Date Effective</div>
+    <div class='row-divider' style='padding-left: 10px; border-bottom: none;'>Approved by</div>
+</td>
+<td class='column-4'>
+    <div class='row-divider' style='padding-left: 10px;'>FM-USeP-ICT-04</div>
+    <div class='row-divider' style='padding-left: 10px;'>01</div>
+    <div class='row-divider' style='padding-left: 10px;'>00</div>
+    <div class='row-divider' style='padding-left: 10px;'>23 December 2022</div>
+    <div class='row-divider' style='padding-left: 10px; border-bottom: none;'>President</div>
+</td>
+
         </tr>
     </table>
     <div class='box'>ICT EQUIPMENT HISTORY SHEET</div>
@@ -288,16 +289,17 @@ $html = "
             </tr>
         </thead>
         <tbody>";
-foreach ($logs as $log) {
-    $html .= "
-            <tr>
-                <td>{$log['maintenance_date']}</td>
-                <td>{$log['jo_number']}</td>
-                <td>{$log['actions_taken']}</td>
-                <td>{$log['remarks']}</td>
-                <td>{$log['firstname']} {$log['lastname']}</td>
-            </tr>";
-}
+        foreach ($logs as $log) {
+            $html .= "
+                <tr style='height: 0.49cm; line-height: 0.49cm; padding: 0; margin: 0;'>
+                    <td style='height: 0.49cm; line-height: 0.49cm; padding: 0; margin: 0;'>{$log['maintenance_date']}</td>
+                    <td style='height: 0.49cm; line-height: 0.49cm; padding: 0; margin: 0;'>{$log['jo_number']}</td>
+                    <td style='height: 0.49cm; line-height: 0.49cm; padding: 0; margin: 0;'>{$log['actions_taken']}</td>
+                    <td style='height: 0.49cm; line-height: 0.49cm; padding: 0; margin: 0;'>{$log['remarks']}</td>
+                    <td style='height: 0.49cm; line-height: 0.49cm; padding: 0; margin: 0;'>{$log['firstname']} {$log['lastname']}</td>
+                </tr>";
+        }
+        
 $html .= "
         </tbody>
     </table>
