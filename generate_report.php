@@ -89,9 +89,38 @@ $html = "
             background-color: #f2f2f2;
             text-align: left;
         }
+        .custom-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .custom-table td {
+            border: 1px solid #000;
+            height: 3.85cm;
+        }
+        .column-1 {
+            width: 2.98cm;
+        }
+        .column-2 {
+            width: 9.54cm;
+        }
+        .column-3 {
+            width: 2.42cm;
+        }
+        .column-4 {
+            width: 3.49cm;
+        }
     </style>
 </head>
 <body>
+    <table class='custom-table'>
+        <tr>
+            <td class='column-1'></td>
+            <td class='column-2'></td>
+            <td class='column-3'></td>
+            <td class='column-4'></td>
+        </tr>
+    </table>
     <div class='header'>
         <h1>Maintenance Logs</h1>
         <p><strong>Equipment Name:</strong> {$logs[0]['equipment_name']}</p>
