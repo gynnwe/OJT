@@ -1,18 +1,8 @@
 <?php
 require_once 'vendor/autoload.php';
 
-use setasign\Fpdi\TcpdfFpdi;
-
-// Custom TCPDF class with FPDI integration
-class CustomPDF extends TcpdfFpdi {
-    public function Header() {
-        // Override this method to prevent the default header from being added
-    }
-
-    public function Footer() {
-        // Override this method to prevent the footer as well
-    }
-}
+use Dompdf\Dompdf;
+use Dompdf\Options;
 
 // Database connection
 include 'conn.php';
@@ -65,81 +55,89 @@ if (!$logs) {
     die('No records found for this property number.');
 }
 
-// Function to add equipment header details on every page
-function addEquipmentHeader($pdf, $logs) {
-    // Place Equipment Details
-    $pdf->SetXY(57, 61.4); // Adjust for Equipment
-    $pdf->Write(0, $logs[0]['equipment_name']);
-
-    $pdf->SetXY(57, 67.7); // Adjust for Property/Serial Number
-    $pdf->Write(0, $logs[0]['property_num']);
-
-    $pdf->SetXY(57, 74.2); // Adjust for Location
-    $pdf->Write(0, $logs[0]['location_name']);
-}
-
-// Create PDF instance
-$pdf = new CustomPDF();
-$pdf->SetAutoPageBreak(true, 10);
-$pdf->SetMargins(0, 0, 0); // Top, left, right margins set to 0
-
-// Import the PDF template
-$templatePath = 'assets/ICT_Equipment_Template.pdf'; // Path to the uploaded template
-if (!file_exists($templatePath)) {
-    die('Template PDF not found.');
-}
-$pdf->AddPage();
-$pdf->setSourceFile($templatePath);
-$tplId = $pdf->importPage(1);
-$pdf->useTemplate($tplId);
-
-// Add the Calibri font
-$pdf->SetFont('calibri', '', 9); // Use Calibri font, size 11
-
-// Add header information to the first page
-addEquipmentHeader($pdf, $logs);
-
-// Place Maintenance Logs
-$startY = 90.5; // Starting Y coordinate for the first row of the logs table
-$lineHeight = 5.1; // Height between rows
-$pageHeightLimit = 270; // Approximate usable height of the page (adjust based on your template)
-
+// Prepare the HTML content
+$html = "
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Maintenance Logs</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+        }
+        .header {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            font-size: 18px;
+        }
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .table th, .table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        .table th {
+            background-color: #f2f2f2;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <div class='header'>
+        <h1>Maintenance Logs</h1>
+        <p><strong>Equipment Name:</strong> {$logs[0]['equipment_name']}</p>
+        <p><strong>Property Number:</strong> {$logs[0]['property_num']}</p>
+        <p><strong>Location:</strong> {$logs[0]['location_name']}</p>
+    </div>
+    <table class='table'>
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>JO Number</th>
+                <th>Actions Taken</th>
+                <th>Remarks</th>
+                <th>Personnel</th>
+            </tr>
+        </thead>
+        <tbody>";
 foreach ($logs as $log) {
-    // Check if adding the next row exceeds the page height
-    if ($startY + $lineHeight > $pageHeightLimit) {
-        // Add a new page and re-import the template
-        $pdf->AddPage();
-        $tplId = $pdf->importPage(1); // Import the first page of the template
-        $pdf->useTemplate($tplId);
-
-        // Add header information to the new page
-        addEquipmentHeader($pdf, $logs);
-
-        // Reset the starting Y coordinate for the new page
-        $startY = 90.5; // Start again from the top of the logs section
-    }
-
-    // Write log data to the current page
-    $pdf->SetXY(19, $startY);
-    $pdf->Write(0, $log['maintenance_date']); // Date
-
-    $pdf->SetXY(46.5, $startY);
-    $pdf->Write(0, $log['jo_number']); // JO Number
-
-    $pdf->SetXY(70, $startY);
-    $pdf->Write(0, $log['actions_taken']); // Actions Taken
-
-    $pdf->SetXY(142, $startY);
-    $pdf->Write(0, $log['remarks']); // Remarks
-
-    $pdf->SetXY(165, $startY);
-    $pdf->Write(0, $log['firstname'] . ' ' . $log['lastname']); // Responsible Personnel
-
-    // Move to the next row
-    $startY += $lineHeight;
+    $html .= "
+            <tr>
+                <td>{$log['maintenance_date']}</td>
+                <td>{$log['jo_number']}</td>
+                <td>{$log['actions_taken']}</td>
+                <td>{$log['remarks']}</td>
+                <td>{$log['firstname']} {$log['lastname']}</td>
+            </tr>";
 }
+$html .= "
+        </tbody>
+    </table>
+</body>
+</html>
+";
 
-// Output PDF
+// Configure DOMPDF
+$options = new Options();
+$options->set('isRemoteEnabled', true); // Enable remote content if needed
+$dompdf = new Dompdf($options);
+
+// Load HTML content
+$dompdf->loadHtml($html);
+
+// Set paper size and orientation
+$dompdf->setPaper('A4', 'portrait');
+
+// Render the PDF
+$dompdf->render();
+
+// Output the PDF to browser
 $filename = $property_num . '.pdf'; // Use the property number as the filename
-$pdf->Output($filename, 'I');
+$dompdf->stream($filename, ['Attachment' => 0]);
 ?>
