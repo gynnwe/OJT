@@ -62,10 +62,11 @@ $options->set("isPhpEnabled", true); // Allow PHP inside HTML (e.g., for loading
 
 $dompdf = new Dompdf($options);
 
-// Register the custom font with DomPDF
-$font_path = 'C:/xampp/htdocs/OJT/assets/oldenglishtextmt.ttf'; // Full path to your .ttf file
-$dompdf->getOptions()->set("fontDir", "C:/xampp/htdocs/OJT/assets/"); // Set font directory
-$dompdf->getOptions()->set("fontCache", "C:/xampp/htdocs/OJT/assets/"); // Set font cache directory
+// Set the font directory and register the font
+$font_dir = 'C:/xampp/htdocs/OJT/assets/fonts'; // Font directory path
+$font_path = $font_dir . '/oldenglishtextmt.ttf'; // Full path to your .ttf file
+$dompdf->getOptions()->set("fontDir", $font_dir); // Set font directory
+$dompdf->getOptions()->set("fontCache", $font_dir); // Set font cache directory
 
 // Prepare the HTML content
 $html = "
@@ -155,7 +156,7 @@ $html = "
     <table class='custom-table'>
         <tr>
             <td class='column-1'>
-                <img src='file:///C:/xampp/htdocs/OJT/assets/usep-logo.png' style='width: 2.54cm; height: 2.54cm;'>
+                <img src='http://localhost/OJT/assets/usep-logo.png' style='width: 2.54cm; height: 2.54cm;'>
             </td>
             <td class='column-2'>
                 <p>Republic of the Philippines</p>
