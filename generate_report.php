@@ -96,29 +96,56 @@ $html = "
         }
         .custom-table td {
             border: 1px solid #000;
-            height: 3.85cm;
         }
         .column-1 {
             width: 2.98cm;
+            height: 3.85cm;
+            text-align: center;
         }
         .column-2 {
             width: 9.54cm;
+            height: 3.85cm;
         }
         .column-3 {
             width: 2.42cm;
+            height: 3.85cm;
+            vertical-align: top;
         }
         .column-4 {
             width: 3.49cm;
+            height: 3.85cm;
+            vertical-align: top;
+        }
+        .row-divider {
+            border-bottom: 1px solid #000;
+            height: 0.77cm;
+        }
+        .row-divider:last-child {
+            border-bottom: none;
         }
     </style>
 </head>
 <body>
     <table class='custom-table'>
         <tr>
-            <td class='column-1'></td>
+            <td class='column-1'>
+                <img src='http://localhost/OJT/assets/usep-logo.png' style='width: 2.54cm; height: 2.54cm;'>
+            </td>
             <td class='column-2'></td>
-            <td class='column-3'></td>
-            <td class='column-4'></td>
+            <td class='column-3'>
+                <div class='row-divider'></div>
+                <div class='row-divider'></div>
+                <div class='row-divider'></div>
+                <div class='row-divider'></div>
+                <div class='row-divider' style='border-bottom: none;'></div>
+            </td>
+            <td class='column-4'>
+                <div class='row-divider'></div>
+                <div class='row-divider'></div>
+                <div class='row-divider'></div>
+                <div class='row-divider'></div>
+                <div class='row-divider' style='border-bottom: none;'></div>
+            </td>
         </tr>
     </table>
     <div class='header'>
