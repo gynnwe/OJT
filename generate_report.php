@@ -95,19 +95,50 @@ $html = "
             font-family: 'Old English Text MT', serif;
             font-size: 16px;
         }
-        .table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-        }
-        .table th, .table td {
-            border: 1px solid #ddd;
-            padding: 8px;
-        }
-        .table th {
-            background-color: #f2f2f2
-            text-align: center;
-        }
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.table th, .table td {
+    border: 1px solid #000; /* Black border */
+    padding: 5px;
+    text-align: center; /* Center align the text */
+    vertical-align: middle; /* Vertically center the text */
+    height: 0.94cm; /* Set the height for all cells */
+}
+
+.table th {
+    font-family: Arial, sans-serif; /* Arial font */
+    font-size: 11px; /* Set font size to 11 */
+    font-weight: normal; /* Ensure text is not bold */
+    padding: 5px; /* Add some padding for spacing */
+}
+
+/* Set specific column widths */
+.table th:nth-child(1), .table td:nth-child(1) {
+    width: 2.92cm; /* Date column */
+}
+
+.table th:nth-child(2), .table td:nth-child(2) {
+    width: 2.1cm; /* JO Number column */
+}
+
+.table th:nth-child(3), .table td:nth-child(3) {
+    width: 6.76cm; /* Actions Taken column */
+}
+
+.table th:nth-child(4), .table td:nth-child(4) {
+    width: 2.47cm; /* Remarks column */
+}
+
+.table th:nth-child(5), .table td:nth-child(5) {
+    width: 3.30cm; /* Responsible SDMD Personnel column */
+}
+
+
+
         .custom-table {
             width: 100%;
             border-collapse: collapse;
@@ -173,7 +204,7 @@ $html = "
 .header-table {
     width: 100%; /* Full width of the table */
     border-collapse: collapse; /* Removes gaps between cells */
-    margin-bottom: 20px; /* Adds spacing below the table */
+    margin-bottom: 5px; /* Adds spacing below the table */
     margin-top: 20px; /* Adds spacing above the table */
     font-family: Arial, sans-serif; /* Sets the font to Arial */
     font-size: 11px; /* Sets the font size to 11 */
@@ -253,7 +284,7 @@ $html = "
                 <th>JO Number</th>
                 <th>Actions Taken</th>
                 <th>Remarks</th>
-                <th>Personnel</th>
+                <th>Responsible SDMD Personnel</th>
             </tr>
         </thead>
         <tbody>";
