@@ -105,6 +105,13 @@ $html = "
         .column-2 {
             width: 9.54cm;
             height: 3.85cm;
+            font-family: Arial, sans-serif;
+            font-size: 9px;
+            text-align: center;
+        }
+        .column-2 .title {
+            font-family: 'Old English Text MT';
+            font-size: 16px;
         }
         .column-3 {
             width: 2.42cm;
@@ -123,6 +130,10 @@ $html = "
         .row-divider:last-child {
             border-bottom: none;
         }
+        .link {
+            color: blue;
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -131,7 +142,14 @@ $html = "
             <td class='column-1'>
                 <img src='http://localhost/OJT/assets/usep-logo.png' style='width: 2.54cm; height: 2.54cm;'>
             </td>
-            <td class='column-2'></td>
+            <td class='column-2'>
+                <p>Republic of the Philippines</p>
+                <p class='title'>University of Southeastern Philippines</p>
+                <p>Iñigo St., Bo. Obrero, Davao City 8000</p>
+                <p>Telephone: (082) 227-8192</p>
+                <p>Website: <a href='http://www.usep.edu.ph' class='link'>www.usep.edu.ph</a></p>
+                <p>Email: <a href='mailto:president@usep.edu.ph' class='link'>president@usep.edu.ph</a></p>
+            </td>
             <td class='column-3'>
                 <div class='row-divider'></div>
                 <div class='row-divider'></div>
