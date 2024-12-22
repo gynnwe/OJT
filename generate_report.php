@@ -73,6 +73,10 @@ $dompdf->getOptions()->set("fontCache", $font_dir); // Set font cache directory
 // Manually register the custom font
 $dompdf->getFontMetrics($font_path);
 
+// Convert image to Base64 encoding
+$imagePath = 'C:/xampp/htdocs/OJT/assets/images/usep-logo.png'; // Full image path
+$imageData = base64_encode(file_get_contents($imagePath));
+
 // Prepare the HTML content
 $html = "
 <!DOCTYPE html>
@@ -162,7 +166,7 @@ $html = "
     <table class='custom-table'>
         <tr>
             <td class='column-1'>
-                <img src='http://localhost/OJT/assets/usep-logo.png' style='width: 2.54cm; height: 2.54cm;'>
+                <img src='data:image/png;base64,{$imageData}' style='width: 2.54cm; height: 2.54cm;'>
             </td>
             <td class='column-2'>
                 <p>Republic of the Philippines</p>
