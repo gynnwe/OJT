@@ -92,7 +92,8 @@ $html = "
             margin-bottom: 20px;
         }
         .header h1 {
-            font-size: 18px;
+            font-family: 'Old English Text MT', serif;
+            font-size: 16px;
         }
         .table {
             width: 100%;
