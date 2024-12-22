@@ -517,23 +517,18 @@ if (isset($_SESSION['message'])) {
 	</script>
 
 	<script>
-document.addEventListener("DOMContentLoaded", function () {
+	document.addEventListener("DOMContentLoaded", function () {
     const inputField = document.getElementById("equip_type_name");
 
-    // Allow only letters, spaces, and hyphens, and auto-capitalize each word
+    // Allow letters (both upper and lower), numbers, spaces, and hyphens
     inputField.addEventListener("input", function () {
-        // Remove invalid characters (anything other than letters, spaces, and hyphens)
-        inputField.value = inputField.value.replace(/[^A-Za-z\s-]/g, "");
+        // Remove invalid characters (anything other than letters, numbers, spaces, and hyphens)
+        inputField.value = inputField.value.replace(/[^A-Za-z0-9\s-]/g, "");
 
         // Limit to 50 characters
         if (inputField.value.length > 50) {
             inputField.value = inputField.value.slice(0, 50);
         }
-
-        // Auto-capitalize the first letter of each word
-        inputField.value = inputField.value
-            .toLowerCase() // Convert to lowercase first
-            .replace(/\b\w/g, char => char.toUpperCase()); // Capitalize each word
     });
 
     // Prevent pasting invalid content
@@ -541,16 +536,15 @@ document.addEventListener("DOMContentLoaded", function () {
         e.preventDefault();
         const pastedText = e.clipboardData.getData("text");
 
-        // Clean pasted text and auto-capitalize
+        // Clean pasted text
         const cleanedText = pastedText
-            .replace(/[^A-Za-z\s-]/g, "") // Remove invalid characters
+            .replace(/[^A-Za-z0-9\s-]/g, "") // Remove invalid characters
             .slice(0, 50); // Enforce 50-character limit
 
-        inputField.value += cleanedText
-            .toLowerCase()
-            .replace(/\b\w/g, char => char.toUpperCase());
+        inputField.value += cleanedText;
     });
 });
+
 </script>
 
 

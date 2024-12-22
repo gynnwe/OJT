@@ -544,51 +544,46 @@ document.addEventListener("DOMContentLoaded", function () {
     const lastNameInput = document.getElementById("lastname");
     const officeInput = document.getElementById("office");
 
-    // Function to allow letters, spaces, and capitalize each word for First Name and Last Name
-    function allowTextSpacesAndCapitalize(input, maxLength) {
+    // Function to allow letters, spaces, hyphens, and capitalize each word for First Name and Last Name
+    function allowTextSpacesHyphensAndCapitalize(input, maxLength) {
         input.addEventListener("input", function () {
             input.value = input.value
-                .replace(/[^A-Za-z ]/g, "") // Allow letters and spaces
-                .slice(0, maxLength) // Enforce max length
-                .toLowerCase()
-                .replace(/\b\w/g, char => char.toUpperCase()); // Capitalize first letter
+                .replace(/[^A-Za-z\s-]/g, "") // Allow letters, spaces, and hyphens
+                .slice(0, maxLength); // Enforce max length
         });
 
         input.addEventListener("paste", function (e) {
             e.preventDefault();
             const pastedText = e.clipboardData.getData("text");
             input.value = pastedText
-                .replace(/[^A-Za-z ]/g, "")
-                .slice(0, maxLength)
-                .toLowerCase()
-                .replace(/\b\w/g, char => char.toUpperCase());
+                .replace(/[^A-Za-z\s-]/g, "") // Allow letters, spaces, and hyphens
+                .slice(0, maxLength);
         });
     }
 
-    // Function to allow text, numbers, spaces, and auto-capitalize after spaces for Office
-    function allowTextNumbersAutoCapitalize(input, maxLength) {
+    // Function to allow letters, numbers, spaces, hyphens, and auto-capitalize for Office
+    function allowTextNumbersSpacesHyphens(input, maxLength) {
         input.addEventListener("input", function () {
             input.value = input.value
-                .replace(/[^A-Za-z0-9 ]/g, "") // Allow letters, numbers, and spaces
-                .slice(0, maxLength) // Enforce max length
-                .replace(/\b\w/g, char => char.toUpperCase()); // Capitalize first letter after spaces
+                .replace(/[^A-Za-z0-9\s-]/g, "") // Allow letters, numbers, spaces, and hyphens
+                .slice(0, maxLength); // Enforce max length
         });
 
         input.addEventListener("paste", function (e) {
             e.preventDefault();
             const pastedText = e.clipboardData.getData("text");
             input.value = pastedText
-                .replace(/[^A-Za-z0-9 ]/g, "")
-                .slice(0, maxLength)
-                .replace(/\b\w/g, char => char.toUpperCase());
+                .replace(/[^A-Za-z0-9\s-]/g, "") // Allow letters, numbers, spaces, and hyphens
+                .slice(0, maxLength);
         });
     }
 
     // Apply the restrictions
-    allowTextSpacesAndCapitalize(firstNameInput, 20); // First Name: Letters and spaces, max 20
-    allowTextSpacesAndCapitalize(lastNameInput, 20);  // Last Name: Letters and spaces, max 20
-    allowTextNumbersAutoCapitalize(officeInput, 20);  // Office: Letters, numbers, spaces, auto-capitalize
+    allowTextSpacesHyphensAndCapitalize(firstNameInput, 20); // First Name: Letters, spaces, hyphens, max 20
+    allowTextSpacesHyphensAndCapitalize(lastNameInput, 20);  // Last Name: Letters, spaces, hyphens, max 20
+    allowTextNumbersSpacesHyphens(officeInput, 30);          // Office: Letters, numbers, spaces, hyphens, max 30
 });
+
 </script>
 
 

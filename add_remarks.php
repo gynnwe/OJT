@@ -548,38 +548,30 @@ if (isset($_SESSION['message'])) {
 	</script>
 
 	<script>
-		document.addEventListener("DOMContentLoaded", function () {
-			const remarksInput = document.getElementById("remarks_name");
+document.addEventListener("DOMContentLoaded", function () {
+    const remarksInput = document.getElementById("remarks_name");
 
-			remarksInput.addEventListener("input", function () {
-				// Allow only letters, remove numbers, spaces, symbols, and hyphens
-				remarksInput.value = remarksInput.value.replace(/[^A-Za-z]/g, "");
+    remarksInput.addEventListener("input", function () {
+        // Allow only letters and spaces
+        remarksInput.value = remarksInput.value.replace(/[^A-Za-z\s]/g, "");
 
-				// Restrict input to 20 characters
-				if (remarksInput.value.length > 20) {
-					remarksInput.value = remarksInput.value.slice(0, 20);
-				}
+        // Restrict input to 20 characters
+        if (remarksInput.value.length > 20) {
+            remarksInput.value = remarksInput.value.slice(0, 20);
+        }
+    });
 
-				// Auto-capitalize the first letter
-				remarksInput.value = remarksInput.value
-					.toLowerCase()
-					.replace(/\b\w/, char => char.toUpperCase());
-			});
+    // Prevent pasting invalid content
+    remarksInput.addEventListener("paste", function (e) {
+        e.preventDefault();
+        const pastedText = e.clipboardData.getData("text");
 
-			// Prevent pasting invalid content
-			remarksInput.addEventListener("paste", function (e) {
-				e.preventDefault();
-				const pastedText = e.clipboardData.getData("text");
+        // Clean pasted text and restrict to 20 characters
+        const cleanedText = pastedText.replace(/[^A-Za-z\s]/g, "").slice(0, 20);
+        remarksInput.value += cleanedText;
+    });
+});
 
-				// Clean pasted text and restrict to 20 characters
-				const cleanedText = pastedText.replace(/[^A-Za-z]/g, "").slice(0, 20);
-
-				// Auto-capitalize the first letter
-				remarksInput.value = cleanedText
-					.toLowerCase()
-					.replace(/\b\w/, char => char.toUpperCase());
-			});
-		});
 	</script>
 
 </body>
