@@ -88,7 +88,7 @@ $html = "
             font-size: 12px;
         }
         .header {
-            text-align: left;
+            text-align: center;
             margin-bottom: 20px;
         }
         .header h1 {
@@ -105,8 +105,8 @@ $html = "
             padding: 8px;
         }
         .table th {
-            background-color: #f2f2f2;
-            text-align: left;
+            background-color: #f2f2f2
+            text-align: center;
         }
         .custom-table {
             width: 100%;
@@ -156,18 +156,48 @@ $html = "
             color: blue;
             text-decoration: underline;
         }
-        .box {
-            width: 18.95cm; /* Exact width as requested */
-            height: 0.84cm; /* Exact height as requested */
-            border-left: 1px solid #000; /* Only left and right borders */
-            border-right: 1px solid #000;
-            margin: -20px auto; /* Centering the box */
-            font-family: Arial, sans-serif; /* Arial font */
-            font-size: 14px; /* Font size 14 */
-            font-weight: bold; /* Bold font */
-            line-height: 0.84cm; /* Ensuring text aligns vertically in the box */
-            text-align: center; /* Centering text horizontally */
-        }
+ .box {
+    width: 18.95cm; /* Exact width as requested */
+    height: 0.84cm; /* Exact height as requested */
+    border-left: 1px solid #000; /* Only left and right borders */
+    border-right: 1px solid #000;
+    margin: -20px auto; /* Adjust to move the box position */
+    font-family: Arial, sans-serif; /* Arial font */
+    font-size: 14px; /* Font size 14 */
+    font-weight: bold; /* Bold font */
+    line-height: 0.7cm; /* Adjust line height to move text higher */
+    text-align: center; /* Centering text horizontally */
+    padding-top: 0; /* Remove padding if present */
+}
+
+.header-table {
+    width: 100%; /* Full width of the table */
+    border-collapse: collapse; /* Removes gaps between cells */
+    margin-bottom: 20px; /* Adds spacing below the table */
+    margin-top: 20px; /* Adds spacing above the table */
+    font-family: Arial, sans-serif; /* Sets the font to Arial */
+    font-size: 11px; /* Sets the font size to 11 */
+}
+
+.header-table td {
+    border: 1px solid #000; /* Adds a solid border around cells */
+    height: 0.62cm; /* Row height set to 0.62cm */
+    padding-left: 5px; /* Moves text slightly to the right */
+    vertical-align: middle; /* Aligns content vertically */
+}
+
+.header-col-1 {
+    width: 4.28cm; /* First column width */
+    font-weight: bold; /* Bold for labels */
+    text-align: left; /* Align text to the left */
+}
+
+.header-col-2 {
+    width: 14.15cm; /* Second column width */
+    text-align: left; /* Align text to the left */
+}
+
+
     </style>
 </head>
 <body>
@@ -201,11 +231,21 @@ $html = "
         </tr>
     </table>
     <div class='box'>ICT EQUIPMENT HISTORY SHEET</div>
-    <div class='header'>
-        <p><strong>Equipment Name:</strong> {$logs[0]['equipment_name']}</p>
-        <p><strong>Property Number:</strong> {$logs[0]['property_num']}</p>
-        <p><strong>Location:</strong> {$logs[0]['location_name']}</p>
-    </div>
+<table class='header-table'>
+    <tr>
+        <td class='header-col-1'>Equipment Name:</td>
+        <td class='header-col-2'>{$logs[0]['equipment_name']}</td>
+    </tr>
+    <tr>
+        <td class='header-col-1'>Property Number:</td>
+        <td class='header-col-2'>{$logs[0]['property_num']}</td>
+    </tr>
+    <tr>
+        <td class='header-col-1'>Location:</td>
+        <td class='header-col-2'>{$logs[0]['location_name']}</td>
+    </tr>
+</table>
+
     <table class='table'>
         <thead>
             <tr>
