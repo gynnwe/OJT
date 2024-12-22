@@ -21,7 +21,7 @@ if (!$property_num) {
     die('Property number is required');
 }
 
-// Fetch all maintenance logs for the specific property number
+// Fetch all maintenance lo gs for the specific property number
 $sql = "
     SELECT 
         ml.maintenance_date,
@@ -78,7 +78,7 @@ $html = "
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Maintenance Logs</title>
+    <title>ICT EQUIPMENT HISTORY SHEET</title>
     <style>
         @page {
             margin: 1cm; /* Set 1 cm margins for all sides */
@@ -156,6 +156,18 @@ $html = "
             color: blue;
             text-decoration: underline;
         }
+        .box {
+            width: 18.95cm; /* Exact width as requested */
+            height: 0.84cm; /* Exact height as requested */
+            border-left: 1px solid #000; /* Only left and right borders */
+            border-right: 1px solid #000;
+            margin: -20px auto; /* Centering the box */
+            font-family: Arial, sans-serif; /* Arial font */
+            font-size: 14px; /* Font size 14 */
+            font-weight: bold; /* Bold font */
+            line-height: 0.84cm; /* Ensuring text aligns vertically in the box */
+            text-align: center; /* Centering text horizontally */
+        }
     </style>
 </head>
 <body>
@@ -172,25 +184,24 @@ $html = "
                 <p>Website: <a href='http://www.usep.edu.ph' class='link'>www.usep.edu.ph</a></p>
                 <p>Email: <a href='mailto:president@usep.edu.ph' class='link'>president@usep.edu.ph</a></p>
             </td>
-   <td class='column-3'>
-    <div class='row-divider'>Form No.</div>
-    <div class='row-divider'>Issue Status</div>
-    <div class='row-divider'>Revision No.</div>
-    <div class='row-divider'>Date Effective</div>
-    <div class='row-divider' style='border-bottom: none;'>Approved by</div>
-</td>
-<td class='column-4'>
-    <div class='row-divider'>FM-USeP-ICT-04</div>
-    <div class='row-divider'>01</div>
-    <div class='row-divider'>00</div>
-    <div class='row-divider'>23 December 2022</div>
-    <div class='row-divider' style='border-bottom: none;'>President</div>
-</td>
-
+            <td class='column-3'>
+                <div class='row-divider'>Form No.</div>
+                <div class='row-divider'>Issue Status</div>
+                <div class='row-divider'>Revision No.</div>
+                <div class='row-divider'>Date Effective</div>
+                <div class='row-divider' style='border-bottom: none;'>Approved by</div>
+            </td>
+            <td class='column-4'>
+                <div class='row-divider'>FM-USeP-ICT-04</div>
+                <div class='row-divider'>01</div>
+                <div class='row-divider'>00</div>
+                <div class='row-divider'>23 December 2022</div>
+                <div class='row-divider' style='border-bottom: none;'>President</div>
+            </td>
         </tr>
     </table>
+    <div class='box'>ICT EQUIPMENT HISTORY SHEET</div>
     <div class='header'>
-        <h1>Maintenance Logs</h1>
         <p><strong>Equipment Name:</strong> {$logs[0]['equipment_name']}</p>
         <p><strong>Property Number:</strong> {$logs[0]['property_num']}</p>
         <p><strong>Location:</strong> {$logs[0]['location_name']}</p>
