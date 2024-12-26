@@ -67,7 +67,7 @@ try {
             $html .= '<thead>';
             
             // Schedule Row with Merged Cell
-            $html .= '<tr><th colspan="' . (count($details) + 1) . '" style="text-align: center;">Schedule</th></tr>';
+            $html .= '<tr><th rowspan="2">Areas to be Maintained / Checked</th><th colspan="' . (count($details) + 1) . '" style="text-align: center;">Schedule</th></tr>';
             
             // Month Acronyms Row
             $html .= '<tr><th></th>'; // Empty first cell for "Plan"/"Implemented"
@@ -80,12 +80,13 @@ try {
             
             // Table Body
             $html .= '<tbody>';
-            $html .= '<tr><td><strong>Plan</strong></td>';
+            $html .= '<tr><td>Hardware</td><td><strong>Plan</strong></td>';
             foreach ($details as $detail) {
                 $html .= '<td>' . htmlspecialchars((int)$detail['target']) . '</td>';
             }
             $html .= '</tr>';
-            $html .= '<tr><td><strong>Implemented</strong></td>';
+
+            $html .= '<tr><td>Software</td><td><strong>Implemented</strong></td>';
             foreach ($details as $detail) {
                 $html .= '<td>' . htmlspecialchars((int)$detail['implemented'] ?? 0) . '</td>';
             }
