@@ -79,7 +79,7 @@ try {
                 }
     
             </style>';
-            $html .= '
+        $html .= '
             <table style="border: 1px solid black; border-collapse: collapse; width: 100%; height: 3.73cm;">
                 <tr>
                     <td style="border: 1px solid black; width: 4.45cm; text-align: center;" rowspan="5">
@@ -135,7 +135,7 @@ try {
     <br>
 ';
 
-        
+
 
         $tableCounter = 1;
 
@@ -198,8 +198,8 @@ try {
             </tr>
         </table>
     ';
-    
-    
+
+
 
         $options = new Options();
         $options->set('isHtml5ParserEnabled', true);
