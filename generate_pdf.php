@@ -82,7 +82,7 @@ try {
 
             // Add duplicate columns in the rows with merged cell for Equipment Type/Name
             $html .= '<tr>';
-            $html .= '<td rowspan="2">Equipment Type/Name</td>'; // Merge the two rows beneath this column
+            $html .= '<td rowspan="2">Blank Text</td>'; // Merge the two rows beneath this column
             $html .= '<td>Hardware</td><td><strong>Plan</strong></td>';
             foreach ($details as $detail) {
                 $html .= '<td>' . htmlspecialchars((int) $detail['target']) . '</td>';
