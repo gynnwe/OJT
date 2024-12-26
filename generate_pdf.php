@@ -81,7 +81,7 @@ try {
                     height: 3.73cm;
                     text-align: center;
                     font-size: 10px;
-                    line-height: 1.0;
+                    line-height: 1;
                 }
                 .col-3,
                 .col-4 {
@@ -109,11 +109,11 @@ try {
                         <img src="' . $imagePath . '" style="width: 2.81cm; height: 2.81cm;" alt="Logo">
                     </td>
                     <td class="col-2">
-                        <p class="header-text">Republic of the Philippines</p>
-                        <p class="header-text-bold">University of Southeastern Philippines</p>
-                        <p class="header-text">I&ntilde;igo St., Bo. Obrero, Davao City 8000</p>
-                        <p class="header-text">Telephone (082) 227-8192</p>
-                        <p class="header-text">
+                        <p class="header-text" style="margin: 0;">Republic of the Philippines</p>
+                        <p class="header-text-bold" style="margin: 0;">University of Southeastern Philippines</p>
+                        <p class="header-text" style="margin: 0;">I&ntilde;igo St., Bo. Obrero, Davao City 8000</p>
+                        <p class="header-text" style="margin: 0;">Telephone (082) 227-8192</p>
+                        <p class="header-text" style="margin: 0;">
                             <a href="http://www.usep.edu.ph" class="hyperlink">www.usep.edu.ph</a>; 
                             email: <a href="mailto:president@usep.edu.ph" class="hyperlink">president@usep.edu.ph</a>
                         </p>
