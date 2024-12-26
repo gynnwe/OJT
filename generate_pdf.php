@@ -1,14 +1,13 @@
 <?php
-require 'vendor/autoload.php'; // Include DOMPDF library
+require 'vendor/autoload.php';
 
 use Dompdf\Dompdf;
 use Dompdf\Options;
 
-// Database connection
 include 'conn.php';
 
 try {
-    ob_start(); // Start output buffering
+    ob_start();
 
     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -16,13 +15,11 @@ try {
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['plan_id'])) {
         $planId = $_POST['plan_id'];
 
-        // Fetch maintenance plan
         $queryPlan = "SELECT * FROM maintenance_plan WHERE id = :planId";
         $stmtPlan = $conn->prepare($queryPlan);
         $stmtPlan->execute([':planId' => $planId]);
         $maintenancePlan = $stmtPlan->fetch(PDO::FETCH_ASSOC);
 
-        // Fetch plan details with Implemented values
         $queryDetails = "
             SELECT 
                 pd.*, 
@@ -51,7 +48,6 @@ try {
             $groupedPlanDetails[$detail['equip_type_id']][] = $detail;
         }
 
-        // HTML content for PDF with CSS for margins
         $html = '
             <style>
                 body {
@@ -78,62 +74,44 @@ try {
             $html .= '<h4>Equipment Type: ' . htmlspecialchars($details[0]['equip_type_name']) . '</h4>';
             $html .= '<table>';
             $html .= '<thead>';
-            // Schedule Row with Merged Cell
             $html .= '<tr><th rowspan="2">No.</th><th rowspan="2">Equipment Type/Name</th><th rowspan="2">Areas to be Maintained / Checked</th><th colspan="' . (count($details) + 1) . '" style="text-align: center;">Schedule</th></tr>';
-
-            // Month Acronyms Row
-            $html .= '<tr><th></th>'; // Empty first cell for "Plan"/"Implemented"
+            $html .= '<tr><th></th>';
             foreach ($details as $detail) {
-                $monthAcronym = substr($detail['month'], 0, 3); // Get the first 3 letters of the month
+                $monthAcronym = substr($detail['month'], 0, 3);
                 $html .= '<th>' . htmlspecialchars($monthAcronym) . '</th>';
             }
             $html .= '</tr>';
             $html .= '</thead>';
-
-            // Table Body
             $html .= '<tbody>';
-
-            // Add duplicate columns in the rows with merged cell for Equipment Type/Name
             $html .= '<tr>';
-            $html .= '<td rowspan="2">1</td>'; // Merge the two rows beneath this column
-            $html .= '<td rowspan="2">Blank Text</td>'; // Duplicate cell on the left
+            $html .= '<td rowspan="2">1 table</td>';
+            $html .= '<td rowspan="2">Blank Text</td>';
             $html .= '<td>Hardware</td><td><strong>Plan</strong></td>';
             foreach ($details as $detail) {
                 $html .= '<td>' . htmlspecialchars((int) $detail['target']) . '</td>';
             }
             $html .= '</tr>';
-
             $html .= '<tr>';
             $html .= '<td>Software</td><td><strong>Implemented</strong></td>';
             foreach ($details as $detail) {
                 $html .= '<td>' . htmlspecialchars((int) $detail['implemented']) . '</td>';
             }
             $html .= '</tr>';
-
             $html .= '</tbody>';
-
             $html .= '</table><br>';
         }
 
-        // DOMPDF Configuration
         $options = new Options();
         $options->set('isHtml5ParserEnabled', true);
         $dompdf = new Dompdf($options);
 
-        // Set the HTML content
         $dompdf->loadHtml($html);
-
-        // Set paper size to A4 and orientation to landscape
         $dompdf->setPaper('A4', 'landscape');
-
-        // Render the PDF
         $dompdf->render();
 
-        // Clear buffer and send proper headers
         ob_end_clean();
         header('Content-Type: application/pdf');
 
-        // Output the generated PDF
         $dompdf->stream('Maintenance_Plan_' . $maintenancePlan['id'] . '.pdf', ['Attachment' => false]);
     } else {
         throw new Exception("Invalid request or missing Plan ID.");
