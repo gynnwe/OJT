@@ -69,8 +69,36 @@ try {
                     font-size: 10px;
                     font-weight: normal;
                 }
+    
+                .col-1 {
+                    width: 4.45cm;
+                    height: 3.73cm;
+                }
+                .col-2 {
+                    width: 12.06cm;
+                    height: 3.73cm;
+                }
+                .col-3,
+                .col-4 {
+                    width: 3.46cm;
+                    height: 3.73cm;
+                }
             </style>';
-            $html .= '<p style="font-family: Arial, sans-serif; font-size: 12px; font-weight: normal;">Year: <span style="text-decoration: underline;">' . htmlspecialchars($maintenancePlan['year']) . '</span></p>';
+
+        // Add the new table above the Year section
+        $html .= '
+            <table class="fixed-table">
+                <tr>
+                    <td class="col-1">Column 1</td>
+                    <td class="col-2">Column 2</td>
+                    <td class="col-3">Column 3</td>
+                    <td class="col-4">Column 4</td>
+                </tr>
+            </table>
+            <br>';
+
+        // Add Year
+        $html .= '<p style="font-family: Arial, sans-serif; font-size: 12px; font-weight: normal;">Year: <span style="text-decoration: underline;">' . htmlspecialchars($maintenancePlan['year']) . '</span></p>';
 
         $tableCounter = 1;
 
