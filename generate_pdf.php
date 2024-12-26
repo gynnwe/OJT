@@ -54,7 +54,7 @@ try {
         $html = '
             <style>
                 body {
-                    margin: 1.27cm;
+                    margin: 0.5cm;
                     font-family: Arial, sans-serif;
                 }
                 table {
@@ -69,7 +69,7 @@ try {
                     text-align: center;
                     vertical-align: middle;
                     font-family: Arial, sans-serif;
-                    font-size: 10px;
+                    font-size: 12px;
                     font-weight: normal;
                 }
 
@@ -88,35 +88,36 @@ try {
                              style="width: 2.50cm; height: 2.50cm;">
                     </td>
                     <td style="border: 1px solid black; width: 12.06cm; text-align: center; font-family: Arial, sans-serif; line-height: 1; padding: 5px;" rowspan="5">
-                        <p style="font-family: Arial, sans-serif; font-size: 10px; margin: 0; line-height: 1;">Republic of the Philippines</p>
+                        <p style="font-family: Arial, sans-serif; font-size: 12px; margin: 0; line-height: 1;">Republic of the Philippines</p>
                         <p style="font-family: \'Old English Text MT\', serif; font-size: 16px; margin: 0; line-height: 1;">University of Southeastern Philippines</p>
-                        <p style="font-family: Arial, sans-serif; font-size: 10px; margin: 0; line-height: 1;">Iñigo St., Bo. Obrero, Davao City 8000</p>
-                        <p style="font-family: Arial, sans-serif; font-size: 10px; margin: 0; line-height: 1;">Telephone (082) 227-8192</p>
-                        <p style="font-family: Arial, sans-serif; font-size: 10px; margin: 0; line-height: 1;">
+                        <p style="font-family: Arial, sans-serif; font-size: 12px; margin: 0; line-height: 1;">Iñigo St., Bo. Obrero, Davao City 8000</p>
+                        <p style="font-family: Arial, sans-serif; font-size: 12px; margin: 0; line-height: 1;">Telephone (082) 227-8192</p>
+                        <p style="font-family: Arial, sans-serif; font-size: 12px; margin: 0; line-height: 1;">
                             <a href="http://www.usep.edu.ph" style="color: blue; text-decoration: underline;">www.usep.edu.ph</a>; 
-                            <span style="font-family: Arial, sans-serif; font-size: 10px;">email:</span>
+                            <span style="font-family: Arial, sans-serif; font-size: 12px;">email:</span>
                             <a href="mailto:president@usep.edu.ph" style="color: blue; text-decoration: underline;">president@usep.edu.ph</a>
                         </p>
                     </td>
-                    <td style="border: 1px solid black; width: 3.5cm; height: 0.50cm; text-align: left;">Form No.</td>
-                    <td style="border: 1px solid black; width: 3.5cm; height: 0.50cm; text-align: left;">FM-USeP-ICT-10</td>
-                </tr>
-                <tr>
-                    <td style="border: 1px solid black; width: 3.5cm; height: 0.50cm; text-align: left;">Issue Status</td>
-                    <td style="border: 1px solid black; width: 3.5cm; height: 0.50cm; text-align: left;">01</td>
-                </tr>
-                <tr>
-                    <td style="border: 1px solid black; width: 3.5cm; height: 0.50cm; text-align: left;">Revision No.</td>
-                    <td style="border: 1px solid black; width: 3.5cm; height: 0.50cm; text-align: left;">00</td>
-                </tr>
-                <tr>
-                    <td style="border: 1px solid black; width: 3.5cm; height: 0.50cm; text-align: left;">Date Effective</td>
-                    <td style="border: 1px solid black; width: 3.5cm; height: 0.50cm; text-align: left;">23 December 2022</td>
-                </tr>
-                <tr>
-                    <td style="border: 1px solid black; width: 3.5cm; height: 0.50cm; text-align: left;">Approved by</td>
-                    <td style="border: 1px solid black; width: 3.5cm; height: 0.50cm; text-align: left;">President</td>
-                </tr>
+    <td style="border: 1px solid black; width: 3.5cm; height: 0.50cm; text-align: left; font-family: Arial, sans-serif; font-size: 12px;">Form No.</td>
+    <td style="border: 1px solid black; width: 3.5cm; height: 0.50cm; text-align: left; font-family: Arial, sans-serif; font-size: 12px;">FM-USeP-ICT-10</td>
+</tr>
+<tr>
+    <td style="border: 1px solid black; width: 3.5cm; height: 0.50cm; text-align: left; font-family: Arial, sans-serif; font-size: 12px;">Issue Status</td>
+    <td style="border: 1px solid black; width: 3.5cm; height: 0.50cm; text-align: left; font-family: Arial, sans-serif; font-size: 12px;">01</td>
+</tr>
+<tr>
+    <td style="border: 1px solid black; width: 3.5cm; height: 0.50cm; text-align: left; font-family: Arial, sans-serif; font-size: 12px;">Revision No.</td>
+    <td style="border: 1px solid black; width: 3.5cm; height: 0.50cm; text-align: left; font-family: Arial, sans-serif; font-size: 12px;">00</td>
+</tr>
+<tr>
+    <td style="border: 1px solid black; width: 3.5cm; height: 0.50cm; text-align: left; font-family: Arial, sans-serif; font-size: 12px;">Date Effective</td>
+    <td style="border: 1px solid black; width: 3.5cm; height: 0.50cm; text-align: left; font-family: Arial, sans-serif; font-size: 12px;">23 December 2022</td>
+</tr>
+<tr>
+    <td style="border: 1px solid black; width: 3.5cm; height: 0.50cm; text-align: left; font-family: Arial, sans-serif; font-size: 12px;">Approved by</td>
+    <td style="border: 1px solid black; width: 3.5cm; height: 0.50cm; text-align: left; font-family: Arial, sans-serif; font-size: 12px;">President</td>
+</tr>
+
                 <tr>
                     <td style="border: 1px solid black; text-align: left; padding: 5px; height: .9cm;" colspan="4">
                         <div style="font-family: Arial, sans-serif; text-align: center;">
@@ -127,7 +128,7 @@ try {
                 </tr>
             </table>
             
-    <div style="font-family: Arial, sans-serif; font-size: 12px; line-height: 1.5; margin-top: 10px;">
+    <div style="font-family: Arial, sans-serif; font-size: 12px; line-height: 1.5; margin-top: 12px;">
         Name of Office/College/School/Unit: ______________________________
         <span style="display: inline-block; margin-left: 70px;">Campus: _____________________________</span>
     </div>
@@ -165,33 +166,33 @@ try {
             }
             $html .= '</tr>';
             $html .= '</tbody>';
-            $html .= '</table>';
+            $html .= '</table><br>';
 
             $tableCounter++;
         }
 
         $html .= '
-        <table style="border: 1px solid black; border-collapse: collapse; width: 100%; margin-top: 10px;">
+        <table style="border: 1px solid black; border-collapse: collapse; width: 100%; margin-top: 12px;">
             <tr>
                 <!-- Column 1 Content -->
                 <td style="border: 1px solid black; width: 50%; text-align: left; padding: 5px; height: 3.59cm;">
-                    <span style="font-family: Arial, sans-serif; font-size: 10px; font-weight: bold;">Prepared by:</span><br><br>
+                    <span style="font-family: Arial, sans-serif; font-size: 12px; font-weight: bold;">Prepared by:</span><br><br>
                     <div style="text-align: center;">
-                        <span style="font-family: Arial, sans-serif; font-size: 10px;">______________________________</span><br>
-                        <span style="font-family: Arial, sans-serif; font-size: 10px; font-weight: bold;">SDMD Deputy Director/Authorized Representative</span><br>
-                        <span style="font-family: Arial, sans-serif; font-size: 10px; font-style: italic;">(Signature Over Printed Name)</span><br>
-                        <span style="font-family: Arial, sans-serif; font-size: 10px;">Date: ____________________</span>
+                        <span style="font-family: Arial, sans-serif; font-size: 12px;">______________________________</span><br>
+                        <span style="font-family: Arial, sans-serif; font-size: 12px; font-weight: bold;">SDMD Deputy Director/Authorized Representative</span><br>
+                        <span style="font-family: Arial, sans-serif; font-size: 12px; font-style: italic;">(Signature Over Printed Name)</span><br>
+                        <span style="font-family: Arial, sans-serif; font-size: 12px;">Date: ____________________</span>
                     </div>
                 </td>
     
                 <!-- Column 2 Content (Same as Column 1) -->
                 <td style="border: 1px solid black; width: 50%; text-align: left; padding: 5px; height: 3.59cm;">
-                    <span style="font-family: Arial, sans-serif; font-size: 10px; font-weight: bold;">Approved by:</span><br><br>
+                    <span style="font-family: Arial, sans-serif; font-size: 12px; font-weight: bold;">Approved by:</span><br><br>
                     <div style="text-align: center;">
-                        <span style="font-family: Arial, sans-serif; font-size: 10px;">______________________________</span><br>
-                        <span style="font-family: Arial, sans-serif; font-size: 10px; font-weight: bold;">SDMD Director</span><br>
-                        <span style="font-family: Arial, sans-serif; font-size: 10px; font-style: italic;">(Signature Over Printed Name)</span><br>
-                        <span style="font-family: Arial, sans-serif; font-size: 10px;">Date: ____________________</span>
+                        <span style="font-family: Arial, sans-serif; font-size: 12px;">______________________________</span><br>
+                        <span style="font-family: Arial, sans-serif; font-size: 12px; font-weight: bold;">SDMD Director</span><br>
+                        <span style="font-family: Arial, sans-serif; font-size: 12px; font-style: italic;">(Signature Over Printed Name)</span><br>
+                        <span style="font-family: Arial, sans-serif; font-size: 12px;">Date: ____________________</span>
                     </div>
                 </td>
             </tr>
