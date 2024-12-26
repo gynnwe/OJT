@@ -79,7 +79,7 @@ try {
                 }
     
             </style>';
-            $html .= '
+        $html .= '
             <table style="border: 1px solid black; border-collapse: collapse; width: 100%; height: 3.73cm;">
                 <tr>
                     <td style="border: 1px solid black; width: 4.45cm; text-align: center;" rowspan="5">
@@ -120,9 +120,6 @@ try {
             </table>
             <br>
         ';
-        
-
-
 
         $html .= '<p style="font-family: Arial, sans-serif; font-size: 12px; font-weight: normal;">Year: <span style="text-decoration: underline;">' . htmlspecialchars($maintenancePlan['year']) . '</span></p>';
 
