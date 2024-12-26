@@ -117,11 +117,17 @@ try {
                     <td style="border: 1px solid black; width: 3.5cm; height: 0.50cm; text-align: left;">Approved by</td>
                     <td style="border: 1px solid black; width: 3.5cm; height: 0.50cm; text-align: left;">President</td>
                 </tr>
+                <tr>
+                    <td style="border: 1px solid black; text-align: left; padding: 5px; height: .9cm;" colspan="4">
+                        <div style="font-family: Arial, sans-serif; text-align: center;">
+                            <span style="font-size: 14px; font-weight: bold;">ANNUAL PREVENTIVE MAINTENANCE PLAN FOR ICT EQUIPMENT</span><br>
+                            <span style="font-size: 12px; font-weight: normal;">Year: <span style="text-decoration: underline;">' . htmlspecialchars($maintenancePlan['year']) . '</span></span>
+                        </div>
+                    </td>
+                </tr>
             </table>
             <br>
         ';
-
-        $html .= '<p style="font-family: Arial, sans-serif; font-size: 12px; font-weight: normal;">Year: <span style="text-decoration: underline;">' . htmlspecialchars($maintenancePlan['year']) . '</span></p>';
 
         $tableCounter = 1;
 
