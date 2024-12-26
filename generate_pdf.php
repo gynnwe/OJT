@@ -186,10 +186,10 @@ try {
     
                 <!-- Column 2 Content (Same as Column 1) -->
                 <td style="border: 1px solid black; width: 50%; text-align: left; padding: 5px; height: 3.59cm;">
-                    <span style="font-family: Arial, sans-serif; font-size: 10px; font-weight: bold;">Prepared by:</span><br><br>
+                    <span style="font-family: Arial, sans-serif; font-size: 10px; font-weight: bold;">Approved by:</span><br><br>
                     <div style="text-align: center;">
                         <span style="font-family: Arial, sans-serif; font-size: 10px;">______________________________</span><br>
-                        <span style="font-family: Arial, sans-serif; font-size: 10px; font-weight: bold;">SDMD Deputy Director/Authorized Representative</span><br>
+                        <span style="font-family: Arial, sans-serif; font-size: 10px; font-weight: bold;">SDMD Director</span><br>
                         <span style="font-family: Arial, sans-serif; font-size: 10px; font-style: italic;">(Signature Over Printed Name)</span><br>
                         <span style="font-family: Arial, sans-serif; font-size: 10px;">Date: ____________________</span>
                     </div>
