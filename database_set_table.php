@@ -118,20 +118,6 @@ try {
     $conn->exec($sql);
     echo "Equipment Table created successfully<br>";
 
-
-    // --- Create Location Details Table ---
-    $sql = "CREATE TABLE IF NOT EXISTS location_details (
-        id INT(7) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-        location_id INT(7) UNSIGNED NOT NULL,
-		equipment_id INT(7) UNSIGNED NOT NULL,
-		date DATETIME NOT NULL,
-		FOREIGN KEY (location_id) REFERENCES location(location_id),
-		FOREIGN KEY (equipment_id) REFERENCES equipment(equipment_id)
-    )";
-
-    $conn->exec($sql);
-    echo "Location Details Table created successfully<br>";
-
     // --- Create Personnel Table ---
     $sql = "CREATE TABLE IF NOT EXISTS personnel (
         personnel_id INT(7) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -185,20 +171,6 @@ try {
     $conn->exec($sql);
     echo "Maintenance Plan Table created successfully<br>";
 
-    // --- Create Equipment Baseline Table ---
-    $sql = "CREATE TABLE IF NOT EXISTS equipment_baseline (
-        id INT(7) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-        equipment_id INT(7) UNSIGNED NOT NULL,
-		maintenance_plan_id INT(7) UNSIGNED NOT NULL,
-        count INT(5) NOT NULL,
-        baseline_date DATE NOT NULL,
-		equipment_type ENUM('Computer', 'Laptop', 'Printer', 'Projector') NOT NULL,
-        FOREIGN KEY (equipment_id) REFERENCES equipment(equipment_id),
-		FOREIGN KEY (maintenance_plan_id) REFERENCES maintenance_plan(id)
-    )";
-
-    $conn->exec($sql);
-    echo "Equipment Baseline Table created successfully<br>";
 
     // --- Create Plan Details Table ---
     $sql = "CREATE TABLE IF NOT EXISTS plan_details (

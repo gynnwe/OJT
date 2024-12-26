@@ -224,7 +224,7 @@ if (isset($_SESSION['user_id'])) {
         <!-- Sidebar -->
         <div class="sidebar">
             <div class="sidebar-header">
-                <img src="assets/usep-logo.png" alt="Logo" class="logo">
+                <img src="assets/images/usep-logo.png" alt="Logo" class="logo">
             </div>
             <ul class="nav-links">
                 <li><a href="dashboard-content.php" class="nav-link active" data-title="Dashboard"><span class="material-symbols-rounded">home</span>Dashboard</a></li>

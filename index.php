@@ -15,7 +15,7 @@
         }
 
         body {
-            background-image: url('assets/dashboard_background.jpg');
+            background-image: url('assets/images/dashboard_background.jpg');
             background-size: cover;
             background-position: center;
             font-family: 'Plus Jakarta Sans', sans-serif;
@@ -161,8 +161,8 @@
         <div class="maroon-square">
             <div class="content">
                 <div class="logos">
-                    <img src="assets/usep-logo.png" alt="USeP Logo" width="165" height="164">
-                    <img src="assets/cic.png" alt="CIC Logo" width="120" height="136">
+                    <img src="assets/images/usep-logo.png" alt="USeP Logo" width="165" height="164">
+                    <img src="assets/images/cic.png" alt="CIC Logo" width="120" height="136">
                 </div>
                 <h1>ICT Equipment<br>Monitoring<br>System</h1>
             </div>
