@@ -65,6 +65,8 @@
                 $html .= '<h4>Equipment Type: ' . htmlspecialchars($details[0]['equip_type_name']) . '</h4>';
                 $html .= '<table>';
                 $html .= '<thead>';
+
+                
                 
                 // Schedule Row with Merged Cell
                 $html .= '<tr><th rowspan="2">Areas to be Maintained / Checked</th><th colspan="' . (count($details) + 1) . '" style="text-align: center;">Schedule</th></tr>';
