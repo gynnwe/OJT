@@ -63,17 +63,14 @@ try {
                 }
                 th, td {
                     padding: 5px;
-                    text-align: left;
+                    text-align: center;
+                    vertical-align: middle;
                 }
             </style>';
-        $html .= '<h1>Maintenance Plan ' . htmlspecialchars($maintenancePlan['id']) . '</h1>';
         $html .= '<p><strong>Year:</strong> ' . htmlspecialchars($maintenancePlan['year']) . '</p>';
-        $html .= '<p><strong>Date Prepared:</strong> ' . htmlspecialchars($maintenancePlan['date_prepared']) . '</p>';
-
-        $tableCounter = 1; 
+        $tableCounter = 1;
 
         foreach ($groupedPlanDetails as $equipTypeId => $details) {
-            $html .= '<h4>Equipment Type: ' . htmlspecialchars($details[0]['equip_type_name']) . '</h4>';
             $html .= '<table>';
             $html .= '<thead>';
             $html .= '<tr><th rowspan="2">No.</th><th rowspan="2">Equipment Type/Name</th><th rowspan="2">Areas to be Maintained / Checked</th><th colspan="' . (count($details) + 1) . '" style="text-align: center;">Schedule</th></tr>';
@@ -87,7 +84,7 @@ try {
             $html .= '<tbody>';
             $html .= '<tr>';
             $html .= '<td rowspan="2">' . $tableCounter . '</td>';
-            $html .= '<td rowspan="2">Blank Text</td>';
+            $html .= '<td rowspan="2">' . htmlspecialchars($details[0]['equip_type_name']) . '</td>';
             $html .= '<td>Hardware</td><td><strong>Plan</strong></td>';
             foreach ($details as $detail) {
                 $html .= '<td>' . htmlspecialchars((int) $detail['target']) . '</td>';
@@ -102,7 +99,7 @@ try {
             $html .= '</tbody>';
             $html .= '</table><br>';
 
-            $tableCounter++; 
+            $tableCounter++;
         }
 
         $options = new Options();
