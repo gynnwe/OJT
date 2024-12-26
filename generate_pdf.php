@@ -83,46 +83,14 @@ try {
                     font-size: 10px;
                     line-height: 1;
                 }
-                .col-3,
-                .col-4 {
-                    width: 3.46cm;
-                    height: 3.73cm;
-                }
+            
                 .hyperlink {
                     color: blue;
                     text-decoration: underline;
                 }
-                .header-text {
-                    font-family: Arial, sans-serif;
-                }
-                .header-text-bold {
-                    font-family: "Old English Text MT", serif;
-                    font-size: 16px;
-                }
+    
             </style>';
 
-        // Add table with the logo and second column text
-        $html .= '
-            <table class="fixed-table">
-                <tr>
-                    <td class="col-1">
-                        <img src="' . $imagePath . '" style="width: 2.81cm; height: 2.81cm;" alt="Logo">
-                    </td>
-                    <td class="col-2">
-                        <p class="header-text" style="margin: 0;">Republic of the Philippines</p>
-                        <p class="header-text-bold" style="margin: 0;">University of Southeastern Philippines</p>
-                        <p class="header-text" style="margin: 0;">I&ntilde;igo St., Bo. Obrero, Davao City 8000</p>
-                        <p class="header-text" style="margin: 0;">Telephone (082) 227-8192</p>
-                        <p class="header-text" style="margin: 0;">
-                            <a href="http://www.usep.edu.ph" class="hyperlink">www.usep.edu.ph</a>; 
-                            email: <a href="mailto:president@usep.edu.ph" class="hyperlink">president@usep.edu.ph</a>
-                        </p>
-                    </td>
-                    <td class="col-3">Column 3</td>
-                    <td class="col-4">Column 4</td>
-                </tr>
-            </table>
-            <br>';
 
         $html .= '<p style="font-family: Arial, sans-serif; font-size: 12px; font-weight: normal;">Year: <span style="text-decoration: underline;">' . htmlspecialchars($maintenancePlan['year']) . '</span></p>';
 
