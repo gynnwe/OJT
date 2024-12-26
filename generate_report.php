@@ -169,12 +169,10 @@ $html = "
         .column-3 {
             width: 2.42cm;
             height: 3.85cm;
-            vertical-align: top;
         }
         .column-4 {
             width: 3.49cm;
             height: 3.85cm;
-            vertical-align: top;
         }
         .row-divider {
             border-bottom: 1px solid #000;
@@ -219,7 +217,6 @@ $html = "
 
 .header-col-1 {
     width: 4.28cm; /* First column width */
-    font-weight: bold; /* Bold for labels */
     text-align: left; /* Align text to the left */
 }
 
@@ -246,18 +243,18 @@ $html = "
                 <p>Email: <a href='mailto:president@usep.edu.ph' class='link'>president@usep.edu.ph</a></p>
             </td>
  <td class='column-3'>
-    <div class='row-divider' style='padding-left: 12px;'>Form No.</div>
-    <div class='row-divider' style='padding-left: 12px;'>Issue Status</div>
-    <div class='row-divider' style='padding-left: 12px;'>Revision No.</div>
-    <div class='row-divider' style='padding-left: 12px;'>Date Effective</div>
-    <div class='row-divider' style='padding-left: 12px; border-bottom: none;'>Approved by</div>
+    <div class='row-divider' style='padding-left: 8px;'>Form No.</div>
+    <div class='row-divider' style='padding-left: 8px;'>Issue Status</div>
+    <div class='row-divider' style='padding-left: 8px;'>Revision No.</div>
+    <div class='row-divider' style='padding-left: 8px;'>Date Effective</div>
+    <div class='row-divider' style='padding-left: 8px; border-bottom: none;'>Approved by</div>
 </td>
 <td class='column-4'>
-    <div class='row-divider' style='padding-left: 12px;'>FM-USeP-ICT-04</div>
-    <div class='row-divider' style='padding-left: 12px;'>01</div>
-    <div class='row-divider' style='padding-left: 12px;'>00</div>
-    <div class='row-divider' style='padding-left: 12px;'>23 December 2022</div>
-    <div class='row-divider' style='padding-left: 12px; border-bottom: none;'>President</div>
+    <div class='row-divider' style='padding-left: 8px;'>FM-USeP-ICT-04</div>
+    <div class='row-divider' style='padding-left: 8px;'>01</div>
+    <div class='row-divider' style='padding-left: 8px;'>00</div>
+    <div class='row-divider' style='padding-left: 8px;'>23 December 2022</div>
+    <div class='row-divider' style='padding-left: 8px; border-bottom: none;'>President</div>
 </td>
 
         </tr>
