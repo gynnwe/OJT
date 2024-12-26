@@ -15,7 +15,7 @@
         }
 
         body {
-            background-image: url('assets/images/dashboard_background.jpg');
+            background-image: url('assets/images/login_bg.png');
             background-size: cover;
             background-position: center;
             font-family: 'Plus Jakarta Sans', sans-serif;
