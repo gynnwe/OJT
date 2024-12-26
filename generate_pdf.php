@@ -65,9 +65,13 @@ try {
                     padding: 5px;
                     text-align: center;
                     vertical-align: middle;
+                    font-family: Arial, sans-serif;
+                    font-size: 10px;
+                    font-weight: normal;
                 }
             </style>';
-        $html .= '<p><strong>Year:</strong> ' . htmlspecialchars($maintenancePlan['year']) . '</p>';
+            $html .= '<p style="font-family: Arial, sans-serif; font-size: 12px; font-weight: normal;">Year: <span style="text-decoration: underline;">' . htmlspecialchars($maintenancePlan['year']) . '</span></p>';
+
         $tableCounter = 1;
 
         foreach ($groupedPlanDetails as $equipTypeId => $details) {
@@ -85,13 +89,13 @@ try {
             $html .= '<tr>';
             $html .= '<td rowspan="2">' . $tableCounter . '</td>';
             $html .= '<td rowspan="2">' . htmlspecialchars($details[0]['equip_type_name']) . '</td>';
-            $html .= '<td>Hardware</td><td><strong>Plan</strong></td>';
+            $html .= '<td>Hardware</td><td>Plan</td>';
             foreach ($details as $detail) {
                 $html .= '<td>' . htmlspecialchars((int) $detail['target']) . '</td>';
             }
             $html .= '</tr>';
             $html .= '<tr>';
-            $html .= '<td>Software</td><td><strong>Implemented</strong></td>';
+            $html .= '<td>Software</td><td>Implemented</td>';
             foreach ($details as $detail) {
                 $html .= '<td>' . htmlspecialchars((int) $detail['implemented']) . '</td>';
             }
