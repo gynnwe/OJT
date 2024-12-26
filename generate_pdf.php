@@ -66,8 +66,7 @@ try {
             $html .= '<table>';
             $html .= '<thead>';
             // Schedule Row with Merged Cell
-            $html .= '<tr><th rowspan="2">Equipment Type/Name</th><th rowspan="2">Areas to be Maintained /
-Checked</th><th colspan="' . (count($details) + 1) . '" style="text-align: center;">Schedule</th></tr>';
+            $html .= '<tr><th rowspan="2">Equipment Type/Name</th><th rowspan="2">Areas to be Maintained / Checked</th><th colspan="' . (count($details) + 1) . '" style="text-align: center;">Schedule</th></tr>';
 
             // Month Acronyms Row
             $html .= '<tr><th></th>'; // Empty first cell for "Plan"/"Implemented"
@@ -81,14 +80,17 @@ Checked</th><th colspan="' . (count($details) + 1) . '" style="text-align: cente
             // Table Body
             $html .= '<tbody>';
 
-            // Add duplicate columns in the rows
-            $html .= '<tr><td></td><td>Hardware</td><td><strong>Plan</strong></td>';
+            // Add duplicate columns in the rows with merged cell for Equipment Type/Name
+            $html .= '<tr>';
+            $html .= '<td rowspan="2">Equipment Type/Name</td>'; // Merge the two rows beneath this column
+            $html .= '<td>Hardware</td><td><strong>Plan</strong></td>';
             foreach ($details as $detail) {
                 $html .= '<td>' . htmlspecialchars((int) $detail['target']) . '</td>';
             }
             $html .= '</tr>';
 
-            $html .= '<tr><td></td><td>Software</td><td><strong>Implemented</strong></td>';
+            $html .= '<tr>';
+            $html .= '<td>Software</td><td><strong>Implemented</strong></td>';
             foreach ($details as $detail) {
                 $html .= '<td>' . htmlspecialchars((int) $detail['implemented'] ?? 0) . '</td>';
             }
