@@ -111,7 +111,7 @@ $html = "
 
 .table th {
     font-family: Arial, sans-serif; /* Arial font */
-    font-size: 11px; /* Set font size to 11 */
+    font-size: 12px; /* Set font size to 11 */
     font-weight: normal; /* Ensure text is not bold */
     padding: 5px; /* Add some padding for spacing */
 }
@@ -156,15 +156,15 @@ $html = "
             width: 9.54cm;
             height: 3.85cm;
             font-family: Arial, sans-serif;
-            font-size: 9px;
+            font-size: 12px;
             text-align: center;
-            line-height: 1;
+            line-height: 0;
         }
         .column-2 .title {
             font-family: 'Old English Text MT', serif;
             font-size: 16px;
             text-align: center;
-            line-height: 1;
+            line-height: 0;
         }
         .column-3 {
             width: 2.42cm;
@@ -207,7 +207,7 @@ $html = "
     margin-bottom: 5px; /* Adds spacing below the table */
     margin-top: 20px; /* Adds spacing above the table */
     font-family: Arial, sans-serif; /* Sets the font to Arial */
-    font-size: 11px; /* Sets the font size to 11 */
+    font-size: 12px; /* Sets the font size to 11 */
 }
 
 .header-table td {
@@ -246,18 +246,18 @@ $html = "
                 <p>Email: <a href='mailto:president@usep.edu.ph' class='link'>president@usep.edu.ph</a></p>
             </td>
  <td class='column-3'>
-    <div class='row-divider' style='padding-left: 10px;'>Form No.</div>
-    <div class='row-divider' style='padding-left: 10px;'>Issue Status</div>
-    <div class='row-divider' style='padding-left: 10px;'>Revision No.</div>
-    <div class='row-divider' style='padding-left: 10px;'>Date Effective</div>
-    <div class='row-divider' style='padding-left: 10px; border-bottom: none;'>Approved by</div>
+    <div class='row-divider' style='padding-left: 12px;'>Form No.</div>
+    <div class='row-divider' style='padding-left: 12px;'>Issue Status</div>
+    <div class='row-divider' style='padding-left: 12px;'>Revision No.</div>
+    <div class='row-divider' style='padding-left: 12px;'>Date Effective</div>
+    <div class='row-divider' style='padding-left: 12px; border-bottom: none;'>Approved by</div>
 </td>
 <td class='column-4'>
-    <div class='row-divider' style='padding-left: 10px;'>FM-USeP-ICT-04</div>
-    <div class='row-divider' style='padding-left: 10px;'>01</div>
-    <div class='row-divider' style='padding-left: 10px;'>00</div>
-    <div class='row-divider' style='padding-left: 10px;'>23 December 2022</div>
-    <div class='row-divider' style='padding-left: 10px; border-bottom: none;'>President</div>
+    <div class='row-divider' style='padding-left: 12px;'>FM-USeP-ICT-04</div>
+    <div class='row-divider' style='padding-left: 12px;'>01</div>
+    <div class='row-divider' style='padding-left: 12px;'>00</div>
+    <div class='row-divider' style='padding-left: 12px;'>23 December 2022</div>
+    <div class='row-divider' style='padding-left: 12px; border-bottom: none;'>President</div>
 </td>
 
         </tr>
@@ -289,8 +289,8 @@ $html = "
             </tr>
         </thead>
         <tbody>";
-        foreach ($logs as $log) {
-            $html .= "
+foreach ($logs as $log) {
+    $html .= "
                 <tr style='height: 0.49cm; line-height: 0.49cm; padding: 0; margin: 0;'>
                     <td style='height: 0.49cm; line-height: 0.49cm; padding: 0; margin: 0;'>{$log['maintenance_date']}</td>
                     <td style='height: 0.49cm; line-height: 0.49cm; padding: 0; margin: 0;'>{$log['jo_number']}</td>
@@ -298,8 +298,8 @@ $html = "
                     <td style='height: 0.49cm; line-height: 0.49cm; padding: 0; margin: 0;'>{$log['remarks']}</td>
                     <td style='height: 0.49cm; line-height: 0.49cm; padding: 0; margin: 0;'>{$log['firstname']} {$log['lastname']}</td>
                 </tr>";
-        }
-        
+}
+
 $html .= "
         </tbody>
     </table>
