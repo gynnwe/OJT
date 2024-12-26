@@ -79,7 +79,7 @@ try {
                 }
     
             </style>';
-        $html .= '
+            $html .= '
             <table style="border: 1px solid black; border-collapse: collapse; width: 100%; height: 3.73cm;">
                 <tr>
                     <td style="border: 1px solid black; width: 4.45cm; text-align: center;" rowspan="5">
@@ -126,8 +126,15 @@ try {
                     </td>
                 </tr>
             </table>
-            <br>
-        ';
+            
+    <div style="font-family: Arial, sans-serif; font-size: 12px; line-height: 1.5; margin-top: 10px;">
+        Name of Office/College/School/Unit: ______________________________
+        <span style="display: inline-block; margin-left: 70px;">Campus: _____________________________</span>
+    </div>
+    <br>
+';
+
+        
 
         $tableCounter = 1;
 
@@ -158,10 +165,40 @@ try {
             }
             $html .= '</tr>';
             $html .= '</tbody>';
-            $html .= '</table><br>';
+            $html .= '</table>';
 
             $tableCounter++;
         }
+
+        $html .= '
+        <table style="border: 1px solid black; border-collapse: collapse; width: 100%; margin-top: 10px;">
+            <tr>
+                <!-- Column 1 Content -->
+                <td style="border: 1px solid black; width: 50%; text-align: left; padding: 5px; height: 3.59cm;">
+                    <span style="font-family: Arial, sans-serif; font-size: 10px; font-weight: bold;">Prepared by:</span><br><br>
+                    <div style="text-align: center;">
+                        <span style="font-family: Arial, sans-serif; font-size: 10px;">______________________________</span><br>
+                        <span style="font-family: Arial, sans-serif; font-size: 10px; font-weight: bold;">SDMD Deputy Director/Authorized Representative</span><br>
+                        <span style="font-family: Arial, sans-serif; font-size: 10px; font-style: italic;">(Signature Over Printed Name)</span><br>
+                        <span style="font-family: Arial, sans-serif; font-size: 10px;">Date: ____________________</span>
+                    </div>
+                </td>
+    
+                <!-- Column 2 Content (Same as Column 1) -->
+                <td style="border: 1px solid black; width: 50%; text-align: left; padding: 5px; height: 3.59cm;">
+                    <span style="font-family: Arial, sans-serif; font-size: 10px; font-weight: bold;">Prepared by:</span><br><br>
+                    <div style="text-align: center;">
+                        <span style="font-family: Arial, sans-serif; font-size: 10px;">______________________________</span><br>
+                        <span style="font-family: Arial, sans-serif; font-size: 10px; font-weight: bold;">SDMD Deputy Director/Authorized Representative</span><br>
+                        <span style="font-family: Arial, sans-serif; font-size: 10px; font-style: italic;">(Signature Over Printed Name)</span><br>
+                        <span style="font-family: Arial, sans-serif; font-size: 10px;">Date: ____________________</span>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    ';
+    
+    
 
         $options = new Options();
         $options->set('isHtml5ParserEnabled', true);
