@@ -22,15 +22,28 @@ try {
         $stmtPlan->execute([':planId' => $planId]);
         $maintenancePlan = $stmtPlan->fetch(PDO::FETCH_ASSOC);
 
-        // Fetch plan details
+        // Fetch plan details with Implemented values
         $queryDetails = "
-                SELECT pd.*, et.equip_type_name 
-                FROM plan_details pd
-                JOIN equipment_type et ON pd.equip_type_id = et.equip_type_id
-                WHERE pd.maintenance_plan_id = :planId
-                ORDER BY et.equip_type_id, pd.month";
+            SELECT 
+                pd.*, 
+                et.equip_type_name,
+                (
+                    SELECT COUNT(DISTINCT e.equipment_id) 
+                    FROM equipment e
+                    JOIN ict_maintenance_logs ml ON e.equipment_id = ml.equipment_id
+                    WHERE e.status = 'Serviceable' 
+                    AND e.equip_type_id = pd.equip_type_id
+                    AND YEAR(ml.maintenance_date) = :planYear
+                    AND MONTH(ml.maintenance_date) = pd.month
+                ) AS implemented
+            FROM plan_details pd
+            JOIN equipment_type et ON pd.equip_type_id = et.equip_type_id
+            WHERE pd.maintenance_plan_id = :planId
+            ORDER BY et.equip_type_id, pd.month";
         $stmtDetails = $conn->prepare($queryDetails);
-        $stmtDetails->execute([':planId' => $planId]);
+        $stmtDetails->bindParam(':planYear', $maintenancePlan['year'], PDO::PARAM_INT);
+        $stmtDetails->bindParam(':planId', $planId, PDO::PARAM_INT);
+        $stmtDetails->execute();
         $planDetails = $stmtDetails->fetchAll(PDO::FETCH_ASSOC);
 
         $groupedPlanDetails = [];
@@ -93,7 +106,7 @@ try {
             $html .= '<tr>';
             $html .= '<td>Software</td><td><strong>Implemented</strong></td>';
             foreach ($details as $detail) {
-                $html .= '<td>' . htmlspecialchars((int) $detail['implemented'] ?? 0) . '</td>';
+                $html .= '<td>' . htmlspecialchars((int) $detail['implemented']) . '</td>';
             }
             $html .= '</tr>';
 
