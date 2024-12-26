@@ -70,6 +70,8 @@ try {
         $html .= '<p><strong>Year:</strong> ' . htmlspecialchars($maintenancePlan['year']) . '</p>';
         $html .= '<p><strong>Date Prepared:</strong> ' . htmlspecialchars($maintenancePlan['date_prepared']) . '</p>';
 
+        $tableCounter = 1; 
+
         foreach ($groupedPlanDetails as $equipTypeId => $details) {
             $html .= '<h4>Equipment Type: ' . htmlspecialchars($details[0]['equip_type_name']) . '</h4>';
             $html .= '<table>';
@@ -84,7 +86,7 @@ try {
             $html .= '</thead>';
             $html .= '<tbody>';
             $html .= '<tr>';
-            $html .= '<td rowspan="2">1 table</td>';
+            $html .= '<td rowspan="2">' . $tableCounter . '</td>';
             $html .= '<td rowspan="2">Blank Text</td>';
             $html .= '<td>Hardware</td><td><strong>Plan</strong></td>';
             foreach ($details as $detail) {
@@ -99,6 +101,8 @@ try {
             $html .= '</tr>';
             $html .= '</tbody>';
             $html .= '</table><br>';
+
+            $tableCounter++; 
         }
 
         $options = new Options();
