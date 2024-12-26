@@ -72,13 +72,56 @@ try {
                     font-size: 10px;
                     font-weight: normal;
                 }
-                    
+
                 .hyperlink {
                     color: blue;
                     text-decoration: underline;
                 }
     
             </style>';
+            $html .= '
+            <table style="border: 1px solid black; border-collapse: collapse; width: 100%; height: 3.73cm;">
+                <tr>
+                    <td style="border: 1px solid black; width: 4.45cm; text-align: center;" rowspan="5">
+                        <img src="http://' . $_SERVER['HTTP_HOST'] . '/OJT/assets/images/usep-logo.png" 
+                             alt="USeP Logo" 
+                             style="width: 2.50cm; height: 2.50cm;">
+                    </td>
+                    <td style="border: 1px solid black; width: 12.06cm; text-align: center; font-family: Arial, sans-serif; line-height: 1; padding: 5px;" rowspan="5">
+                        <p style="font-family: Arial, sans-serif; font-size: 10px; margin: 0; line-height: 1;">Republic of the Philippines</p>
+                        <p style="font-family: \'Old English Text MT\', serif; font-size: 16px; margin: 0; line-height: 1;">University of Southeastern Philippines</p>
+                        <p style="font-family: Arial, sans-serif; font-size: 10px; margin: 0; line-height: 1;">Iñigo St., Bo. Obrero, Davao City 8000</p>
+                        <p style="font-family: Arial, sans-serif; font-size: 10px; margin: 0; line-height: 1;">Telephone (082) 227-8192</p>
+                        <p style="font-family: Arial, sans-serif; font-size: 10px; margin: 0; line-height: 1;">
+                            <a href="http://www.usep.edu.ph" style="color: blue; text-decoration: underline;">www.usep.edu.ph</a>; 
+                            <span style="font-family: Arial, sans-serif; font-size: 10px;">email:</span>
+                            <a href="mailto:president@usep.edu.ph" style="color: blue; text-decoration: underline;">president@usep.edu.ph</a>
+                        </p>
+                    </td>
+                    <td style="border: 1px solid black; width: 3.5cm; height: 0.50cm; text-align: left;">Form No.</td>
+                    <td style="border: 1px solid black; width: 3.5cm; height: 0.50cm; text-align: left;">FM-USeP-ICT-10</td>
+                </tr>
+                <tr>
+                    <td style="border: 1px solid black; width: 3.5cm; height: 0.50cm; text-align: left;">Issue Status</td>
+                    <td style="border: 1px solid black; width: 3.5cm; height: 0.50cm; text-align: left;">01</td>
+                </tr>
+                <tr>
+                    <td style="border: 1px solid black; width: 3.5cm; height: 0.50cm; text-align: left;">Revision No.</td>
+                    <td style="border: 1px solid black; width: 3.5cm; height: 0.50cm; text-align: left;">00</td>
+                </tr>
+                <tr>
+                    <td style="border: 1px solid black; width: 3.5cm; height: 0.50cm; text-align: left;">Date Effective</td>
+                    <td style="border: 1px solid black; width: 3.5cm; height: 0.50cm; text-align: left;">23 December 2022</td>
+                </tr>
+                <tr>
+                    <td style="border: 1px solid black; width: 3.5cm; height: 0.50cm; text-align: left;">Approved by</td>
+                    <td style="border: 1px solid black; width: 3.5cm; height: 0.50cm; text-align: left;">President</td>
+                </tr>
+            </table>
+            <br>
+        ';
+        
+
 
 
         $html .= '<p style="font-family: Arial, sans-serif; font-size: 12px; font-weight: normal;">Year: <span style="text-decoration: underline;">' . htmlspecialchars($maintenancePlan['year']) . '</span></p>';
