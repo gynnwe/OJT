@@ -72,18 +72,7 @@ try {
                     font-size: 10px;
                     font-weight: normal;
                 }
-                .col-1 {
-                    width: 4.45cm;
-                    height: 3.73cm;
-                }
-                .col-2 {
-                    width: 12.06cm;
-                    height: 3.73cm;
-                    text-align: center;
-                    font-size: 10px;
-                    line-height: 1;
-                }
-            
+                    
                 .hyperlink {
                     color: blue;
                     text-decoration: underline;
