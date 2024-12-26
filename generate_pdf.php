@@ -48,6 +48,9 @@ try {
             $groupedPlanDetails[$detail['equip_type_id']][] = $detail;
         }
 
+        // Generate the image path
+        $imagePath = 'http://' . $_SERVER['HTTP_HOST'] . '/OJT/assets/images/usep-logo.png';
+
         $html = '
             <style>
                 body {
@@ -69,7 +72,6 @@ try {
                     font-size: 10px;
                     font-weight: normal;
                 }
-    
                 .col-1 {
                     width: 4.45cm;
                     height: 3.73cm;
@@ -77,27 +79,51 @@ try {
                 .col-2 {
                     width: 12.06cm;
                     height: 3.73cm;
+                    text-align: center;
+                    font-size: 10px;
+                    line-height: 1.0;
                 }
                 .col-3,
                 .col-4 {
                     width: 3.46cm;
                     height: 3.73cm;
                 }
+                .hyperlink {
+                    color: blue;
+                    text-decoration: underline;
+                }
+                .header-text {
+                    font-family: Arial, sans-serif;
+                }
+                .header-text-bold {
+                    font-family: "Old English Text MT", serif;
+                    font-size: 16px;
+                }
             </style>';
 
-        // Add the new table above the Year section
+        // Add table with the logo and second column text
         $html .= '
             <table class="fixed-table">
                 <tr>
-                    <td class="col-1">Column 1</td>
-                    <td class="col-2">Column 2</td>
+                    <td class="col-1">
+                        <img src="' . $imagePath . '" style="width: 2.81cm; height: 2.81cm;" alt="Logo">
+                    </td>
+                    <td class="col-2">
+                        <p class="header-text">Republic of the Philippines</p>
+                        <p class="header-text-bold">University of Southeastern Philippines</p>
+                        <p class="header-text">I&ntilde;igo St., Bo. Obrero, Davao City 8000</p>
+                        <p class="header-text">Telephone (082) 227-8192</p>
+                        <p class="header-text">
+                            <a href="http://www.usep.edu.ph" class="hyperlink">www.usep.edu.ph</a>; 
+                            email: <a href="mailto:president@usep.edu.ph" class="hyperlink">president@usep.edu.ph</a>
+                        </p>
+                    </td>
                     <td class="col-3">Column 3</td>
                     <td class="col-4">Column 4</td>
                 </tr>
             </table>
             <br>';
 
-        // Add Year
         $html .= '<p style="font-family: Arial, sans-serif; font-size: 12px; font-weight: normal;">Year: <span style="text-decoration: underline;">' . htmlspecialchars($maintenancePlan['year']) . '</span></p>';
 
         $tableCounter = 1;
@@ -136,6 +162,7 @@ try {
 
         $options = new Options();
         $options->set('isHtml5ParserEnabled', true);
+        $options->set('isRemoteEnabled', true); // Enable remote loading for external resources
         $dompdf = new Dompdf($options);
 
         $dompdf->loadHtml($html);
