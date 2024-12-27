@@ -21,7 +21,7 @@ if (!$property_num) {
     die('Property number is required');
 }
 
-// Fetch all maintenance lo gs for the specific property number
+// Fetch all maintenance logs for the specific property number
 $sql = "
     SELECT 
         ml.maintenance_date,
@@ -138,7 +138,6 @@ $html = "
 }
 
 
-
         .custom-table {
             width: 100%;
             border-collapse: collapse;
@@ -237,7 +236,7 @@ $html = "
             </td>
             <td class='column-2'>
                 <p>Republic of the Philippines</p>
-                <p class='title'>University of Southeastern Philippines</p>
+                <p class='title' style='font-family: Arial, sans-serif; font-size: 16px; font-weight: bold;'>University of Southeastern Philippines</p>
                 <p>Iñigo St., Bo. Obrero, Davao City 8000</p>
                 <p>Telephone: (082) 227-8192</p>
                 <p>Website: <a href='http://www.usep.edu.ph' class='link'>www.usep.edu.ph</a></p>
