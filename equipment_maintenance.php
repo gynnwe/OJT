@@ -11,21 +11,17 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
 include 'conn.php';
 
 try {
-    // Connect to the database
     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    // Fetch all non-deleted equipment types for the dropdown
     $sqlTypes = "SELECT equip_type_id, equip_type_name FROM equipment_type WHERE deleted_id = 0";
     $stmtTypes = $conn->prepare($sqlTypes);
     $stmtTypes->execute();
     $equipment_types = $stmtTypes->fetchAll(PDO::FETCH_ASSOC);
 
-    // Check if an equipment type is selected
     $selectedTypeId = isset($_GET['equipment_type']) ? $_GET['equipment_type'] : '';
     $searchTerm = isset($_GET['search_term']) ? $_GET['search_term'] : '';
 
-    // Prepare and execute SQL query to fetch equipment based on the selected type and search term
     $sqlEquipment = "SELECT e.equipment_id, e.equip_name, e.property_num, e.status, e.date_purchased
                      FROM equipment e
                      WHERE (:equip_type_id = '' OR e.equip_type_id = :equip_type_id)
@@ -37,19 +33,16 @@ try {
     $stmtEquipment->execute();
     $equipment = $stmtEquipment->fetchAll(PDO::FETCH_ASSOC);
 
-    // Fetch all non-deleted remarks for the dropdown
     $sqlRemarks = "SELECT remarks_id, remarks_name FROM remarks WHERE deleted_id = 0";
     $stmtRemarks = $conn->prepare($sqlRemarks);
     $stmtRemarks->execute();
     $remarks_options = $stmtRemarks->fetchAll(PDO::FETCH_ASSOC);
     
-    // Fetch all non-deleted Personnel for the dropdown
     $sqlPersonnel = "SELECT personnel_id, firstname, lastname, office FROM personnel WHERE deleted_id = 0";
     $stmtPersonnel = $conn->prepare($sqlPersonnel);
     $stmtPersonnel->execute();
     $personnel_options = $stmtPersonnel->fetchAll(PDO::FETCH_ASSOC);
 
-    // Fetch data from Maintenance Logs with joins
     $sqlLogs = "
         SELECT 
             ml.jo_number,
@@ -71,9 +64,58 @@ try {
     $stmtLogs = $conn->prepare($sqlLogs);
     $stmtLogs->execute();
     $maintenanceLogs = $stmtLogs->fetchAll(PDO::FETCH_ASSOC);
-    
+
 } catch (PDOException $e) {
     echo "Error: " . $e->getMessage();
+}
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Collect form data
+    $jo_number = $_POST['jo_number'];
+    $actions_taken = $_POST['actions_taken'];
+    $remarks_id = $_POST['remarks'];
+    $maintaindate = $_POST['maintaindate'];
+
+    if (isset($_POST['equipment_id'])) {
+        $equipment_id = $_POST['equipment_id'];
+
+        try {
+            // Create a new PDO connection
+            $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+            // Check if personnel is selected from dropdown
+            if (isset($_POST['personnel_id']) && !empty($_POST['personnel_id'])) {
+                $personnel_id = intval($_POST['personnel_id']); // Get selected personnel ID
+
+                try {
+                    // Insert into maintenance logs table with remarks_id included
+                    $stmtInsertLog = $conn->prepare("INSERT INTO ict_maintenance_logs (jo_number, personnel_id, equipment_id, maintenance_date, actions_taken, remarks_id) VALUES (?, ?, ?, ?, ?, ?)");
+                    if (!$stmtInsertLog->execute([$jo_number, $personnel_id, $equipment_id, $maintaindate, $actions_taken, $remarks_id])) {
+                        print_r($stmtInsertLog->errorInfo()); 
+                    } else {
+                        header("Location: " . $_SERVER['PHP_SELF']);
+        exit;
+                    }
+                } catch (PDOException $e) {
+                }
+            } else {
+                header("Location: " . $_SERVER['PHP_SELF']);
+        exit;
+            }
+
+        } catch (PDOException $e) {
+            header("Location: " . $_SERVER['PHP_SELF']);
+        exit;
+        }
+    } else {
+        header("Location: " . $_SERVER['PHP_SELF']);
+        exit;
+    }
+
+    if (isset($conn)) {
+        $conn = null; 
+    }
 }
 ?>
 
@@ -320,7 +362,7 @@ try {
             <!-- Log Maintenance Form Card -->
             <div class="card-section left-card">
                 <h3>Log Maintenance</h3>
-                <form action="maintenance_process.php" method="POST" onsubmit="incrementJobOrder()" class="log-maintenance-form">
+                <form action="equipment_maintenance.php" method="POST" onsubmit="incrementJobOrder()" class="log-maintenance-form">
                     <div class="mb-3">
                         <label for="jo_number">Job Order:</label>
                         <input type="text" name="jo_number" id="jo_number" class="form-control" required readonly>
@@ -565,6 +607,5 @@ try {
             });
         }
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

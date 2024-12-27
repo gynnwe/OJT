@@ -1,7 +1,6 @@
 <?php
 include 'conn.php';
 
-// Create connection
 $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
 $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
@@ -67,16 +66,307 @@ $years = getYears($conn);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Equipment Maintenance</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+	<style>
+		body {
+            font-family: Arial, sans-serif;
+            background-color: transparent !important;
+        }
+        .container{
+            margin-top: 3.65rem !important;
+            margin-left: 2.6rem !important;
+        }
+		
+				
+		.container-form {
+			margin-top: 20px !important;
+		}
+		
+        .mt-5 {
+            background-color: #ffffff !important;
+            border-radius: 24px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            padding: 15px;
+            border: none;
+        }
+		
+		.mb-4 {
+			margin-bottom: 13px !important;
+		}
+
+        h1, h2 {
+            color: #3A3A3A;
+            font-weight: bold;
+            font-size: 13px;
+        }
+        .section-divider {
+            border: none;
+            height: 1px;
+            background-color: #ddd;
+            margin-top: 5px;
+            margin-bottom: 10px;
+        }
+        .form-control {
+            border: 2px solid #646464;
+            border-radius: 14px;
+            color: #646464;
+            font-size: 12px;
+            height: 33px;
+        }
+		.form-select {
+			width: 250px !important;
+			border-radius: 14px;
+            color: #646464;
+            font-size: 12px;
+            height: 33px;
+			background-color: #d1d1d1 !important;
+			border: none !important;
+		}
+		
+		#equipmentTypesContainer .border, h4 {
+			border-radius: 14px !important;
+			font-size: 13px;
+		}
+		
+		.month-label {
+			font-size: 13px;
+			font-weight: bold;
+			color: #969696;
+		}
+		
+		h3 {
+			font-size: 13px !important;
+			font-weight: bold !important;
+		}
+		
+        .btn, .btn-danger {
+            height: 33px;
+            border-radius: 24px;
+            font-size: 12px;
+			font-weight: bold;
+        }
+		
+		.btn-danger {
+            weight: 50px;
+        }
+		    font-weight: bold;
+			color: white;
+        }
+        .btn-primary:hover {
+            background-color: #E3595C;
+        }
+        
+		.table-responsive {
+			border-radius: 10px;
+			overflow: hidden;
+		}
+		.table {
+			width: 100%; 
+			border:none;
+		}
+		.table th {
+			text-align:left ;
+			font-size :13px ;
+			font-weight: normal;
+			color:#646464 ;
+			border: none ;
+			display: inline-block;
+			margin-top: -4px;
+			margin-bottom: -2px;
+			border-bottom: none;
+			background-color: transparent;
+		}
+
+		th:nth-child(1) {
+			width: 15%; 
+		}
+		th:nth-child(2) {
+			width: 10%; 
+		}
+
+		th:nth-child(3) {
+			width: 15%; 
+		}
+
+		th:nth-child(4) {
+			width: 10%;
+		}
+		
+		th:nth-child(5) {
+			width: 15%;
+		}
+		
+		th:nth-child(6) {
+			width: 35%;
+		}
+
+		.table td {
+			color:#646464 ; 
+			font-weight :bold ;
+			border-collapse: separate; 
+			border-spacing: 10px 40px;
+			border: none; 
+			display: inline-block;
+			background-color: transparent;
+			padding-top: 15px !important;
+		}
+		
+		td:nth-child(1) {
+			width: 15%;
+			padding-top: 12px;
+		}
+
+		td:nth-child(2) {
+			width: 10%; 
+			margin-left: -5px;
+			padding-top: 12px;
+		}
+
+		td:nth-child(3) {
+			width: 15%;
+			margin-left: -5px;
+			padding-top: 12px;
+		}
+
+		td:nth-child(4) {
+			width: 10%;
+			margin-left: -5px;
+			padding-top: 12px;
+		}
+		
+		td:nth-child(5) {
+			width: 15%;
+			margin-left: -5px;
+			padding-top: 12px;
+		}
+		
+		td:nth-child(6) {
+			width: 35%;
+			margin-left: -5px;
+			padding-top: 12px;
+		}
+		
+		td a, td button.btn-success a, td button.btn-warning a , td button.{
+			padding-top: 7.5px !important;
+			padding-bottom: 0px;
+			border: none !important;
+		}
+		
+		td a {
+			width: 100px;
+			background-color: #a81519 !important;
+			color: white !important;
+			margin-top: -5px;
+			padding-top: 6.5px !important;
+			border-color: transparent !important;
+			margin-bottom: 1px !important;
+		}
+		
+		td a:hover, .btn-submit:hover {
+			background-color: #E3595C !important;
+		}
+		
+		td button.btn-warning {
+			width: 70px;
+			margin-top: -5px;
+			color: white;
+			margin-bottom: 1px !important;
+		}
+		
+		td button.btn-warning:hover {
+			color: white !important;
+			background-color: #b5aa2f !important;
+			border-color: transparent !important;
+		}
+		
+		td button.btn-success {
+			width: 80px;
+			margin-top: -5px;
+			background-color: #008207;
+			margin-bottom: 1px !important;
+		}
+		
+		td button.btn-danger {
+			width: 80px;
+			margin-top: -5px;
+			font-size: bold !important;
+			margin-bottom: 1px !important;
+		}
+		
+		td button.btn-primary {
+			width: 80px;
+			margin-top: -5px;
+			font-size: bold !important;
+			margin-bottom: 1px !important;
+		}
+		
+		.btn-submit {
+			background-color: #a81519 !important;
+			color: white !important;
+		}
+
+		table tbody {
+			border-spacing: 15px 155px;
+			border-radius: 14px; 
+			margin: 20 -20px;
+		}
+
+		.table tbody tr:nth-child(odd), .table tbody tr:nth-child(even) {
+			background-color: white;
+			border: 1px solid #DFDFDF;
+			border-radius: 14px; 
+			display: block;
+			width: 100%;
+			margin-top: 5px;
+		}
+
+		.table tbody tr:hover {
+			background-color :#ebebeb; 
+		}
+
+		tr {
+			font-size: 13px;
+		}
+		
+		.empty-row {
+			height: 46.6px !important;
+		}
+		
+		.pagination .disabled .page-link {
+			pointer-events: none;
+			color: #ccc !important;
+			background-color: transparent !important;
+		}
+
+		.pagination {
+			justify-content: flex-end; 
+			margin-top: -5.2px;
+		}
+		
+		.pagination .page-link:hover {
+			color: #b86e63;
+		}
+
+		.page-link {
+			color: #474747; }
+		
+		ul.pagination {
+			margin-bottom: 0px;
+		}
+		
+        .pagination .page-link {
+            border: none;
+            font-size: 0.8rem;
+            padding: 4px 8px;
+            color: #474747;
+        }
+
+	</style>
 </head>
 
 <body>
     <div class="container mt-5">
         <h1 class="mb-4">Equipment Maintenance</h1>
-
-        <!-- Trigger Button for Modal -->
-        <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#maintenanceModal">
-            Open Maintenance Form
-        </button>
 
         <?php
         // Fetch all maintenance plans
@@ -148,48 +438,48 @@ $years = getYears($conn);
                 <tbody>
                     <?php foreach ($maintenancePlans as $plan): ?>
                         <tr>
-        <td>Maintenance Plan <?= htmlspecialchars($plan['id']) ?></td>
-        <td><?= htmlspecialchars($plan['year']) ?></td>
-        <td><?= htmlspecialchars($plan['date_prepared']) ?></td>
-        <td><?= htmlspecialchars($plan['count']) ?></td>
-        <td><?= htmlspecialchars($plan['status']) ?></td>
-        <td>
-            <a href="maintenance_plan_view.php?plan_id=<?= $plan['id'] ?>" class="btn btn-info btn-sm">View Plan</a>
+							<td>Maintenance Plan <?= htmlspecialchars($plan['id']) ?></td>
+							<td><?= htmlspecialchars($plan['year']) ?></td>
+							<td><?= htmlspecialchars($plan['date_prepared']) ?></td>
+							<td><?= htmlspecialchars($plan['count']) ?></td>
+							<td><?= htmlspecialchars($plan['status']) ?></td>
+							<td>
+								<a href="maintenance_plan_view.php?plan_id=<?= $plan['id'] ?>" class="btn btn-info btn-sm">View Plan</a>
             
-            <?php if ($plan['status'] === 'pending'): ?>
-                <button type="button"
-                    class="btn btn-warning btn-sm"
-                    data-bs-toggle="modal"
-                    data-bs-target="#editModal<?= $plan['id'] ?>">
-                    Edit
-                </button>
-                <button type="button"
-                    class="btn btn-success btn-sm"
-                    data-bs-toggle="modal"
-                    data-bs-target="#submitModal<?= $plan['id'] ?>">
-                    Submit
-                </button>
-            <?php endif; ?>
+								<?php if ($plan['status'] === 'pending'): ?>
+									<button type="button"
+										class="btn btn-warning btn-sm"
+										data-bs-toggle="modal"
+										data-bs-target="#editModal<?= $plan['id'] ?>">
+										Edit
+									</button>
+									<button type="button"
+										class="btn btn-success btn-sm"
+										data-bs-toggle="modal"
+										data-bs-target="#submitModal<?= $plan['id'] ?>">
+										Submit
+									</button>
+								<?php endif; ?>
 
-            <?php if ($plan['status'] !== 'trash' && $plan['status'] !== 'submitted' && $plan['status'] !== 'archive'): ?>
-                <button type="button"
-                    class="btn btn-danger btn-sm"
-                    data-bs-toggle="modal"
-                    data-bs-target="#trashModal<?= $plan['id'] ?>">
-                    Trash
-                </button>
-            <?php endif; ?>
+								<?php if ($plan['status'] !== 'trash' && $plan['status'] !== 'submitted' && $plan['status'] !== 'archive'): ?>
+									<button type="button"
+										class="btn btn-danger btn-sm trash"
+										data-bs-toggle="modal"
+										data-bs-target="#trashModal<?= $plan['id'] ?>">
+										Trash
+									</button>
+								<?php endif; ?>
 
-            <?php if ($plan['status'] === 'trash'): ?>
-                <button type="button"
-                    class="btn btn-primary btn-sm"
-                    data-bs-toggle="modal"
-                    data-bs-target="#recoverModal<?= $plan['id'] ?>">
-                    Recover
-                </button>
-            <?php endif; ?>
-        </td>
-    </tr>
+								<?php if ($plan['status'] === 'trash'): ?>
+									<button type="button"
+										class="btn btn-primary btn-sm"
+										data-bs-toggle="modal"
+										data-bs-target="#recoverModal<?= $plan['id'] ?>">
+										Recover
+									</button>
+								<?php endif; ?>
+							</td>
+						</tr>
 
                         <!-- Modal -->
                         <div class="modal fade" id="submitModal<?= $plan['id'] ?>" tabindex="-1" aria-labelledby="modalLabel<?= $plan['id'] ?>" aria-hidden="true">
@@ -212,52 +502,49 @@ $years = getYears($conn);
                                 </div>
                             </div>
                         </div>
-                        
-    <!-- Trash Modal -->
-    <div class="modal fade" id="trashModal<?= $plan['id'] ?>" tabindex="-1" aria-labelledby="trashModalLabel<?= $plan['id'] ?>" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="trashModalLabel<?= $plan['id'] ?>">Move to Trash</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    Are you sure you want to move Maintenance Plan <?= htmlspecialchars($plan['id']) ?> to trash?
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <form action="update_maintenance_status.php" method="POST" style="display: inline;">
-                        <input type="hidden" name="plan_id" value="<?= $plan['id'] ?>">
-                        <input type="hidden" name="status" value="trash">
-                        <button type="submit" class="btn btn-danger">Move to Trash</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
+						<div class="modal fade" id="trashModal<?= $plan['id'] ?>" tabindex="-1" aria-labelledby="trashModalLabel<?= $plan['id'] ?>" aria-hidden="true">
+							<div class="modal-dialog">
+								<div class="modal-content">
+									<div class="modal-header">
+										<h5 class="modal-title" id="trashModalLabel<?= $plan['id'] ?>">Move to Trash</h5>
+										<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+									</div>
+									<div class="modal-body">
+										Are you sure you want to move Maintenance Plan <?= htmlspecialchars($plan['id']) ?> to trash?
+									</div>
+									<div class="modal-footer">
+										<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+										<form action="update_maintenance_status.php" method="POST" style="display: inline;">
+											<input type="hidden" name="plan_id" value="<?= $plan['id'] ?>">
+											<input type="hidden" name="status" value="trash">
+											<button type="submit" class="btn btn-danger">Move to Trash</button>
+										</form>
+									</div>
+								</div>
+							</div>
+						</div>
 
-    <!-- Recover Modal -->
-    <div class="modal fade" id="recoverModal<?= $plan['id'] ?>" tabindex="-1" aria-labelledby="recoverModalLabel<?= $plan['id'] ?>" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="recoverModalLabel<?= $plan['id'] ?>">Recover Maintenance Plan</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    Are you sure you want to recover Maintenance Plan <?= htmlspecialchars($plan['id']) ?>?
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <form action="update_maintenance_status.php" method="POST" style="display: inline;">
-                        <input type="hidden" name="plan_id" value="<?= $plan['id'] ?>">
-                        <input type="hidden" name="status" value="pending">
-                        <button type="submit" class="btn btn-primary">Recover</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
+						<div class="modal fade" id="recoverModal<?= $plan['id'] ?>" tabindex="-1" aria-labelledby="recoverModalLabel<?= $plan['id'] ?>" aria-hidden="true">
+							<div class="modal-dialog">
+								<div class="modal-content">
+									<div class="modal-header">
+										<h5 class="modal-title" id="recoverModalLabel<?= $plan['id'] ?>">Recover Maintenance Plan</h5>
+										<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+									</div>
+									<div class="modal-body">
+										Are you sure you want to recover Maintenance Plan <?= htmlspecialchars($plan['id']) ?>?
+									</div>
+									<div class="modal-footer">
+										<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+										<form action="update_maintenance_status.php" method="POST" style="display: inline;">
+											<input type="hidden" name="plan_id" value="<?= $plan['id'] ?>">
+											<input type="hidden" name="status" value="pending">
+											<button type="submit" class="btn btn-primary">Recover</button>
+										</form>
+									</div>
+								</div>
+							</div>
+						</div>
                         <div class="modal fade" id="editModal<?= $plan['id'] ?>" tabindex="-1" aria-labelledby="editModalLabel<?= $plan['id'] ?>" aria-hidden="true">
                             <div class="modal-dialog modal-lg">
                                 <div class="modal-content">
@@ -355,74 +642,60 @@ $years = getYears($conn);
         <?php else: ?>
             <p>No maintenance plans available.</p>
         <?php endif; ?>
-
-        <!-- Modal -->
-        <div class="modal fade" id="maintenanceModal" tabindex="-1">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <form method="post" action="add_plan_maintenance_process.php">
-                        <div class="modal-header">
-                            <h5 class="modal-title">Equipment Maintenance Form</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                        </div>
-                        <div class="modal-body">
-                            <!-- Year Dropdown -->
-                            <div class="mb-3">
-                                <label for="year_maintained" class="form-label">Select Year:</label>
-                                <select name="year_maintained" id="year_maintained" class="form-select" required>
-                                    <option value="">--Select Year--</option>
-                                    <?php foreach ($years as $year): ?>
-                                        <option value="<?= htmlspecialchars($year['year_maintained']) ?>">
-                                            <?= htmlspecialchars($year['year_maintained']) ?>
-                                        </option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </div>
-
-                            <!-- Equipment Types Container -->
-                            <div id="equipmentTypesContainer">
-                                <div class="equipment-entry border p-3 mb-3">
-                                    <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <h6>Equipment Entry</h6>
-                                        <button type="button" class="btn btn-danger btn-sm remove-equipment" style="display: none;">Remove</button>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label">Select Equipment Type:</label>
-                                        <select name="equipment_types[]" class="form-select" required>
-                                            <option value="">--Select Equipment Type--</option>
-                                            <?php foreach ($equipmentTypes as $type): ?>
-                                                <option value="<?= htmlspecialchars($type['equip_type_id']) ?>">
-                                                    <?= htmlspecialchars($type['equip_type_name']) ?>
-                                                </option>
-                                            <?php endforeach; ?>
-                                        </select>
-                                    </div>
-                                    <!-- Monthly counts for this equipment -->
-                                    <div class="row">
-                                        <?php for ($i = 1; $i <= 12; $i++): ?>
-                                            <div class="col-md-3 mb-3">
-                                                <label class="form-label"><?= date("F", mktime(0, 0, 0, $i, 1)) ?>:</label>
-                                                <input type="number" name="counts[0][<?= $i ?>]" class="form-control" min="0" required>
-                                            </div>
-                                        <?php endfor; ?>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Add More Equipment Button -->
-                            <button type="button" class="btn btn-success" id="addMoreEquipment">
-                                Add Another Equipment Type
-                            </button>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary">Submit</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
     </div>
+	
+	<div class="container mt-5 container-form">
+        <h1 class="mb-4">Equipment Maintenance</h1>
+		<hr class="section-divider">
+		<form method="post" action="add_plan_maintenance_process.php">
+			<div class="body">
+				<!-- Year Dropdown -->
+				<div class="mb-3">
+					<label for="year_maintained" class="form-label">Select Year:</label>
+					<select name="year_maintained" id="year_maintained" class="form-select" required>
+						<option value="">--Select Year--</option>
+						<?php foreach ($years as $year): ?>
+							<option value="<?= htmlspecialchars($year['year_maintained']) ?>">
+								<?= htmlspecialchars($year['year_maintained']) ?>
+							</option>
+						<?php endforeach; ?>
+					</select>
+				</div>
+
+				<!-- Equipment Types Container -->
+				<div id="equipmentTypesContainer">
+					<div class="equipment-entry border p-3 mb-3">
+						<div class="d-flex justify-content-between align-items-center mb-2">
+							<h6>Equipment Entry</h6>
+							<button type="button" class="btn btn-danger btn-sm remove-equipment" style="display: none;">Remove</button>
+						</div>
+						<div class="mb-3">
+							<label class="form-label">Select Equipment Type:</label>
+							<select name="equipment_types[]" class="form-select" required>
+								<option value="">--Select Equipment Type--</option>
+								<?php foreach ($equipmentTypes as $type): ?>
+									<option value="<?= htmlspecialchars($type['equip_type_id']) ?>">
+										<?= htmlspecialchars($type['equip_type_name']) ?>
+									</option>
+								<?php endforeach; ?>
+							</select>
+						</div>
+						<!-- Monthly counts for this equipment -->
+						<div class="row">
+							<?php for ($i = 1; $i <= 12; $i++): ?>
+								<div class="col-md-3 mb-3">
+									<label class="form-label"><?= date("F", mktime(0, 0, 0, $i, 1)) ?>:</label>
+									<input type="number" name="counts[0][<?= $i ?>]" class="form-control" min="0" required>
+								</div>
+							<?php endfor; ?>
+						</div>
+					</div>
+				</div>
+				<button type="button" class="btn btn-success" id="addMoreEquipment">Add Another Equipment Type</button>
+				<button type="submit" class="btn btn-submit">Submit</button>
+			</div>
+		</form>
+	</div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
