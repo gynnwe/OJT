@@ -136,6 +136,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         margin: 0;
         padding: 0;
         color: #333;
+        background-color: transparent !important;
     }
 
     .main-container {
@@ -214,7 +215,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     .btn-primary {
-        background-color: #b53236 !important;
+        background-color: maroon !important;
         border: none !important;
         border-radius: 20px;
     }
@@ -234,7 +235,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     .btn-select {
-        background-color: #b53236;
+        background-color: maroon;
         color: #fff;
         font-weight: bold;
         padding: 4px 12px;

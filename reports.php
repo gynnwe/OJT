@@ -147,6 +147,10 @@ try {
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+        body {
+            background-color: transparent !important;
+        }
+
         /* Equipment Overview Section */
         .equipment-overview {
             background: #fff;
