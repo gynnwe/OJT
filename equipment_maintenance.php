@@ -272,6 +272,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         gap: 16px;
         align-items: end;
         margin-bottom: 16px;
+        margin-right: 50%;
     }
 
     .maintenance-logs-section {
