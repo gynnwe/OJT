@@ -140,7 +140,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     .main-container {
-        max-width: 1400px;
+        max-width: 1350px;
         margin: 0 auto;
         padding: 16px;
     }
