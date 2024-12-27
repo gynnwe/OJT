@@ -155,6 +155,7 @@ try {
             max-width: 1350px;
         margin: 0 auto;
         padding: 16px;
+        margin-right: 2.6rem !important;
     }
 
         /* Equipment Overview Section */
