@@ -89,7 +89,7 @@ try {
                     </td>
                     <td style="border: 1px solid black; width: 12.06cm; text-align: center; font-family: Arial, sans-serif; line-height: 1; padding: 5px;" rowspan="5">
                         <p style="font-family: Arial, sans-serif; font-size: 12px; margin: 0; line-height: 1;">Republic of the Philippines</p>
-                        <p style="font-family: \'Old English Text MT\', serif; font-size: 16px; margin: 0; line-height: 1;">University of Southeastern Philippines</p>
+                        <p style="font-family: Arial, sans-serif; font-size: 16px; font-weight: bold; margin: 0; line-height: 1;">University of Southeastern Philippines</p>
                         <p style="font-family: Arial, sans-serif; font-size: 12px; margin: 0; line-height: 1;">Iñigo St., Bo. Obrero, Davao City 8000</p>
                         <p style="font-family: Arial, sans-serif; font-size: 12px; margin: 0; line-height: 1;">Telephone (082) 227-8192</p>
                         <p style="font-family: Arial, sans-serif; font-size: 12px; margin: 0; line-height: 1;">

@@ -161,7 +161,8 @@ $html = "
             line-height: 0;
         }
         .column-2 .title {
-            font-family: 'Old English Text MT', serif;
+            font-family: Arial, sans-serif;
+            font-weight: bold
             font-size: 16px;
             text-align: center;
             line-height: 0;
