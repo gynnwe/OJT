@@ -151,6 +151,12 @@ try {
             background-color: transparent !important;
         }
 
+        .container {
+            max-width: 1350px;
+        margin: 0 auto;
+        padding: 16px;
+    }
+
         /* Equipment Overview Section */
         .equipment-overview {
             background: #fff;
