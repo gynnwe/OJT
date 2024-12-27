@@ -460,18 +460,6 @@ try {
             padding-bottom: 0.5rem;
         }
 
-        .section-title:after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 60px;
-            height: 3px;
-            background: #3498db;
-            border-radius: 2px;
-        }
-
         /* Responsive Design */
         @media (max-width: 1200px) {
             .stats-container {
@@ -665,8 +653,6 @@ try {
         </div>
 
         <!-- Charts Section -->
-        <div class="mt-5">
-            <h4 class="section-title text-center mb-4">Equipment Analytics</h4>
             <div class="row">
                 <div class="col-md-6 mb-4">
                     <div class="chart-card">
