@@ -54,7 +54,7 @@ try {
         $html = '
             <style>
                 body {
-                    margin: 0.5cm;
+                    margin: .5cm;
                     font-family: Arial, sans-serif;
                 }
                 table {
