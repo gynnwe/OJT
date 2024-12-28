@@ -3,6 +3,8 @@ require 'vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Font;
 
 include 'conn.php';
 
@@ -54,10 +56,14 @@ try {
         $sheet = $spreadsheet->getActiveSheet();
 
         // Set Title
-        $sheet->setCellValue('A1', 'Annual Preventive Maintenance Plan for ICT Equipment');
+        $sheet->setCellValue('A1', 'Maintenance Plan for ICT Equipment');
         $sheet->setCellValue('A2', 'Year: ' . htmlspecialchars($maintenancePlan['year']));
         $sheet->mergeCells('A1:E1');
         $sheet->mergeCells('A2:E2');
+
+        // Center-align and set font for title
+        $sheet->getStyle('A1:A2')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $sheet->getStyle('A1:A2')->getFont()->setBold(true)->setSize(14);
 
         // Initialize Row Counter
         $row = 4;
@@ -65,6 +71,8 @@ try {
         foreach ($groupedPlanDetails as $equipTypeId => $details) {
             $sheet->setCellValue('A' . $row, 'Equipment Type: ' . htmlspecialchars($details[0]['equip_type_name']));
             $sheet->mergeCells('A' . $row . ':E' . $row);
+            $sheet->getStyle('A' . $row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            $sheet->getStyle('A' . $row)->getFont()->setBold(true);
             $row++;
 
             // Set Table Headers
@@ -72,6 +80,8 @@ try {
             $sheet->setCellValue('B' . $row, 'Month');
             $sheet->setCellValue('C' . $row, 'Plan');
             $sheet->setCellValue('D' . $row, 'Implemented');
+            $sheet->getStyle('A' . $row . ':D' . $row)->getFont()->setBold(true);
+            $sheet->getStyle('A' . $row . ':D' . $row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
             $row++;
 
             $counter = 1;
@@ -80,6 +90,7 @@ try {
                 $sheet->setCellValue('B' . $row, htmlspecialchars($detail['month']));
                 $sheet->setCellValue('C' . $row, (int) $detail['target']);
                 $sheet->setCellValue('D' . $row, (int) $detail['implemented']);
+                $sheet->getStyle('A' . $row . ':D' . $row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
                 $row++;
                 $counter++;
             }
