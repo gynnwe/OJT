@@ -579,8 +579,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Apply the restrictions
-    allowTextSpacesHyphensAndCapitalize(firstNameInput, 20); // First Name: Letters, spaces, hyphens, max 20
-    allowTextSpacesHyphensAndCapitalize(lastNameInput, 20);  // Last Name: Letters, spaces, hyphens, max 20
+    allowTextSpacesHyphensAndCapitalize(firstNameInput, 50); // First Name: Letters, spaces, hyphens, max 50
+    allowTextSpacesHyphensAndCapitalize(lastNameInput, 50);  // Last Name: Letters, spaces, hyphens, max 50
     allowTextNumbersSpacesHyphens(officeInput, 30);          // Office: Letters, numbers, spaces, hyphens, max 30
 });
 
