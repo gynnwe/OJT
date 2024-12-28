@@ -711,30 +711,115 @@ try {
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+        // Ensure Equipment Name allows numbers, spaces, and hyphens
         const equipNameInput = document.getElementById('equip_name');
         equipNameInput.addEventListener('input', function () {
             let value = this.value;
 
-            value = value.replace(/[^a-zA-Z\s-]/g, '');
+            // Allow only letters, numbers, spaces, and hyphens
+            value = value.replace(/[^a-zA-Z0-9\s-]/g, '');
 
+            // Replace multiple consecutive spaces or hyphens with a single one
             value = value.replace(/(\s{2,}|\-{2,})/g, ' ');
 
+            // Capitalize the first letter of every word
             value = value.replace(/\b\w/g, (char) => char.toUpperCase());
 
+            // Limit to 50 characters
             this.value = value.slice(0, 50);
         });
 
+        // Ensure Property Number follows specified constraints
         const propertyNumInput = document.getElementById('property_num');
         propertyNumInput.addEventListener('input', function () {
             let value = this.value;
 
+            // Allow letters, numbers, slashes, and hyphens
             value = value.replace(/[^a-zA-Z0-9\/-]/g, '');
 
+            // Replace multiple consecutive slashes or hyphens with a single one
             value = value.replace(/(\/{2,}|\-{2,})/g, '-');
 
+            // Convert to uppercase
             value = value.toUpperCase();
 
-            this.value = value.slice(0, 30);
+            // Limit to 50 characters
+            this.value = value.slice(0, 50);
+        });
+
+        // Handle search and filter functionality
+        const searchInput = document.querySelector('.search-bar input');
+        const filterSelect = document.getElementById('filterBy');
+        const table = document.querySelector('.table');
+
+        function filterTable() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const filterValue = filterSelect.value.toLowerCase();
+            const rows = Array.from(table.getElementsByTagName('tr')).slice(1);
+
+            rows.forEach(row => {
+                if (row.cells.length <= 1) return;
+                const equipName = row.cells[0].textContent.toLowerCase();
+                
+                const matchesFilter = filterValue === 'all' || equipName.includes(filterValue);
+                const matchesSearch = searchTerm === '' || equipName.includes(searchTerm);
+                row.style.display = (matchesFilter && matchesSearch) ? '' : 'none';
+            });
+        }
+
+        if (searchInput && filterSelect) {
+            searchInput.addEventListener('input', filterTable);
+            filterSelect.addEventListener('change', filterTable);
+        }
+
+        // Handle dynamic model selection based on equipment type
+        const equipmentTypeSelect = document.getElementById('equipment_type');
+        const modelNameSelect = document.getElementById('model_name');
+
+        if (!equipmentTypeSelect || !modelNameSelect) return;
+
+        equipmentTypeSelect.addEventListener('change', function () {
+            const equipTypeId = this.value;
+
+            // Clear existing options
+            while (modelNameSelect.firstChild) {
+                modelNameSelect.removeChild(modelNameSelect.firstChild);
+            }
+
+            const defaultOption = document.createElement('option');
+            defaultOption.value = '';
+            defaultOption.textContent = 'Brand/Model Name';
+            defaultOption.disabled = true;
+            defaultOption.selected = true;
+            modelNameSelect.appendChild(defaultOption);
+
+            if (equipTypeId) {
+                fetch(`?equip_type_id=${equipTypeId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const uniqueModels = new Map();
+                        data.forEach(model => {
+                            if (!uniqueModels.has(model.model_id)) {
+                                uniqueModels.set(model.model_id, model);
+                            }
+                        });
+
+                        uniqueModels.forEach(model => {
+                            const option = document.createElement('option');
+                            option.value = model.model_id;
+                            option.textContent = model.model_name;
+                            modelNameSelect.appendChild(option);
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        const errorOption = document.createElement('option');
+                        errorOption.value = '';
+                        errorOption.textContent = 'Error loading models';
+                        errorOption.disabled = true;
+                        modelNameSelect.appendChild(errorOption);
+                    });
+            }
         });
     });
 </script>
