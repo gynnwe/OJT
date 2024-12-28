@@ -571,14 +571,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         window.onload = function() {
-            const dateInput = document.getElementById("maintaindate");
-            function setMaxDate() {
-                const today = new Date().toISOString().split("T")[0];
-                dateInput.setAttribute("max", today);
-            }
-            setMaxDate();
-            dateInput.addEventListener("focus", setMaxDate);
-        };
+    const dateInput = document.getElementById("maintaindate");
+    
+    function restrictToCurrentMonth() {
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+
+        // Set the minimum and maximum dates to the first and last day of the current month
+        const firstDay = `${year}-${month}-01`;
+        const lastDay = new Date(year, today.getMonth() + 1, 0).toISOString().split("T")[0];
+
+        dateInput.setAttribute("min", firstDay);
+        dateInput.setAttribute("max", lastDay);
+    }
+
+    restrictToCurrentMonth();
+    dateInput.addEventListener("focus", restrictToCurrentMonth);
+};
     </script>
 
 <script>
