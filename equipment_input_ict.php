@@ -771,56 +771,6 @@ try {
             searchInput.addEventListener('input', filterTable);
             filterSelect.addEventListener('change', filterTable);
         }
-
-        // Handle dynamic model selection based on equipment type
-        const equipmentTypeSelect = document.getElementById('equipment_type');
-        const modelNameSelect = document.getElementById('model_name');
-
-        if (!equipmentTypeSelect || !modelNameSelect) return;
-
-        equipmentTypeSelect.addEventListener('change', function () {
-            const equipTypeId = this.value;
-
-            // Clear existing options
-            while (modelNameSelect.firstChild) {
-                modelNameSelect.removeChild(modelNameSelect.firstChild);
-            }
-
-            const defaultOption = document.createElement('option');
-            defaultOption.value = '';
-            defaultOption.textContent = 'Brand/Model Name';
-            defaultOption.disabled = true;
-            defaultOption.selected = true;
-            modelNameSelect.appendChild(defaultOption);
-
-            if (equipTypeId) {
-                fetch(`?equip_type_id=${equipTypeId}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        const uniqueModels = new Map();
-                        data.forEach(model => {
-                            if (!uniqueModels.has(model.model_id)) {
-                                uniqueModels.set(model.model_id, model);
-                            }
-                        });
-
-                        uniqueModels.forEach(model => {
-                            const option = document.createElement('option');
-                            option.value = model.model_id;
-                            option.textContent = model.model_name;
-                            modelNameSelect.appendChild(option);
-                        });
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        const errorOption = document.createElement('option');
-                        errorOption.value = '';
-                        errorOption.textContent = 'Error loading models';
-                        errorOption.disabled = true;
-                        modelNameSelect.appendChild(errorOption);
-                    });
-            }
-        });
     });
 </script>
 
