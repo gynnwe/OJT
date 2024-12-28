@@ -681,143 +681,181 @@ if (isset($_SESSION['message'])) {
 		</div>
 	</div>
 	<script>
-	        $(document).ready(function() {
-	            const successAlert = $('#successAlert');
-	            const errorAlert = $('#errorAlert');
-	            if (successAlert.length) {
-	                successAlert.fadeIn().delay(5000).fadeOut('slow', function() {
-	                    $(this).remove();
-	                });
-	            }
-	            if (errorAlert.length) {
-	                errorAlert.fadeIn().delay(5000).fadeOut('slow', function() {
-	                    $(this).remove();
-	                });
-	            }
+    $(document).ready(function () {
+        const successAlert = $('#successAlert');
+        const errorAlert = $('#errorAlert');
+        if (successAlert.length) {
+            successAlert.fadeIn().delay(5000).fadeOut('slow', function () {
+                $(this).remove();
+            });
+        }
+        if (errorAlert.length) {
+            errorAlert.fadeIn().delay(5000).fadeOut('slow', function () {
+                $(this).remove();
+            });
+        }
 
-				// Password validation
-			$('form').on('submit', function(e) {
-				const password = $('#psw').val().trim();
-				const validation = validatePassword(password);
+        // Limit input for firstname and lastname to 50 characters
+        $('#firstname, #lastname').on('input', function () {
+            const maxLength = 50;
+            if (this.value.length > maxLength) {
+                this.value = this.value.substring(0, maxLength);
+            }
+        });
 
-				// Check if password is valid
-				if (!validation.valid) {
-					e.preventDefault(); // Prevent form submission
-					$('#passwordErrorModal').modal('show'); // Show the modal
-					return;
-				}
-			});
+        // Front-end validation
+        $('form').on('submit', function (e) {
+            // Validate inputs
+            const email = $('#email').val().trim();
+            const firstname = $('#firstname').val().trim();
+            const lastname = $('#lastname').val().trim();
 
-			function validatePassword(password) {
-				const minLength = password.length >= 8;
-				const hasUpperCase = /[A-Z]/.test(password);
-				const hasNumber = /[0-9]/.test(password);
-				const hasSymbol = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+            const emailPattern = /^.+@(usep\.edu\.ph|gmail\.com)$/;
+            const namePattern = /^[a-zA-Z\s\-]+$/;
 
-				return {
-					valid: minLength && hasUpperCase && hasNumber && hasSymbol,
-					errors: {
-						length: !minLength,
-						uppercase: !hasUpperCase,
-						number: !hasNumber,
-						symbol: !hasSymbol
-					}
-				};
-			}
-				
-                // Search functionality
-                $('#searchInput').on('keyup', function() {
-                    const searchValue = $(this).val().toLowerCase();
-                    const filterBy = $('#filterBy').val();
-                    
-                    $('#locationTableBody tr:not(.empty-row)').each(function() {
-                        const row = $(this);
-                        let text = '';
-                        
-                        // Get text from the appropriate column based on filter
-                        switch(filterBy) {
-                            case 'email':
-                                text = row.find('td:eq(0)').text();
-                                break;
-                            case 'firstname':
-                                text = row.find('td:eq(1)').text();
-                                break;
-                            case 'lastname':
-                                text = row.find('td:eq(2)').text();
-                                break;
-                            case 'username':
-                                text = row.find('td:eq(3)').text();
-                                break;
-                        }
-                        
-                        // Show/hide row based on search match
-                        if (text.toLowerCase().includes(searchValue)) {
-                            row.show();
-                        } else {
-                            row.hide();
-                        }
-                    });
-                });
+            let isValid = true;
+            let errorMessage = '';
 
-                // Trigger search when filter changes
-                $('#filterBy').on('change', function() {
-                    $('#searchInput').trigger('keyup');
-                });
-	        });
+            // Email validation
+            if (!emailPattern.test(email)) {
+                isValid = false;
+                errorMessage += 'Invalid email. Must end with @usep.edu.ph or @gmail.com.\n';
+            }
+            // First name validation
+            if (!namePattern.test(firstname) || firstname.length > 50) {
+                isValid = false;
+                errorMessage += 'Invalid first name. Must contain only letters, spaces, and hyphens (max 50 characters).\n';
+            }
+            // Last name validation
+            if (!namePattern.test(lastname) || lastname.length > 50) {
+                isValid = false;
+                errorMessage += 'Invalid last name. Must contain only letters, spaces, and hyphens (max 50 characters).\n';
+            }
 
-	        function editUser(id, email, firstname, lastname, username) {
-	            document.getElementById('user_id').value = id;
-	            document.getElementById('email').value = email;
-	            document.getElementById('firstname').value = firstname;
-	            document.getElementById('lastname').value = lastname;
-	            document.getElementById('username').value = username;
-	            
-	            // Make password fields optional when editing
-	            document.getElementById('psw').removeAttribute('required');
-	            document.getElementById('psw-repeat').removeAttribute('required');
-	            
-	            // Change button text
-	            document.getElementById('submitBtn').textContent = 'Update User';
-	            
-	            // Scroll to form
-	            document.querySelector('.add-edit-card').scrollIntoView({ behavior: 'smooth' });
-	        }
+            // Display error messages if validation fails
+            if (!isValid) {
+                e.preventDefault(); // Prevent form submission
+                alert(errorMessage); // Display error message
+                return;
+            }
 
-	        function softDelete(id) {
-	            if (confirm('Are you sure you want to delete this user?')) {
-	                $.ajax({
-	                    url: 'add_users.php',
-	                    type: 'POST',
-	                    data: { deleted_id: id },
-	                    success: function(response) {
-	                        if (response.trim() === "Success") {
-	                            document.getElementById('row-' + id).style.display = 'none';
-	                        } else {
-	                            alert('Failed to delete the user.');
-	                        }
-	                    }
-	                });
-	            }
-	        }
+            // Password validation
+            const password = $('#psw').val().trim();
+            const validation = validatePassword(password);
 
-	        // Reset form when adding new user
-	        function resetForm() {
-	            document.getElementById('user_id').value = '';
-	            document.getElementById('psw').setAttribute('required', '');
-	            document.getElementById('psw-repeat').setAttribute('required', '');
-	            document.getElementById('submitBtn').textContent = 'Register';
-	        }
+            if (!validation.valid) {
+                e.preventDefault(); // Prevent form submission
+                $('#passwordErrorModal').modal('show'); // Show the modal
+                return;
+            }
+        });
 
-	        // Add reset when clicking Register button in nav
-	        document.addEventListener('DOMContentLoaded', function() {
-	            const navLinks = document.querySelectorAll('nav a');
-	            navLinks.forEach(link => {
-	                if (link.textContent.includes('Register')) {
-	                    link.addEventListener('click', resetForm);
-	                }
-	            });
-	        });
+        // Password validation function
+        function validatePassword(password) {
+            const minLength = password.length >= 8;
+            const hasUpperCase = /[A-Z]/.test(password);
+            const hasNumber = /[0-9]/.test(password);
+            const hasSymbol = /[!@#$%^&*(),.?":{}|<>]/.test(password);
 
-	    </script>
+            return {
+                valid: minLength && hasUpperCase && hasNumber && hasSymbol,
+                errors: {
+                    length: !minLength,
+                    uppercase: !hasUpperCase,
+                    number: !hasNumber,
+                    symbol: !hasSymbol
+                }
+            };
+        }
+
+        // Search functionality
+        $('#searchInput').on('keyup', function () {
+            const searchValue = $(this).val().toLowerCase();
+            const filterBy = $('#filterBy').val();
+
+            $('#locationTableBody tr:not(.empty-row)').each(function () {
+                const row = $(this);
+                let text = '';
+
+                switch (filterBy) {
+                    case 'email':
+                        text = row.find('td:eq(0)').text();
+                        break;
+                    case 'firstname':
+                        text = row.find('td:eq(1)').text();
+                        break;
+                    case 'lastname':
+                        text = row.find('td:eq(2)').text();
+                        break;
+                    case 'username':
+                        text = row.find('td:eq(3)').text();
+                        break;
+                }
+
+                if (text.toLowerCase().includes(searchValue)) {
+                    row.show();
+                } else {
+                    row.hide();
+                }
+            });
+        });
+
+        // Trigger search when filter changes
+        $('#filterBy').on('change', function () {
+            $('#searchInput').trigger('keyup');
+        });
+    });
+
+    // Function to edit a user
+    function editUser(id, email, firstname, lastname, username) {
+        document.getElementById('user_id').value = id;
+        document.getElementById('email').value = email;
+        document.getElementById('firstname').value = firstname;
+        document.getElementById('lastname').value = lastname;
+        document.getElementById('username').value = username;
+
+        document.getElementById('psw').removeAttribute('required');
+        document.getElementById('psw-repeat').removeAttribute('required');
+
+        document.getElementById('submitBtn').textContent = 'Update User';
+        document.querySelector('.add-edit-card').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Function to soft delete a user
+    function softDelete(id) {
+        if (confirm('Are you sure you want to delete this user?')) {
+            $.ajax({
+                url: 'add_users.php',
+                type: 'POST',
+                data: { deleted_id: id },
+                success: function (response) {
+                    if (response.trim() === "Success") {
+                        document.getElementById('row-' + id).style.display = 'none';
+                    } else {
+                        alert('Failed to delete the user.');
+                    }
+                }
+            });
+        }
+    }
+
+    // Reset form for adding new user
+    function resetForm() {
+        document.getElementById('user_id').value = '';
+        document.getElementById('psw').setAttribute('required', '');
+        document.getElementById('psw-repeat').setAttribute('required', '');
+        document.getElementById('submitBtn').textContent = 'Register';
+    }
+
+    // Add reset when clicking Register button in nav
+    document.addEventListener('DOMContentLoaded', function () {
+        const navLinks = document.querySelectorAll('nav a');
+        navLinks.forEach(link => {
+            if (link.textContent.includes('Register')) {
+                link.addEventListener('click', resetForm);
+            }
+        });
+    });
+</script>
 </body>
 </html>
