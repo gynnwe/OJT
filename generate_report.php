@@ -171,7 +171,6 @@ $html = "
         }
         .column-4 {
             width: 3.49cm;
-            height: 3.85cm;
         }
         .row-divider {
             border-bottom: 1px solid #000;
