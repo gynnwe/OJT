@@ -168,7 +168,6 @@ $html = "
         }
         .column-3 {
             width: 2.42cm;
-            height: 3.85cm;
         }
         .column-4 {
             width: 3.49cm;
@@ -178,9 +177,7 @@ $html = "
             border-bottom: 1px solid #000;
             height: 0.77cm;
         }
-        .row-divider:last-child {
-            border-bottom: none;
-        }
+
         .link {
             color: blue;
             text-decoration: underline;
