@@ -127,10 +127,16 @@ try {
         <?php endforeach; ?>
 
         <!-- Button to View and Print PDF -->
-        <form action="generate_pdf.php" method="POST" target="_blank">
-            <input type="hidden" name="plan_id" value="<?= htmlspecialchars($maintenancePlan['id']) ?>">
-            <button type="submit" class="btn btn-primary mt-3">View & Print PDF</button>
-        </form>
+        <form action="generate_pdf.php" method="POST" target="_blank" style="display: inline;">
+    <input type="hidden" name="plan_id" value="<?= htmlspecialchars($maintenancePlan['id']) ?>">
+    <button type="submit" class="btn btn-primary mt-3">Print PDF</button>
+</form>
+
+<form action="plan_excel.php" method="POST" target="_blank" style="display: inline;">
+    <input type="hidden" name="plan_id" value="<?= htmlspecialchars($maintenancePlan['id']) ?>">
+    <button type="submit" class="btn btn-success mt-3">Export to Excel</button>
+</form>
+
 
     <?php else: ?>
         <p>No maintenance plan found for the provided ID.</p>
