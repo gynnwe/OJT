@@ -66,21 +66,22 @@ $years = getYears($conn);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Equipment Maintenance</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-	<style>
-		body {
+    <style>
+        body {
             font-family: Arial, sans-serif;
             background-color: transparent !important;
         }
-        .container{
+
+        .container {
             margin-top: 3.65rem !important;
             margin-left: 2.6rem !important;
         }
-		
-				
-		.container-form {
-			margin-top: 20px !important;
-		}
-		
+
+
+        .container-form {
+            margin-top: 20px !important;
+        }
+
         .mt-5 {
             background-color: #ffffff !important;
             border-radius: 24px;
@@ -89,16 +90,18 @@ $years = getYears($conn);
             padding: 15px;
             border: none;
         }
-		
-		.mb-4 {
-			margin-bottom: 13px !important;
-		}
 
-        h1, h2 {
+        .mb-4 {
+            margin-bottom: 13px !important;
+        }
+
+        h1,
+        h2 {
             color: #3A3A3A;
             font-weight: bold;
             font-size: 13px;
         }
+
         .section-divider {
             border: none;
             height: 1px;
@@ -106,6 +109,7 @@ $years = getYears($conn);
             margin-top: 5px;
             margin-bottom: 10px;
         }
+
         .form-control {
             border: 2px solid #646464;
             border-radius: 14px;
@@ -113,255 +117,268 @@ $years = getYears($conn);
             font-size: 12px;
             height: 33px;
         }
-		.form-select {
-			width: 250px !important;
-			border-radius: 14px;
+
+        .form-select {
+            width: 250px !important;
+            border-radius: 14px;
             color: #646464;
             font-size: 12px;
             height: 33px;
-			background-color: #d1d1d1 !important;
-			border: none !important;
-		}
-		
-		#equipmentTypesContainer .border, h4 {
-			border-radius: 14px !important;
-			font-size: 13px;
-		}
-		
-		.month-label {
-			font-size: 13px;
-			font-weight: bold;
-			color: #969696;
-		}
-		
-		h3 {
-			font-size: 13px !important;
-			font-weight: bold !important;
-		}
-		
-        .btn, .btn-danger {
+            background-color: #d1d1d1 !important;
+            border: none !important;
+        }
+
+        #equipmentTypesContainer .border,
+        h4 {
+            border-radius: 14px !important;
+            font-size: 13px;
+        }
+
+        .month-label {
+            font-size: 13px;
+            font-weight: bold;
+            color: #969696;
+        }
+
+        h3 {
+            font-size: 13px !important;
+            font-weight: bold !important;
+        }
+
+        .btn,
+        .btn-danger {
             height: 33px;
             border-radius: 24px;
             font-size: 12px;
-			font-weight: bold;
+            font-weight: bold;
         }
-		
-		.btn-danger {
+
+        .btn-danger {
             weight: 50px;
         }
-		    font-weight: bold;
-			color: white;
+
+        font-weight: bold;
+        color: white;
         }
+
         .btn-primary:hover {
             background-color: #E3595C;
         }
-        
-		.table-responsive {
-			border-radius: 10px;
-			overflow: hidden;
-		}
-		.table {
-			width: 100%; 
-			border:none;
-		}
-		.table th {
-			text-align:left ;
-			font-size :13px ;
-			font-weight: normal;
-			color:#646464 ;
-			border: none ;
-			display: inline-block;
-			margin-top: -4px;
-			margin-bottom: -2px;
-			border-bottom: none;
-			background-color: transparent;
-		}
 
-		th:nth-child(1) {
-			width: 15%; 
-		}
-		th:nth-child(2) {
-			width: 10%; 
-		}
+        .table-responsive {
+            border-radius: 10px;
+            overflow: hidden;
+        }
 
-		th:nth-child(3) {
-			width: 15%; 
-		}
+        .table {
+            width: 100%;
+            border: none;
+        }
 
-		th:nth-child(4) {
-			width: 10%;
-		}
-		
-		th:nth-child(5) {
-			width: 15%;
-		}
-		
-		th:nth-child(6) {
-			width: 35%;
-		}
+        .table th {
+            text-align: left;
+            font-size: 13px;
+            font-weight: normal;
+            color: #646464;
+            border: none;
+            display: inline-block;
+            margin-top: -4px;
+            margin-bottom: -2px;
+            border-bottom: none;
+            background-color: transparent;
+        }
 
-		.table td {
-			color:#646464 ; 
-			font-weight :bold ;
-			border-collapse: separate; 
-			border-spacing: 10px 40px;
-			border: none; 
-			display: inline-block;
-			background-color: transparent;
-			padding-top: 15px !important;
-		}
-		
-		td:nth-child(1) {
-			width: 15%;
-			padding-top: 12px;
-		}
+        th:nth-child(1) {
+            width: 15%;
+        }
 
-		td:nth-child(2) {
-			width: 10%; 
-			margin-left: -5px;
-			padding-top: 12px;
-		}
+        th:nth-child(2) {
+            width: 10%;
+        }
 
-		td:nth-child(3) {
-			width: 15%;
-			margin-left: -5px;
-			padding-top: 12px;
-		}
+        th:nth-child(3) {
+            width: 15%;
+        }
 
-		td:nth-child(4) {
-			width: 10%;
-			margin-left: -5px;
-			padding-top: 12px;
-		}
-		
-		td:nth-child(5) {
-			width: 15%;
-			margin-left: -5px;
-			padding-top: 12px;
-		}
-		
-		td:nth-child(6) {
-			width: 35%;
-			margin-left: -5px;
-			padding-top: 12px;
-		}
-		
-		td a, td button.btn-success a, td button.btn-warning a , td button.{
-			padding-top: 7.5px !important;
-			padding-bottom: 0px;
-			border: none !important;
-		}
-		
-		td a {
-			width: 100px;
-			background-color: #a81519 !important;
-			color: white !important;
-			margin-top: -5px;
-			padding-top: 6.5px !important;
-			border-color: transparent !important;
-			margin-bottom: 1px !important;
-		}
-		
-		td a:hover, .btn-submit:hover {
-			background-color: #E3595C !important;
-		}
-		
-		td button.btn-warning {
-			width: 70px;
-			margin-top: -5px;
-			color: white;
-			margin-bottom: 1px !important;
-		}
-		
-		td button.btn-warning:hover {
-			color: white !important;
-			background-color: #b5aa2f !important;
-			border-color: transparent !important;
-		}
-		
-		td button.btn-success {
-			width: 80px;
-			margin-top: -5px;
-			background-color: #008207;
-			margin-bottom: 1px !important;
-		}
-		
-		td button.btn-danger {
-			width: 80px;
-			margin-top: -5px;
-			font-size: bold !important;
-			margin-bottom: 1px !important;
-		}
-		
-		td button.btn-primary {
-			width: 80px;
-			margin-top: -5px;
-			font-size: bold !important;
-			margin-bottom: 1px !important;
-		}
-		
-		.btn-submit {
-			background-color: #a81519 !important;
-			color: white !important;
-		}
+        th:nth-child(4) {
+            width: 10%;
+        }
 
-		table tbody {
-			border-spacing: 15px 155px;
-			border-radius: 14px; 
-			margin: 20 -20px;
-		}
+        th:nth-child(5) {
+            width: 15%;
+        }
 
-		.table tbody tr:nth-child(odd), .table tbody tr:nth-child(even) {
-			background-color: white;
-			border: 1px solid #DFDFDF;
-			border-radius: 14px; 
-			display: block;
-			width: 100%;
-			margin-top: 5px;
-		}
+        th:nth-child(6) {
+            width: 35%;
+        }
 
-		.table tbody tr:hover {
-			background-color :#ebebeb; 
-		}
+        .table td {
+            color: #646464;
+            font-weight: bold;
+            border-collapse: separate;
+            border-spacing: 10px 40px;
+            border: none;
+            display: inline-block;
+            background-color: transparent;
+            padding-top: 15px !important;
+        }
 
-		tr {
-			font-size: 13px;
-		}
-		
-		.empty-row {
-			height: 46.6px !important;
-		}
-		
-		.pagination .disabled .page-link {
-			pointer-events: none;
-			color: #ccc !important;
-			background-color: transparent !important;
-		}
+        td:nth-child(1) {
+            width: 15%;
+            padding-top: 12px;
+        }
 
-		.pagination {
-			justify-content: flex-end; 
-			margin-top: -5.2px;
-		}
-		
-		.pagination .page-link:hover {
-			color: #b86e63;
-		}
+        td:nth-child(2) {
+            width: 10%;
+            margin-left: -5px;
+            padding-top: 12px;
+        }
 
-		.page-link {
-			color: #474747; }
-		
-		ul.pagination {
-			margin-bottom: 0px;
-		}
-		
+        td:nth-child(3) {
+            width: 15%;
+            margin-left: -5px;
+            padding-top: 12px;
+        }
+
+        td:nth-child(4) {
+            width: 10%;
+            margin-left: -5px;
+            padding-top: 12px;
+        }
+
+        td:nth-child(5) {
+            width: 15%;
+            margin-left: -5px;
+            padding-top: 12px;
+        }
+
+        td:nth-child(6) {
+            width: 35%;
+            margin-left: -5px;
+            padding-top: 12px;
+        }
+
+        td a,
+        td button.btn-success a,
+        td button.btn-warning a,
+        td button. {
+            padding-top: 7.5px !important;
+            padding-bottom: 0px;
+            border: none !important;
+        }
+
+        td a {
+            width: 100px;
+            background-color: #a81519 !important;
+            color: white !important;
+            margin-top: -5px;
+            padding-top: 6.5px !important;
+            border-color: transparent !important;
+            margin-bottom: 1px !important;
+        }
+
+        td a:hover,
+        .btn-submit:hover {
+            background-color: #E3595C !important;
+        }
+
+        td button.btn-warning {
+            width: 70px;
+            margin-top: -5px;
+            color: white;
+            margin-bottom: 1px !important;
+        }
+
+        td button.btn-warning:hover {
+            color: white !important;
+            background-color: #b5aa2f !important;
+            border-color: transparent !important;
+        }
+
+        td button.btn-success {
+            width: 80px;
+            margin-top: -5px;
+            background-color: #008207;
+            margin-bottom: 1px !important;
+        }
+
+        td button.btn-danger {
+            width: 80px;
+            margin-top: -5px;
+            font-size: bold !important;
+            margin-bottom: 1px !important;
+        }
+
+        td button.btn-primary {
+            width: 80px;
+            margin-top: -5px;
+            font-size: bold !important;
+            margin-bottom: 1px !important;
+        }
+
+        .btn-submit {
+            background-color: #a81519 !important;
+            color: white !important;
+        }
+
+        table tbody {
+            border-spacing: 15px 155px;
+            border-radius: 14px;
+            margin: 20 -20px;
+        }
+
+        .table tbody tr:nth-child(odd),
+        .table tbody tr:nth-child(even) {
+            background-color: white;
+            border: 1px solid #DFDFDF;
+            border-radius: 14px;
+            display: block;
+            width: 100%;
+            margin-top: 5px;
+        }
+
+        .table tbody tr:hover {
+            background-color: #ebebeb;
+        }
+
+        tr {
+            font-size: 13px;
+        }
+
+        .empty-row {
+            height: 46.6px !important;
+        }
+
+        .pagination .disabled .page-link {
+            pointer-events: none;
+            color: #ccc !important;
+            background-color: transparent !important;
+        }
+
+        .pagination {
+            justify-content: flex-end;
+            margin-top: -5.2px;
+        }
+
+        .pagination .page-link:hover {
+            color: #b86e63;
+        }
+
+        .page-link {
+            color: #474747;
+        }
+
+        ul.pagination {
+            margin-bottom: 0px;
+        }
+
         .pagination .page-link {
             border: none;
             font-size: 0.8rem;
             padding: 4px 8px;
             color: #474747;
         }
-
-	</style>
+    </style>
 </head>
 
 <body>
@@ -438,48 +455,48 @@ $years = getYears($conn);
                 <tbody>
                     <?php foreach ($maintenancePlans as $plan): ?>
                         <tr>
-							<td>Maintenance Plan <?= htmlspecialchars($plan['id']) ?></td>
-							<td><?= htmlspecialchars($plan['year']) ?></td>
-							<td><?= htmlspecialchars($plan['date_prepared']) ?></td>
-							<td><?= htmlspecialchars($plan['count']) ?></td>
-							<td><?= htmlspecialchars($plan['status']) ?></td>
-							<td>
-								<a href="maintenance_plan_view.php?plan_id=<?= $plan['id'] ?>" class="btn btn-info btn-sm">View Plan</a>
-            
-								<?php if ($plan['status'] === 'pending'): ?>
-									<button type="button"
-										class="btn btn-warning btn-sm"
-										data-bs-toggle="modal"
-										data-bs-target="#editModal<?= $plan['id'] ?>">
-										Edit
-									</button>
-									<button type="button"
-										class="btn btn-success btn-sm"
-										data-bs-toggle="modal"
-										data-bs-target="#submitModal<?= $plan['id'] ?>">
-										Submit
-									</button>
-								<?php endif; ?>
+                            <td>Maintenance Plan <?= htmlspecialchars($plan['id']) ?></td>
+                            <td><?= htmlspecialchars($plan['year']) ?></td>
+                            <td><?= htmlspecialchars($plan['date_prepared']) ?></td>
+                            <td><?= htmlspecialchars($plan['count']) ?></td>
+                            <td><?= htmlspecialchars($plan['status']) ?></td>
+                            <td>
+                                <a href="maintenance_plan_view.php?plan_id=<?= $plan['id'] ?>" class="btn btn-info btn-sm">View Plan</a>
 
-								<?php if ($plan['status'] !== 'trash' && $plan['status'] !== 'submitted' && $plan['status'] !== 'archive'): ?>
-									<button type="button"
-										class="btn btn-danger btn-sm trash"
-										data-bs-toggle="modal"
-										data-bs-target="#trashModal<?= $plan['id'] ?>">
-										Trash
-									</button>
-								<?php endif; ?>
+                                <?php if ($plan['status'] === 'pending'): ?>
+                                    <button type="button"
+                                        class="btn btn-warning btn-sm"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#editModal<?= $plan['id'] ?>">
+                                        Edit
+                                    </button>
+                                    <button type="button"
+                                        class="btn btn-success btn-sm"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#submitModal<?= $plan['id'] ?>">
+                                        Submit
+                                    </button>
+                                <?php endif; ?>
 
-								<?php if ($plan['status'] === 'trash'): ?>
-									<button type="button"
-										class="btn btn-primary btn-sm"
-										data-bs-toggle="modal"
-										data-bs-target="#recoverModal<?= $plan['id'] ?>">
-										Recover
-									</button>
-								<?php endif; ?>
-							</td>
-						</tr>
+                                <?php if ($plan['status'] !== 'trash' && $plan['status'] !== 'submitted' && $plan['status'] !== 'archive'): ?>
+                                    <button type="button"
+                                        class="btn btn-danger btn-sm trash"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#trashModal<?= $plan['id'] ?>">
+                                        Trash
+                                    </button>
+                                <?php endif; ?>
+
+                                <?php if ($plan['status'] === 'trash'): ?>
+                                    <button type="button"
+                                        class="btn btn-primary btn-sm"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#recoverModal<?= $plan['id'] ?>">
+                                        Recover
+                                    </button>
+                                <?php endif; ?>
+                            </td>
+                        </tr>
 
                         <!-- Modal -->
                         <div class="modal fade" id="submitModal<?= $plan['id'] ?>" tabindex="-1" aria-labelledby="modalLabel<?= $plan['id'] ?>" aria-hidden="true">
@@ -502,49 +519,49 @@ $years = getYears($conn);
                                 </div>
                             </div>
                         </div>
-						<div class="modal fade" id="trashModal<?= $plan['id'] ?>" tabindex="-1" aria-labelledby="trashModalLabel<?= $plan['id'] ?>" aria-hidden="true">
-							<div class="modal-dialog">
-								<div class="modal-content">
-									<div class="modal-header">
-										<h5 class="modal-title" id="trashModalLabel<?= $plan['id'] ?>">Move to Trash</h5>
-										<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-									</div>
-									<div class="modal-body">
-										Are you sure you want to move Maintenance Plan <?= htmlspecialchars($plan['id']) ?> to trash?
-									</div>
-									<div class="modal-footer">
-										<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-										<form action="update_maintenance_status.php" method="POST" style="display: inline;">
-											<input type="hidden" name="plan_id" value="<?= $plan['id'] ?>">
-											<input type="hidden" name="status" value="trash">
-											<button type="submit" class="btn btn-danger">Move to Trash</button>
-										</form>
-									</div>
-								</div>
-							</div>
-						</div>
+                        <div class="modal fade" id="trashModal<?= $plan['id'] ?>" tabindex="-1" aria-labelledby="trashModalLabel<?= $plan['id'] ?>" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="trashModalLabel<?= $plan['id'] ?>">Move to Trash</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        Are you sure you want to move Maintenance Plan <?= htmlspecialchars($plan['id']) ?> to trash?
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                        <form action="update_maintenance_status.php" method="POST" style="display: inline;">
+                                            <input type="hidden" name="plan_id" value="<?= $plan['id'] ?>">
+                                            <input type="hidden" name="status" value="trash">
+                                            <button type="submit" class="btn btn-danger">Move to Trash</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-						<div class="modal fade" id="recoverModal<?= $plan['id'] ?>" tabindex="-1" aria-labelledby="recoverModalLabel<?= $plan['id'] ?>" aria-hidden="true">
-							<div class="modal-dialog">
-								<div class="modal-content">
-									<div class="modal-header">
-										<h5 class="modal-title" id="recoverModalLabel<?= $plan['id'] ?>">Recover Maintenance Plan</h5>
-										<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-									</div>
-									<div class="modal-body">
-										Are you sure you want to recover Maintenance Plan <?= htmlspecialchars($plan['id']) ?>?
-									</div>
-									<div class="modal-footer">
-										<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-										<form action="update_maintenance_status.php" method="POST" style="display: inline;">
-											<input type="hidden" name="plan_id" value="<?= $plan['id'] ?>">
-											<input type="hidden" name="status" value="pending">
-											<button type="submit" class="btn btn-primary">Recover</button>
-										</form>
-									</div>
-								</div>
-							</div>
-						</div>
+                        <div class="modal fade" id="recoverModal<?= $plan['id'] ?>" tabindex="-1" aria-labelledby="recoverModalLabel<?= $plan['id'] ?>" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="recoverModalLabel<?= $plan['id'] ?>">Recover Maintenance Plan</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        Are you sure you want to recover Maintenance Plan <?= htmlspecialchars($plan['id']) ?>?
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                        <form action="update_maintenance_status.php" method="POST" style="display: inline;">
+                                            <input type="hidden" name="plan_id" value="<?= $plan['id'] ?>">
+                                            <input type="hidden" name="status" value="pending">
+                                            <button type="submit" class="btn btn-primary">Recover</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div class="modal fade" id="editModal<?= $plan['id'] ?>" tabindex="-1" aria-labelledby="editModalLabel<?= $plan['id'] ?>" aria-hidden="true">
                             <div class="modal-dialog modal-lg">
                                 <div class="modal-content">
@@ -643,161 +660,252 @@ $years = getYears($conn);
             <p>No maintenance plans available.</p>
         <?php endif; ?>
     </div>
-	
-	<div class="container mt-5 container-form">
-        <h1 class="mb-4">Equipment Maintenance</h1>
-		<hr class="section-divider">
-		<form method="post" action="add_plan_maintenance_process.php">
-			<div class="body">
-				<!-- Year Dropdown -->
-				<div class="mb-3">
-					<label for="year_maintained" class="form-label">Select Year:</label>
-					<select name="year_maintained" id="year_maintained" class="form-select" required>
-						<option value="">--Select Year--</option>
-						<?php foreach ($years as $year): ?>
-							<option value="<?= htmlspecialchars($year['year_maintained']) ?>">
-								<?= htmlspecialchars($year['year_maintained']) ?>
-							</option>
-						<?php endforeach; ?>
-					</select>
-				</div>
 
-				<!-- Equipment Types Container -->
-				<div id="equipmentTypesContainer">
-					<div class="equipment-entry border p-3 mb-3">
-						<div class="d-flex justify-content-between align-items-center mb-2">
-							<h6>Equipment Entry</h6>
-							<button type="button" class="btn btn-danger btn-sm remove-equipment" style="display: none;">Remove</button>
-						</div>
-						<div class="mb-3">
-							<label class="form-label">Select Equipment Type:</label>
-							<select name="equipment_types[]" class="form-select" required>
-								<option value="">--Select Equipment Type--</option>
-								<?php foreach ($equipmentTypes as $type): ?>
-									<option value="<?= htmlspecialchars($type['equip_type_id']) ?>">
-										<?= htmlspecialchars($type['equip_type_name']) ?>
-									</option>
-								<?php endforeach; ?>
-							</select>
-						</div>
-						<!-- Monthly counts for this equipment -->
-						<div class="row">
-							<?php for ($i = 1; $i <= 12; $i++): ?>
-								<div class="col-md-3 mb-3">
-									<label class="form-label"><?= date("F", mktime(0, 0, 0, $i, 1)) ?>:</label>
-									<input type="number" name="counts[0][<?= $i ?>]" class="form-control" min="0" required>
-								</div>
-							<?php endfor; ?>
-						</div>
-					</div>
-				</div>
-				<button type="button" class="btn btn-success" id="addMoreEquipment">Add Another Equipment Type</button>
-				<button type="submit" class="btn btn-submit">Submit</button>
-			</div>
-		</form>
-	</div>
+    <div class="container mt-5 container-form">
+        <h1 class="mb-4">Equipment Maintenance</h1>
+        <hr class="section-divider">
+        <form method="post" action="add_plan_maintenance_process.php">
+            <div class="body">
+                <!-- Year Dropdown -->
+                <div class="mb-3">
+                    <label for="year_maintained" class="form-label">Select Year:</label>
+                    <select name="year_maintained" id="year_maintained" class="form-select" required>
+                        <option value="">--Select Year--</option>
+                        <?php foreach ($years as $year): ?>
+                            <option value="<?= htmlspecialchars($year['year_maintained']) ?>">
+                                <?= htmlspecialchars($year['year_maintained']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
+                <!-- Equipment Types Container -->
+                <div id="equipmentTypesContainer">
+                    <div class="equipment-entry border p-3 mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h6>Equipment Entry</h6>
+                            <button type="button" class="btn btn-danger btn-sm remove-equipment" style="display: none;">Remove</button>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Select Equipment Type:</label>
+                            <select name="equipment_types[]" class="form-select" required>
+                                <option value="">--Select Equipment Type--</option>
+                                <?php foreach ($equipmentTypes as $type): ?>
+                                    <option value="<?= htmlspecialchars($type['equip_type_id']) ?>">
+                                        <?= htmlspecialchars($type['equip_type_name']) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                            <div class="mb-2">
+                                <small class="text-muted">Total Serviceable Equipment: <span class="serviceable-count">0</span></small>
+                            </div>
+                        </div>
+                        <!-- Monthly counts for this equipment -->
+                        <div class="row">
+                            <?php for ($i = 1; $i <= 12; $i++): ?>
+                                <div class="col-md-3 mb-3">
+                                    <label class="form-label"><?= date("F", mktime(0, 0, 0, $i, 1)) ?>:</label>
+                                    <input type="number" name="counts[0][<?= $i ?>]" class="form-control" min="0" required value="0">
+                                </div>
+                            <?php endfor; ?>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-success" id="addMoreEquipment">Add Another Equipment Type</button>
+                <button type="submit" class="btn btn-submit">Submit</button>
+            </div>
+        </form>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             let equipmentCount = 0;
-    const container = document.getElementById('equipmentTypesContainer');
-    const addButton = document.getElementById('addMoreEquipment');
+            const container = document.getElementById('equipmentTypesContainer');
+            const addButton = document.getElementById('addMoreEquipment');
 
-    // Function to get all currently selected equipment types
-    function getSelectedEquipmentTypes() {
-        const selectedTypes = new Set();
-        container.querySelectorAll('select[name="equipment_types[]"]').forEach(select => {
-            if (select.value) {
-                selectedTypes.add(select.value);
+            // Modified updateServiceableCount function
+            function updateServiceableCount(select) {
+                // First make sure we have a container for the count
+                let countDisplay = select.closest('.mb-3').querySelector('.serviceable-count');
+
+                // If count display doesn't exist, create it
+                if (!countDisplay) {
+                    const countContainer = document.createElement('div');
+                    countContainer.className = 'mb-2';
+                    countContainer.innerHTML = '<small class="text-muted">Total Serviceable Equipment: <span class="serviceable-count">0</span></small>';
+                    select.closest('.mb-3').appendChild(countContainer);
+                    countDisplay = countContainer.querySelector('.serviceable-count');
+                }
+
+                const equipTypeId = select.value;
+
+                if (!equipTypeId) {
+                    countDisplay.textContent = '0';
+                    return;
+                }
+
+                // Fetch the count from the server
+                fetch(`get_serviceable_count.php?equip_type_id=${equipTypeId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.error) {
+                            console.error('Error:', data.error);
+                            return;
+                        }
+                        countDisplay.textContent = data.count;
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        countDisplay.textContent = 'Error';
+                    });
             }
-        });
-        return selectedTypes;
-    }
 
-    // Function to update disabled states on all selects
-    function updateEquipmentSelects() {
-        const selectedTypes = getSelectedEquipmentTypes();
-        const allSelects = container.querySelectorAll('select[name="equipment_types[]"]');
-        
-        allSelects.forEach(select => {
-            const currentValue = select.value;
-            select.querySelectorAll('option').forEach(option => {
-                if (option.value && option.value !== currentValue) {
-                    option.disabled = selectedTypes.has(option.value);
+            function getSelectedEquipmentTypes() {
+                const selectedTypes = new Set();
+                container.querySelectorAll('select[name="equipment_types[]"]').forEach(select => {
+                    if (select.value) {
+                        selectedTypes.add(select.value);
+                    }
+                });
+                return selectedTypes;
+            }
+
+            function updateEquipmentSelects() {
+                const selectedTypes = getSelectedEquipmentTypes();
+                const allSelects = container.querySelectorAll('select[name="equipment_types[]"]');
+
+                allSelects.forEach(select => {
+                    const currentValue = select.value;
+                    select.querySelectorAll('option').forEach(option => {
+                        if (option.value && option.value !== currentValue) {
+                            option.disabled = selectedTypes.has(option.value);
+                        }
+                    });
+                });
+            }
+
+            // Modify the HTML structure when adding new equipment entry
+            addButton.addEventListener('click', function() {
+                equipmentCount++;
+                const template = container.querySelector('.equipment-entry').cloneNode(true);
+
+                // Update name attributes for the new equipment entry
+                template.querySelectorAll('input[name^="counts[0]"]').forEach(input => {
+                    const month = input.name.match(/\[(\d+)\]$/)[1];
+                    input.name = `counts[${equipmentCount}][${month}]`;
+                    input.value = ''; // Clear the value
+                });
+
+                // Get the new select element and reset it
+                const equipmentSelect = template.querySelector('select[name="equipment_types[]"]');
+                equipmentSelect.selectedIndex = 0;
+
+                // Add the serviceable count display div
+                const selectContainer = equipmentSelect.closest('.mb-3');
+                const countContainer = document.createElement('div');
+                countContainer.className = 'mb-2';
+                selectContainer.appendChild(countContainer);
+
+                // Add change event listener to the new select
+                equipmentSelect.addEventListener('change', function() {
+                    updateEquipmentSelects();
+                    updateServiceableCount(this);
+                });
+
+                // Show remove button for additional entries
+                template.querySelector('.remove-equipment').style.display = 'block';
+
+                container.appendChild(template);
+
+                // Update disabled states after adding new entry
+                updateEquipmentSelects();
+            });
+
+            // Add the initial serviceable count display to existing selects
+            container.querySelectorAll('select[name="equipment_types[]"]').forEach(select => {
+                const selectContainer = select.closest('.mb-3');
+                if (!selectContainer.querySelector('.serviceable-count')) {
+                    const countContainer = document.createElement('div');
+                    countContainer.className = 'mb-2';
+                    countContainer.innerHTML = '<small class="text-muted">Total Serviceable Equipment: <span class="serviceable-count">0</span></small>';
+                    selectContainer.appendChild(countContainer);
+                }
+
+                // Add change event listener
+                select.addEventListener('change', function() {
+                    updateEquipmentSelects();
+                    updateServiceableCount(this);
+                });
+            });
+
+            // Modified remove button handler
+            container.addEventListener('click', function(e) {
+                if (e.target.classList.contains('remove-equipment')) {
+                    e.target.closest('.equipment-entry').remove();
+                    // Update disabled states after removing an entry
+                    updateEquipmentSelects();
                 }
             });
-        });
-    }
 
-    // Add change event listeners to initial select
-    container.querySelector('select[name="equipment_types[]"]').addEventListener('change', updateEquipmentSelects);
+            // Form submission validation
+            const form = container.closest('form');
+            form.addEventListener('submit', function(event) {
+                const equipmentSelects = container.querySelectorAll('select[name="equipment_types[]"]');
+                const selectedTypes = new Set();
+                let hasEmptySelection = false;
+                let hasExceededServiceable = false;
 
-    // Modified add button click handler
-    addButton.addEventListener('click', function() {
-        equipmentCount++;
-        const template = container.querySelector('.equipment-entry').cloneNode(true);
+                equipmentSelects.forEach(select => {
+                    if (!select.value) {
+                        hasEmptySelection = true;
+                        return;
+                    }
 
-        // Update name attributes for the new equipment entry
-        template.querySelectorAll('input[name^="counts[0]"]').forEach(input => {
-            const month = input.name.match(/\[(\d+)\]$/)[1];
-            input.name = `counts[${equipmentCount}][${month}]`;
-            input.value = ''; // Clear the value
-        });
+                    if (selectedTypes.has(select.value)) {
+                        event.preventDefault();
+                        alert('Duplicate equipment types are not allowed.');
+                        select.focus();
+                        return;
+                    }
+                    selectedTypes.add(select.value);
 
-        // Reset and update the new select
-        const newSelect = template.querySelector('select[name="equipment_types[]"]');
-        newSelect.selectedIndex = 0;
-        
-        // Add change event listener to the new select
-        newSelect.addEventListener('change', updateEquipmentSelects);
+                    // Get the total serviceable count for this equipment type
+                    const serviceableCount = parseInt(select.closest('.mb-3').querySelector('.serviceable-count').textContent);
 
-        // Show remove button for additional entries
-        template.querySelector('.remove-equipment').style.display = 'block';
+                    // Get all monthly inputs for this equipment entry
+                    const equipmentEntry = select.closest('.equipment-entry');
+                    const monthlyInputs = equipmentEntry.querySelectorAll('input[type="number"]');
 
-        container.appendChild(template);
-        
-        // Update disabled states after adding new entry
-        updateEquipmentSelects();
-    });
+                    // Calculate total monthly counts
+                    let totalMonthlyCount = 0;
+                    monthlyInputs.forEach(input => {
+                        totalMonthlyCount += parseFloat(input.value) || 0;
+                    });
 
-    // Modified remove button handler
-    container.addEventListener('click', function(e) {
-        if (e.target.classList.contains('remove-equipment')) {
-            e.target.closest('.equipment-entry').remove();
-            // Update disabled states after removing an entry
+                    // Check if total monthly counts exceed serviceable equipment
+                    if (totalMonthlyCount > serviceableCount) {
+                        event.preventDefault();
+                        hasExceededServiceable = true;
+                        alert(`The total monthly maintenance count (${totalMonthlyCount}) for ${select.options[select.selectedIndex].text} exceeds the total serviceable equipment (${serviceableCount}).`);
+                        monthlyInputs[0].focus();
+                        return;
+                    }
+                });
+
+                if (hasEmptySelection) {
+                    event.preventDefault();
+                    alert('Please select an equipment type for all entries.');
+                    return;
+                }
+
+                if (hasExceededServiceable) {
+                    return;
+                }
+            });
+
+            // Initial update of selects
             updateEquipmentSelects();
-        }
-    });
-
-    // Form submission validation
-    const form = container.closest('form');
-    form.addEventListener('submit', function(event) {
-        const equipmentSelects = container.querySelectorAll('select[name="equipment_types[]"]');
-        const selectedTypes = new Set();
-        let hasEmptySelection = false;
-
-        equipmentSelects.forEach(select => {
-            if (!select.value) {
-                hasEmptySelection = true;
-            } else if (selectedTypes.has(select.value)) {
-                event.preventDefault();
-                alert('Duplicate equipment types are not allowed.');
-                select.focus();
-                return;
-            }
-            selectedTypes.add(select.value);
-        });
-
-        if (hasEmptySelection) {
-            event.preventDefault();
-            alert('Please select an equipment type for all entries.');
-            return;
-        }
-    });
-
-    // Initial update of selects
-    updateEquipmentSelects();
 
             <?php foreach ($maintenancePlans as $plan): ?>
                     (function() {
