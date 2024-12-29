@@ -182,9 +182,8 @@ $years = getYears($conn);
             color: #646464;
             border: none;
             display: inline-block;
-            margin-top: -4px;
+            margin-top: -8px;
             margin-bottom: -2px;
-            border-bottom: none;
             background-color: transparent;
         }
 
@@ -344,6 +343,10 @@ $years = getYears($conn);
         tr {
             font-size: 13px;
         }
+		
+		thead tr {
+			border-color: transparent !important;
+		}
 
         .empty-row {
             height: 46.6px !important;
@@ -384,7 +387,7 @@ $years = getYears($conn);
 <body>
     <div class="container mt-5">
         <h1 class="mb-4">Equipment Maintenance</h1>
-
+		<hr class="section-divider">
         <?php
         // Fetch all maintenance plans
         $queryPlans = "SELECT * FROM maintenance_plan ORDER BY date_prepared DESC";
@@ -575,7 +578,7 @@ $years = getYears($conn);
                                             <div class="mb-3">
                                                 <label for="year_maintained<?= $plan['id'] ?>" class="form-label">Select Year:</label>
                                                 <select name="year_maintained" id="year_maintained<?= $plan['id'] ?>" class="form-select" required>
-                                                    <option value="">--Select Year--</option>
+                                                    <option value="">Select Year</option>
                                                     <?php foreach ($years as $year): ?>
                                                         <option value="<?= htmlspecialchars($year['year_maintained']) ?>"
                                                             <?= $year['year_maintained'] == $plan['year'] ? 'selected' : '' ?>>
@@ -594,7 +597,7 @@ $years = getYears($conn);
                                                     </div>
                                                     <div class="mb-3">
                                                         <select name="equipment_types[]" class="form-select" required hidden>
-                                                            <option value="">--Select Equipment Type--</option>
+                                                            <option value="">Select Equipment Type</option>
                                                             <?php foreach ($equipmentTypes as $type): ?>
                                                                 <option value="<?= htmlspecialchars($type['equip_type_id']) ?>"
                                                                     <?= $type['equip_type_id'] == $detail['equip_type_id'] ? 'selected' : '' ?>>
@@ -670,7 +673,7 @@ $years = getYears($conn);
                 <div class="mb-3">
                     <label for="year_maintained" class="form-label">Select Year:</label>
                     <select name="year_maintained" id="year_maintained" class="form-select" required>
-                        <option value="">--Select Year--</option>
+                        <option value="">Select Year</option>
                         <?php foreach ($years as $year): ?>
                             <option value="<?= htmlspecialchars($year['year_maintained']) ?>">
                                 <?= htmlspecialchars($year['year_maintained']) ?>
@@ -689,7 +692,7 @@ $years = getYears($conn);
                         <div class="mb-3">
                             <label class="form-label">Select Equipment Type:</label>
                             <select name="equipment_types[]" class="form-select" required>
-                                <option value="">--Select Equipment Type--</option>
+                                <option value="">Select Equipment Type</option>
                                 <?php foreach ($equipmentTypes as $type): ?>
                                     <option value="<?= htmlspecialchars($type['equip_type_id']) ?>">
                                         <?= htmlspecialchars($type['equip_type_name']) ?>
