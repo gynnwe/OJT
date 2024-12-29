@@ -81,7 +81,7 @@ try {
             padding: 10px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 			color: gray;
-			max-height: 95px;
+			height: 95px;
     		overflow-y: auto;
         }
 		
@@ -93,7 +93,7 @@ try {
 			color: #bd4444;
 		}
         .maintenance-goal {
-            min-height: 400px;
+            min-height: 468px;
         }
 		.maintenance-goal h6 {
 			margin-bottom: 17px;
@@ -104,6 +104,11 @@ try {
     		overflow-y: auto;
 			margin-right: -13px;
 		}	
+		.no-goals-message {
+			font-size: 12px;
+			color: #838383;
+			padding-left: 5px;
+		}
 		.month {
 			background-color: #ECECEC;
 			border-radius: 8px; 
@@ -119,12 +124,6 @@ try {
 			padding-left: 25px;
 			color: #838383;
 		}
-		
-		
-		
-		
-		
-		
 		
         .calendar-grid {
             display: grid;
@@ -333,7 +332,7 @@ try {
 							}
 							echo '</div>';
 						} else {
-							echo '<p>No maintenance goals found.</p>';
+							echo '<p class="no-goals-message">No maintenance goals found.</p>';
 						}
 						?>
 					</div>
