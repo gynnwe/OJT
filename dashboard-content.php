@@ -71,11 +71,61 @@ try {
             min-height: 300px;
         }
         .activity-feed {
-            min-height: 200px;
+            min-height: 165px;
         }
+		
+		.inside-activity-feed {
+            background: #white !important;
+            border-radius: 8px;
+			border: 3px solid #e3e3e3;
+            padding: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+			color: gray;
+			max-height: 95px;
+    		overflow-y: auto;
+        }
+		
+		.date {
+			color: #8c2020;
+		}
+
+		.equip-name, .remarks-name {
+			color: #bd4444;
+		}
         .maintenance-goal {
-            min-height: 435px;
+            min-height: 400px;
         }
+		.maintenance-goal h6 {
+			margin-bottom: 17px;
+		}
+		
+		.inside-maintenance-goal {
+			max-height: 391px;
+    		overflow-y: auto;
+			margin-right: -13px;
+		}	
+		.month {
+			background-color: #ECECEC;
+			border-radius: 8px; 
+			cursor: pointer; 
+			margin-bottom: 5px;
+			padding-left: 15px;
+		}
+
+		.goal-item {
+			margin-top: 2px;
+			margin-bottom: 6px;
+			font-size: 12px;
+			padding-left: 25px;
+			color: #838383;
+		}
+		
+		
+		
+		
+		
+		
+		
         .calendar-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
@@ -126,7 +176,6 @@ try {
 </head>
 <body>
     <div class="content-wrapper">
-        <!-- Stats Row -->
         <div class="row">
             <div class="col-md-3">
                 <div class="stats-card total-equipment">
@@ -204,7 +253,6 @@ try {
             </div>
         </div>
 
-        <!-- Progress and Maintenance Section -->
         <div class="row">
             <div class="col-md-9">
                 <div class="white-card">
@@ -213,80 +261,83 @@ try {
                 </div>
                 <div class="solid-card activity-feed">
                     <h6>Recent Maintenance Activity Feed</h6>
-                    <?php
-                    // Fetch recent maintenance activities
-                    $query = "SELECT m.maintenance_date, e.equip_name, r.remarks_name 
-                              FROM `ict_maintenance_logs` m 
-                              JOIN equipment e ON m.equipment_id = e.equipment_id 
-                              JOIN remarks r ON m.remarks_id = r.remarks_id 
-                              ORDER BY m.maintenance_date DESC LIMIT 10";
-                    $stmt = $conn->prepare($query);
-                    $stmt->execute();
-                    $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+					<div class="inside-activity-feed">
+						<?php
+						$query = "SELECT m.maintenance_date, e.equip_name, r.remarks_name 
+								  FROM `ict_maintenance_logs` m 
+								  JOIN equipment e ON m.equipment_id = e.equipment_id 
+								  JOIN remarks r ON m.remarks_id = r.remarks_id 
+								  ORDER BY m.maintenance_date DESC LIMIT 10";
+						$stmt = $conn->prepare($query);
+						$stmt->execute();
+						$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-                    // Display recent maintenance activities
-                    if (count($result) > 0) {
-                        echo '<table>';
-                        foreach ($result as $row) {
-                            echo '<tr>';
-                            // Format the date
-                            $formattedDate = date('F j, Y', strtotime($row['maintenance_date']));
-                            echo '<td>' . $formattedDate . ' &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>';
-                            // Wrap equip_name and remarks_name in a sentence with bold text
-                            echo '<td><strong>' . $row['equip_name'] . '</strong> maintenance is <strong>' . $row['remarks_name'] . '</strong>.'.'</td>';
-                            echo '</tr>';
-                        }
-                        echo '</table>';
-                    } else {
-                        echo '<p>No recent maintenance activities found.</p>';
-                    }
-                    ?>
+						// Display recent maintenance activities
+						if (count($result) > 0) {
+							echo '<table>';
+							foreach ($result as $row) {
+								echo '<tr>';
+								// Format the date
+								$formattedDate = date('F j, Y', strtotime($row['maintenance_date']));
+								echo '<td class="date">' . $formattedDate . ' &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>';
+								// Wrap equip_name and remarks_name in a sentence with bold text
+								echo '<td><strong class="equip-name">' . $row['equip_name'] . '</strong> maintenance is <strong class="remarks-name">' . $row['remarks_name'] . '</strong>.</td>';
+								echo '</tr>';
+							}
+							echo '</table>';
+						} else {
+							echo '<p>No recent maintenance activities found.</p>';
+						}
+						?>
+					</div>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="solid-card maintenance-goal">
-                    <?php
-                    // Fetch maintenance goals from the database
-                    $query = "SELECT pd.month, et.equip_type_name, pd.target, mp.year 
-                              FROM plan_details pd 
-                              JOIN maintenance_plan mp ON pd.maintenance_plan_id = mp.id 
-                              JOIN equipment_type et ON pd.equip_type_id = et.equip_type_id 
-                              WHERE mp.status = 'submitted' 
-                              AND mp.id = (SELECT MAX(id) FROM maintenance_plan WHERE status = 'submitted') 
-                              ORDER BY FIELD(pd.month, 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December')";
-                    $stmt = $conn->prepare($query);
-                    $stmt->execute();
-                    $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+					<h6>Maintenance Goal This Year</h6>
+					<div class="inside-maintenance-goal">
+						<?php
+						// Fetch maintenance goals from the database
+						$query = "SELECT pd.month, et.equip_type_name, pd.target, mp.year 
+								  FROM plan_details pd 
+								  JOIN maintenance_plan mp ON pd.maintenance_plan_id = mp.id 
+								  JOIN equipment_type et ON pd.equip_type_id = et.equip_type_id 
+								  WHERE mp.status = 'submitted' 
+								  AND mp.id = (SELECT MAX(id) FROM maintenance_plan WHERE status = 'submitted') 
+								  ORDER BY FIELD(pd.month, 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December')";
+						$stmt = $conn->prepare($query);
+						$stmt->execute();
+						$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-                    // Prepare data for displaying goals
-                    $goals = [];
-                    $year = '';
-                    foreach ($result as $row) {
-                        $goals[$row['month']][] = [
-                            'equipment_type' => $row['equip_type_name'],
-                            'planned_goal' => $row['target']
-                        ];
-                        $year = $row['year']; // Store the year from the first row
-                    }
+						// Prepare data for displaying goals
+						$goals = [];
+						$year = '';
+						foreach ($result as $row) {
+							$goals[$row['month']][] = [
+								'equipment_type' => $row['equip_type_name'],
+								'planned_goal' => $row['target']
+							];
+							$year = $row['year']; // Store the year from the first row
+						}
 
-                    // Display Maintenance Goals
-                    if (!empty($goals)) {
-                        echo '<h6>Maintenance Goal Year ' . $year . '</h6>';
-                        echo '<div class="maintenance-goal">';
-                        foreach ($goals as $month => $equipment) {
-                            echo '<div class="month" onclick="toggleDropdown(this)">' . $month . ' &#9662;</div>';
-                            echo '<div class="dropdown-content" style="display:none;">';
-                            foreach ($equipment as $goal) {
-                                echo '<div>' . $goal['equipment_type'] . ': ' . $goal['planned_goal'] . '&nbsp;units</div>';
-                            }
-                            echo '</div>';
-                        }
-                        echo '</div>';
-                    } else {
-                        echo '<p>No maintenance goals found.</p>';
-                    }
-                    ?>
-                </div>
+						// Display Maintenance Goals
+						if (!empty($goals)) {
+							echo '<div class="maintenance-goal">';
+							foreach ($goals as $month => $equipment) {
+								echo '<div class="month" onclick="toggleDropdown(this)">' . $month . ' &#9662;</div>';
+								echo '<div class="dropdown-content" style="display:none;">';
+								foreach ($equipment as $goal) {
+									echo '<div class="goal-item">' . $goal['equipment_type'] . ': ' . $goal['planned_goal'] . '&nbsp;units</div>';
+								}
+								echo '</div>';
+							}
+							echo '</div>';
+						} else {
+							echo '<p>No maintenance goals found.</p>';
+						}
+						?>
+					</div>
+				</div>
             </div>
         </div>
     </div>
