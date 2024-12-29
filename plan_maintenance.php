@@ -325,6 +325,12 @@ $years = getYears($conn);
             border-radius: 14px;
             margin: 20 -20px;
         }
+		
+		.table-body {
+			display: block;
+			height: 180px;
+    		overflow-y: auto;
+		}
 
         .table tbody tr:nth-child(odd),
         .table tbody tr:nth-child(even) {
@@ -351,6 +357,13 @@ $years = getYears($conn);
         .empty-row {
             height: 46.6px !important;
         }
+		
+		.plan-empty-row {
+			height: 50px;
+		}
+		.text-center {
+			text-align: left !important;
+		}
 
         .pagination .disabled .page-link {
             pointer-events: none;
@@ -455,8 +468,8 @@ $years = getYears($conn);
                         <th>Action</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <?php foreach ($maintenancePlans as $plan): ?>
+                <tbody class="table-body">
+                    <?php $rowCount = count($maintenancePlans); foreach ($maintenancePlans as $plan): ?>
                         <tr>
                             <td>Maintenance Plan <?= htmlspecialchars($plan['id']) ?></td>
                             <td><?= htmlspecialchars($plan['year']) ?></td>
@@ -660,8 +673,26 @@ $years = getYears($conn);
                 </tbody>
             </table>
         <?php else: ?>
-            <p>No maintenance plans available.</p>
-        <?php endif; ?>
+			<table class="table table-bordered">
+				<thead class="table-light">
+					<tr>
+						<th>Plan</th>
+						<th>Year</th>
+						<th>Date Prepared</th>
+						<th>Total Count</th>
+						<th>Status</th>
+						<th>Action</th>
+					</tr>
+				</thead>
+				<tbody class="table-body">
+ 					<?php for ($i = 0; $i < 3; $i++): ?>
+                        <tr class="plan-empty-row">
+                            <td colspan="6">No data available</td>
+                        </tr>
+                    <?php endfor; ?>
+                </tbody>
+			</table>
+		<?php endif; ?>
     </div>
 
     <div class="container mt-5 container-form">
