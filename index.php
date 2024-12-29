@@ -101,20 +101,21 @@
             width: 100%;
             padding: 10px;
             margin-top: 5px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-            font-size: 14px;
+            border: 2px solid #ccc;
+            border-radius: 24px !important;
+			font-size: 14px !important;
+			background-color: white;
         }
 
         button {
             width: 100%;
             padding: 12px;
-            margin-top: 20px;
+            margin-top: 45px;
             background-color: #a50000;
             color: white;
             border: none;
-            border-radius: 5px;
-            font-size: 16px;
+            border-radius: 24px;
+            font-size: 14px;
             cursor: pointer;
         }
 
@@ -129,13 +130,12 @@
 
         .password-container input[type="password"],
         .password-container input[type="text"] {
-            width: 100%;
+			width: 100%;
             padding: 10px;
             margin-top: 5px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-            font-size: 14px;
-            padding-right: 40px; /* Add padding to make space for the eye icon */
+            border: 2px solid #ccc;
+            border-radius: 24px !important;
+			font-size: 14px;
         }
 
         .password-toggle {
@@ -145,6 +145,8 @@
             transform: translateY(-50%);
             cursor: pointer;
             font-size: 18px;
+			margin-top: 2px;
+			opacity: 50%;
         }
 
         .sign-in-title {
