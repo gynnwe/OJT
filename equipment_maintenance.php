@@ -22,16 +22,28 @@ try {
     $selectedTypeId = isset($_GET['equipment_type']) ? $_GET['equipment_type'] : '';
     $searchTerm = isset($_GET['search_term']) ? $_GET['search_term'] : '';
 
-    $sqlEquipment = "SELECT e.equipment_id, e.equip_name, e.property_num, e.status, e.date_purchased
-                     FROM equipment e
-                     WHERE (:equip_type_id = '' OR e.equip_type_id = :equip_type_id)
-                     AND (e.equip_name LIKE :search_term OR e.property_num LIKE :search_term)";
-    $stmtEquipment = $conn->prepare($sqlEquipment);
-    $stmtEquipment->bindParam(':equip_type_id', $selectedTypeId);
-    $searchWildcard = "%$searchTerm%";
-    $stmtEquipment->bindParam(':search_term', $searchWildcard);
-    $stmtEquipment->execute();
-    $equipment = $stmtEquipment->fetchAll(PDO::FETCH_ASSOC);
+    $sqlEquipment = "
+    SELECT e.equipment_id, e.equip_name, e.property_num, e.status, e.date_purchased
+    FROM equipment e
+    WHERE (:equip_type_id = '' OR e.equip_type_id = :equip_type_id)
+    AND (:status = '' OR e.status = :status)
+    AND (:date_purchased = '' OR e.date_purchased = :date_purchased)
+    AND (e.equip_name LIKE :search_term OR e.property_num LIKE :search_term)";
+$stmtEquipment = $conn->prepare($sqlEquipment);
+$stmtEquipment->bindParam(':equip_type_id', $selectedTypeId);
+
+$status = isset($_GET['status']) ? $_GET['status'] : '';
+$stmtEquipment->bindParam(':status', $status);
+
+$datePurchased = isset($_GET['date_purchased']) ? $_GET['date_purchased'] : '';
+$stmtEquipment->bindParam(':date_purchased', $datePurchased);
+
+$searchWildcard = "%$searchTerm%";
+$stmtEquipment->bindParam(':search_term', $searchWildcard);
+
+$stmtEquipment->execute();
+$equipment = $stmtEquipment->fetchAll(PDO::FETCH_ASSOC);
+
 
     $sqlRemarks = "SELECT remarks_id, remarks_name FROM remarks WHERE deleted_id = 0";
     $stmtRemarks = $conn->prepare($sqlRemarks);
@@ -818,6 +830,26 @@ function filterLogs() {
         row.style.display = match ? '' : 'none';
     });
 }
+
+document.querySelectorAll('#search_term, #equipment_type_filter').forEach(input => {
+    input.addEventListener('input', function () {
+        clearTimeout(debounceTimeout);
+        debounceTimeout = setTimeout(() => {
+            const form = document.querySelector('.filter-search-row');
+            const searchParams = new URLSearchParams(new FormData(form));
+            
+            fetch('equipment_maintenance.php?' + searchParams.toString())
+                .then(response => response.text())
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const tableBody = doc.querySelector('.body-table tbody');
+                    document.querySelector('.body-table tbody').innerHTML = tableBody.innerHTML;
+                });
+        }, 300); // Adjust debounce delay if necessary
+    });
+});
+
 
 </script>
 
