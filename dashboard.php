@@ -5,19 +5,16 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
     exit;
 }
 
-// Fetch user details
-$user = null; // Initialize $user to null
+$user = null; 
 if (isset($_SESSION['user_id'])) {
     $user_id = $_SESSION['user_id'];
     
 	include 'conn.php';
 
     try {
-        // Create connection
         $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        // Fetch user details
         $sql = "SELECT email, firstname, lastname, role FROM user WHERE admin_id = :user_id";
         $stmt = $conn->prepare($sql);
         $stmt->bindParam(':user_id', $user_id);
@@ -150,18 +147,17 @@ if (isset($_SESSION['user_id'])) {
       color: #721c24;
     }
 
-    /* ========== Custom Logout Modal Styles ========== */
     .logout-overlay {
-      display: none; /* hidden by default */
+      display: none; 
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0, 0, 0, 0.7); /* darker bg to emphasize the modal */
+      background: rgba(0, 0, 0, 0.7);
       justify-content: center;
       align-items: center;
-      z-index: 9999; /* ensure it appears on top of everything */
+      z-index: 9999;
     }
 
     .logout-modal {
@@ -187,32 +183,27 @@ if (isset($_SESSION['user_id'])) {
       gap: 1rem;
     }
 
-    /* Common styling for the modal’s buttons */
     .logout-btn {
       padding: 0.5rem 1.5rem;
-      border-radius: 8px;
+      border-radius: 24px;
       border: none;
       font-weight: bold;
       cursor: pointer;
       font-size: 0.9rem;
     }
 
-    /* Maroon button */
     .maroon-btn {
-      background-color: #800000; /* maroon */
+      background-color: #800000; 
       color: #fff;
     }
     .maroon-btn:hover {
       background-color: #a81519;
     }
 
-    /* Cancel button hover (if you want a subtle effect) */
     .logout-btn:hover:not(.maroon-btn) {
       background-color: #ddd;
     }
   </style>
-
-  <!-- Bootstrap CSS & Google Icons -->
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" />
   <link rel="stylesheet" href="styles.css">
@@ -220,7 +211,6 @@ if (isset($_SESSION['user_id'])) {
 
 <body class="dashboard">
 
-  <!-- Header-->
   <div class="header">
     <span id="current-page">Dashboard</span>
     <div class="user-info" id="user-info">
@@ -236,7 +226,6 @@ if (isset($_SESSION['user_id'])) {
     </div>
   </div>
 
-  <!-- Update Profile Modal -->
   <div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -292,9 +281,7 @@ if (isset($_SESSION['user_id'])) {
     </div>
   </div>
 
-  <!-- Main Container -->
   <div class="main-container">
-    <!-- Sidebar -->
     <div class="sidebar">
       <div class="sidebar-header">
         <img src="assets/images/usep-logo.png" alt="Logo" class="logo">
@@ -346,22 +333,18 @@ if (isset($_SESSION['user_id'])) {
       </ul>
     </div>
 
-    <!-- Main Content (iframe) -->
     <div class="main-content">
       <iframe id="content-frame" class="content-frame" src="dashboard-content.php"></iframe>
     </div>
   </div>
 
-  <!-- jQuery & Bootstrap JS -->
   <script src="https://code.jquery.com/jquery-3.6.4.min.js"
           integrity="sha384-UG8ao2jwOWB7/oDdObZc6ItJmwUkR/PfMyt9Qs5AwX7PsnYn1CRKCTWyncPTWvaS"
           crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
 
-  <!-- Main Script -->
   <script>
     document.addEventListener('DOMContentLoaded', function () {
-      // ========== Password Strength Function ==========
       function validatePassword(password) {
         const minLength = password.length >= 8;
         const hasUpperCase = /[A-Z]/.test(password);
@@ -397,32 +380,25 @@ if (isset($_SESSION['user_id'])) {
         strengthDiv.html(strengthHtml);
       });
 
-      // Handle navigation clicks
       document.querySelectorAll('.nav-link').forEach(link => {
         link.addEventListener('click', function (e) {
-          // Ignore links that are '#'
           if (this.getAttribute('href') !== '#') {
             e.preventDefault();
 
-            // Update active state
             document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
             this.classList.add('active');
 
-            // Update page title
             document.getElementById('current-page').textContent = this.dataset.title;
 
-            // Load content in iframe
             document.getElementById('content-frame').src = this.getAttribute('href');
           }
         });
       });
 
-      // Show modal on user-info click
       $('#user-info').on('click', function () {
         $('#editUserModal').modal('show');
       });
 
-      // Handle form submission
       $('#updateProfileForm').on('submit', function(e) {
         e.preventDefault();
 
@@ -434,7 +410,6 @@ if (isset($_SESSION['user_id'])) {
         const newPassword = $('#new_password').val().trim();
         const repeatPassword = $('#repeat_password').val().trim();
 
-        // Validate email and name fields
         if (!email) {
           alertDiv.removeClass('alert-success').addClass('alert-danger')
             .text('Email is required').show();
@@ -456,7 +431,6 @@ if (isset($_SESSION['user_id'])) {
           return;
         }
 
-        // If password fields are used, validate them
         if (currentPassword || newPassword || repeatPassword) {
           if (!currentPassword) {
             alertDiv.removeClass('alert-success').addClass('alert-danger')
@@ -474,7 +448,6 @@ if (isset($_SESSION['user_id'])) {
             return;
           }
 
-          // Validate password strength
           const validation = validatePassword(newPassword);
           if (!validation.valid) {
             let errorMessage = 'Password must have: ';
@@ -490,7 +463,6 @@ if (isset($_SESSION['user_id'])) {
           }
         }
 
-        // Submit form via AJAX
         $.ajax({
           url: 'profile.php',
           type: 'POST',
@@ -507,7 +479,6 @@ if (isset($_SESSION['user_id'])) {
                 $('#current_password, #new_password, #repeat_password').val('');
                 $('#password-strength').empty();
               }
-              // Update user info in header if changed
               if (response.user) {
                 $('.username').text(response.user.firstname + ' ' + response.user.lastname);
               }
@@ -516,7 +487,6 @@ if (isset($_SESSION['user_id'])) {
             }
             alertDiv.text(response.message).fadeIn();
 
-            // Hide alert after 3 seconds if success
             if (response.status === 'success') {
               setTimeout(function() {
                 alertDiv.fadeOut();
@@ -533,16 +503,13 @@ if (isset($_SESSION['user_id'])) {
         });
       });
 
-      // Email validation
       function isValidEmail(email) {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email);
       }
 
-      // Hide repeat password field on page load
       $('.form-group label[for="repeat_password"], .form-group #repeat_password').hide();
 
-      // Toggle repeat password field if user types a new password
       $('#new_password').on('input', function() {
         const password = $(this).val().trim();
         if (password.length > 0) {
@@ -555,14 +522,11 @@ if (isset($_SESSION['user_id'])) {
       });
     });
 
-    // ========== Custom Logout Function ==========
     function logout() {
-      // Show our custom logout overlay (instead of confirm())
       document.getElementById('logoutOverlay').style.display = 'flex';
     }
   </script>
 
-  <!-- Custom Logout Modal (centered, dark background) -->
   <div id="logoutOverlay" class="logout-overlay">
     <div class="logout-modal">
       <h2>Are you sure you want to logout?</h2>
@@ -573,19 +537,15 @@ if (isset($_SESSION['user_id'])) {
     </div>
   </div>
 
-  <!-- Script for handling the custom logout modal -->
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       const overlay = document.getElementById('logoutOverlay');
       const confirmBtn = document.getElementById('confirmLogout');
       const cancelBtn = document.getElementById('cancelLogout');
 
-      // Confirm logout
       confirmBtn.addEventListener('click', function () {
         window.location.href = 'logout.php';
       });
-
-      // Cancel logout
       cancelBtn.addEventListener('click', function () {
         overlay.style.display = 'none';
       });

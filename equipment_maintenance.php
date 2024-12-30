@@ -141,9 +141,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     .main-container {
         max-width: 1350px;
-        margin: 0 auto;
+        margin: 43px 40px 30px 30px !important;
         padding: 16px;
-        margin-right: 2.6rem !important;
     }
 
     .top-section {
@@ -170,16 +169,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     h3 {
-        font-size: 0.90em;
-        color: #343a40;
-        margin-bottom: 16px;
-        font-weight: bold;
-        border-bottom: 1px solid #ccc;
-        padding-bottom: 8px;
+        color: #3A3A3A;
+        font-weight: bold !important;
+        font-size: 13px !important;
+    }
+		
+	.section-divider1, .section-divider2 {
+        border: none;
+        height: 2px;
+		background-color: #ddd;
+        margin-top: 12px;
+		margin-bottom: 19px;
     }
 
     label {
         font-weight: normal !important;
+		font-size: 12px;
     }
 
     .log-maintenance-form .mb-3, .log-maintenance-form .mb-4 {
@@ -196,29 +201,41 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         color: #333;
     }
 
-    .form-control, .form-select, textarea, input[type="date"], input[type="text"], input[type="search"] {
-        font-size: 0.85em;
-        border-radius: 20px; 
-        border: 1px solid #ced4da;
-        padding: 6px;
-        width: 100%; /* Uniform width */
+    .form-control, textarea, input[type="date"], input[type="text"], input[type="search"] {
+        font-size: 12px;
+        width: 100%;
         box-sizing: border-box;
+		border: 2px solid #646464;
+        border-radius: 24px;
+        color: #646464;
     }
 
-    /* Make all dropdowns grey */
     .form-select {
         background-color: #e9ecef;
+		font-size: 12px;
+        width: 100%;
+        box-sizing: border-box;
+        border-radius: 24px;
+        color: #646464;
     }
 
     textarea {
         resize: vertical;
         flex: 1;
     }
+		
+	.btn-primary, .btn-secondary {
+        color: white;
+        font-weight: bold;
+        font-size: 12px;
+        border: none;
+        border-radius: 14px;
+        cursor: pointer;	
+		margin-bottom: 10px;
+	}
 
     .btn-primary {
-        background-color: maroon !important;
-        border: none !important;
-        border-radius: 20px;
+        background-color: #a81519 !important;
     }
 
     .btn-primary:hover {
@@ -227,8 +244,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     .btn-secondary {
         background-color: #6c757d !important;
-        border: none !important;
-        border-radius: 20px;
     }
 
     .btn-secondary:hover {
@@ -252,8 +267,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     .selected-equipment-label {
-        font-weight: normal;
-        font-size: 0.9em;
+        font-weight: normal !important;
+        font-size: 13px;
         color: #333;
         margin-bottom: 16px;
     }
@@ -285,18 +300,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         margin-top: 24px;
     }
 
-    .maintenance-logs-section h3 {
-        border-bottom: 1px solid #ccc;
-        padding-bottom: 8px;
-        margin-bottom: 16px;
-    }
-
     .equipment-list-title {
         padding: 8px 0;
-        margin-bottom: 8px;
-        margin-top: 8px;
+        margin-bottom: 2px;
+        margin-top: -10px;
         font-weight: bold;
-        font-size: 1em;
+        font-size: 13px;
     }
 
     .log-buttons {
@@ -304,74 +313,196 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         justify-content: end;
         gap: 8px;
     }
+		
+		
+		
+		
+	table-responsive {
+		border-radius: 10px;
+		overflow: hidden;
+		margin-top: -10px;
+	}
 
-    /* Table styling */
-    /* Set table-layout:fixed so that column widths align between header and body tables */
-    .header-table, .body-table {
-        width: 100%;
-        border-collapse: separate;
-        border-spacing: 0 10px;
-        table-layout: fixed;
-    }
+	table {
+		width: 100%;
+		border: none;
+		dispaly: block;
+	}
+		
+	tbody {
+		height: 210px;
+		display: inline-block;
+		width: 100%;
+		overflow: auto;
+		}
 
-    .header-table thead th {
-        border: none;
-        background: none;
-        font-weight: bold;
-        font-size: 0.85em;
-        text-align: left;
-        color: #343a40;
-        padding-bottom: 4px;
-    }
+	table th,
+	table td {
+		color: #646464;
+		padding: 10px;
+		text-align: left;
+		font-size: 12px;
+	}
+		
+	table th, .maintainance-thead th {
+		text-align:left ;
+		font-size :13px ;
+		font-weight: normal !important;
+		color:#646464 ;
+		border: none ;
+		display: inline-block;
+		margin-top: -5px;
+	}
 
-    .body-table tbody tr {
-        background: #fff;
-        font-size: 0.80em;
-        border-radius: 20px;
-        box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-    }
+	table tbody tr:nth-child(odd), table tbody tr:nth-child(even), .maintainance-table tr:nth-child(odd), .maintainance-table tr:nth-child(even) {
+		background-color: transparent;
+		border: 1px solid #DFDFDF;
+		border-radius: 14px; 
+		display: block;
+		width: 100%;
+		height: 36px;
+		margin-bottom: 5px !important;
+	}
+		
+	table td, .maintainance-table td {
+		color:#646464 ; 
+		font-weight :bold ;
+		border-collapse: separate; 
+		border-spacing: 10px 40px;
+		border: none; 
+		display: inline-block;
+		padding: 7px 10px 0px 10px;
+		background-color: transparent;
+	}
+		
+	tbody tr:hover {
+		background-color: #ebebeb !important;
+	}
+		
+	td:nth-child(1) {
+		width: 27%;
+	}
 
-    .body-table tbody tr td {
-        vertical-align: middle;
-        padding: 8px;
-    }
+	td:nth-child(2) {
+		width: 21%; 
+		margin-left: -5px;
+	}
 
-    .body-table tbody tr td:first-child {
-        border-top-left-radius: 8px;
-        border-bottom-left-radius: 8px;
-    }
+	td:nth-child(3) {
+		width: 19%;
+		margin-left: -5px;
+	}
 
-    .body-table tbody tr td:last-child {
-        border-top-right-radius: 8px;
-        border-bottom-right-radius: 8px;
-    }
+	td:nth-child(4) {
+		width: 19%;
+		margin-left: -5px;
+	}
+		
+	td:nth-child(5) {
+		width: 14%;
+		margin-left: -5px;
+	}
+		
+	th:nth-child(1) {
+		width: 27%; 
+	}
 
-    /* Scrollable area for the body only */
-    .scroll-container {
-        max-height: 200px; /* Adjust as needed */
-        overflow-y: auto;
-    }
+	th:nth-child(2) {
+		width: 21%; 
+	}
+
+	th:nth-child(3) {
+		width: 19%; 
+	}
+
+	th:nth-child(4) {
+		width: 19%;
+	}
+	th:nth-child(5) {
+		width: 14%;
+	}
+		
+	.maintainance-table tbody {
+		overflow-y: auto; 
+    	max-height: 200px;
+	}
+
+	.maintainance-thead tr {
+		border-color: transparent !important;
+	}
+	.maintainance-table tbody tr {
+		padding-top: 2px !important;
+	}
+		
+	.maintainance-table td:nth-child(1) {
+		width: 20%;
+	}
+	.maintainance-table td:nth-child(2) {
+		width: 12%; 
+		margin-left: -5px;
+	}
+
+	.maintainance-table td:nth-child(3) {
+		width: 16%;
+		margin-left: -5px;
+	}
+
+	.maintainance-table td:nth-child(4) {
+		width: 16%;
+		margin-left: -5px;
+	}
+		
+	.maintainance-table td:nth-child(5) {
+		width: 16%;
+		margin-left: -5px;
+	}
+	.maintainance-table td:nth-child(6) {
+		width: 16%;
+		margin-left: -5px;
+	}
+		
+	.maintainance-table th:nth-child(1) {
+		width: 20%; 
+	}
+
+	.maintainance-table th:nth-child(2) {
+		width: 12%; 
+		margin-left: -5px;
+	}
+
+	.maintainance-table th:nth-child(3) {
+		width: 16%; 
+		margin-left: -5px;
+	}
+
+	.maintainance-table th:nth-child(4) {
+		width: 16%;
+		margin-left: -7px;
+	}
+	.maintainance-table th:nth-child(5) {
+		width: 16%;
+		margin-left: -8px;
+	}
+	.maintainance-table th:nth-child(6) {
+		width: 16%;
+		margin-left: -8px;
+	}
 
     </style>
 </head>
 <body>
-    <!-- PHP variables assumed to be defined elsewhere:
-         $equipment_types, $selectedTypeId, $searchTerm,
-         $equipment, $remarks_options, $personnel_options, $maintenanceLogs -->
-
     <div class="main-container mt-4">
-        
         <div class="top-section">
-            <!-- Log Maintenance Form Card -->
             <div class="card-section left-card">
                 <h3>Log Maintenance</h3>
+				<hr class="section-divider1">
                 <form action="equipment_maintenance.php" method="POST" onsubmit="incrementJobOrder()" class="log-maintenance-form">
                     <div class="mb-3">
                         <label for="jo_number">Job Order:</label>
                         <input type="text" name="jo_number" id="jo_number" class="form-control" required readonly>
                     </div>
 
-                    <div id="selected_equipment" class="selected-equipment-label">Selected Equipments</div>
+                    <div id="selected_equipment" class="selected-equipment-label">Selected Equipments:</div>
 
                     <div class="mb-3">
                         <label for="actions_taken">Actions Taken:</label>
@@ -419,6 +550,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <!-- Right Panel: Select Registered Equipment -->
             <div class="card-section right-card">
                 <h3>Select Registered Equipment to Log for Maintenance</h3>
+				<hr class="section-divider1">
                 <form method="GET" action="equipment_maintenance.php" class="filter-search-row">
                     <div style="flex:1;">
                         <label for="equipment_type_filter" style="display:block; font-weight:bold; font-size:0.85em; margin-bottom:4px;">Filter by Equipment Type</label>
@@ -437,9 +569,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     </div>
                 </form>
 
-                <div class="equipment-list-title">List of Equipments</div>
-
-                <!-- Table with fixed header and scrollable body -->
+                <div class="equipment-list-title">List of Registered Equipments</div>
                 <table class="header-table">
                     <thead>
                         <tr>
@@ -451,39 +581,49 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         </tr>
                     </thead>
                 </table>
-                <div class="scroll-container">
-                    <table class="body-table">
-                        <tbody>
-                            <?php if (!empty($equipment)): ?>
-                                <?php foreach ($equipment as $item): ?>
-                                    <tr>
-                                        <td><?php echo htmlspecialchars($item['equip_name']); ?></td>
-                                        <td><?php echo htmlspecialchars($item['property_num']); ?></td>
-                                        <td><?php echo htmlspecialchars($item['status']); ?></td>
-                                        <td><?php echo htmlspecialchars($item['date_purchased']); ?></td>
-                                        <td>
-                                            <button type="button" class="btn-select" 
-                                                onclick="generateJobOrderAndUpdate('<?php echo htmlspecialchars($item['equipment_id']); ?>', '<?php echo htmlspecialchars($item['equip_name']); ?>')">
-                                                SELECT
-                                            </button>
-                                        </td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            <?php else: ?>
-                                <tr><td colspan="5">No equipment found.</td></tr>
-                            <?php endif; ?>
-                        </tbody>
-                    </table>
-                </div>
+                <table class="body-table">
+                	<tbody>
+						<?php 
+						$maxRows = 5; 
+						$totalEntries = !empty($equipment) ? count($equipment) : 0;
 
+						if ($totalEntries > 0): ?>
+							<?php foreach ($equipment as $item): ?>
+								<tr>
+									<td><?php echo htmlspecialchars($item['equip_name']); ?></td>
+									<td><?php echo htmlspecialchars($item['property_num']); ?></td>
+									<td><?php echo htmlspecialchars($item['status']); ?></td>
+									<td><?php echo htmlspecialchars($item['date_purchased']); ?></td>
+									<td>
+										<button type="button" class="btn-select" 
+												onclick="generateJobOrderAndUpdate('<?php echo htmlspecialchars($item['equipment_id']); ?>', '<?php echo htmlspecialchars($item['equip_name']); ?>')">
+											SELECT
+										</button>
+									</td>
+								</tr>
+							<?php endforeach; ?>
+
+							<?php for ($j = $totalEntries; $j < $maxRows; $j++): ?>
+								<tr class="empty-row"><td colspan="5"></td></tr>
+							<?php endfor; ?>
+
+						<?php else: ?>
+							<tr><td colspan="5">No equipment found.</td></tr>
+							<?php for ($j = 1; $j < $maxRows; $j++): ?>
+								<tr class="empty-row"><td colspan="5"></td></tr>
+							<?php endfor; ?>
+						<?php endif; ?>
+					</tbody>
+
+                </table>
             </div>
         </div>
 
         <!-- Maintenance Logs -->
         <div class="maintenance-logs-section">
         <h3>Maintenance Logs</h3>
-    <!-- Use the same filter-search-row class and styling as above -->
-    <form class="filter-search-row" onsubmit="return false;">
+		<hr class="section-divider2">
+	    <form class="filter-search-row" onsubmit="return false;">
         <div style="flex:1;">
             <label for="column_filter" style="display:block; font-weight:bold; font-size:0.85em; margin-bottom:4px;"></label>
             <select id="column_filter" class="form-select">
@@ -500,41 +640,53 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <label for="search_logs" style="display:block; font-weight:bold; font-size:0.85em; margin-bottom:4px;"></label>
             <input type="text" id="search_logs" class="form-control" placeholder="Search">
         </div>
-    </form>
+    	</form>
 
-    <table class="table header-table">
-        <thead>
-            <tr>
-                <th>Equipment Name</th>
-                <th>Maintenance Date</th>
-                <th>Job Order Number</th>
-                <th>Actions Taken</th>
-                <th>Remarks</th>
-                <th>Responsible Personnel</th>
-            </tr>
-        </thead>
-    </table>
-    <div class="scroll-container">
-        <table class="body-table">
-            <tbody>
-                <?php if (!empty($maintenanceLogs)): ?>
-                    <?php foreach ($maintenanceLogs as $log): ?>
-                        <tr>
-                            <td><?php echo htmlspecialchars($log['equipment_name']); ?></td>
-                            <td><?php echo htmlspecialchars($log['maintenance_date']); ?></td>
-                            <td><?php echo htmlspecialchars($log['jo_number']); ?></td>
-                            <td><?php echo htmlspecialchars($log['actions_taken']); ?></td>
-                            <td><?php echo htmlspecialchars($log['remarks']); ?></td>
-                            <td><?php echo htmlspecialchars($log['firstname'] . ' ' . $log['lastname']); ?></td>
-                        </tr>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <tr>
-                        <td colspan="6">No maintenance logs found.</td>
-                    </tr>
-                <?php endif; ?>
-            </tbody>
-        </table>
+		<table class="table maintainance-table">
+			<thead class="maintainance-thead">
+				<tr>
+					<th>Equipment Name</th>
+					<th>Maintenance Date</th>
+					<th>Job Order Number</th>
+					<th>Actions Taken</th>
+					<th>Remarks</th>
+					<th>Responsible Personnel</th>
+				</tr>
+			</thead>
+			<tbody>
+				<?php 
+				$maxRows = 5; // Set maximum rows to display for the initial view
+				$totalEntries = count($maintenanceLogs);
+
+				if ($totalEntries === 0): ?>
+					<tr><td colspan="6">No maintenance logs found.</td></tr>
+					<?php for ($j = 1; $j < $maxRows; $j++): ?>
+						<tr class="empty-row maintainance"><td colspan="6"></td></tr>
+					<?php endfor; 
+				else:
+					$rowCount = 0;
+					foreach ($maintenanceLogs as $log): 
+						// Display all logs without limiting to maxRows
+						?>
+						<tr>
+							<td><?php echo htmlspecialchars($log['equipment_name']); ?></td>
+							<td><?php echo htmlspecialchars($log['maintenance_date']); ?></td>
+							<td><?php echo htmlspecialchars($log['jo_number']); ?></td>
+							<td><?php echo htmlspecialchars($log['actions_taken']); ?></td>
+							<td><?php echo htmlspecialchars($log['remarks']); ?></td>
+							<td><?php echo htmlspecialchars($log['firstname'] . ' ' . $log['lastname']); ?></td>
+						</tr>
+						<?php 
+						$rowCount++; // Increment row count
+					endforeach;
+
+					// Add empty rows if total entries are less than maxRows
+					for ($j = $rowCount; $j < $maxRows; $j++): ?>
+						<tr class="empty-row"><td colspan="6"></td></tr>
+					<?php endfor; 
+				endif; ?>
+			</tbody>
+		</table>
     </div>
 </div>
 
