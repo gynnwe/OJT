@@ -71,7 +71,7 @@ try {
     $locations = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     // Fetch registered equipment with joined data
-    $sql = "SELECT e.*, et.equip_type_name, m.model_name, l.building, l.office, l.room 
+    $sql = "SELECT e.*, et.equip_type_name, et.equip_type_id, m.model_name, l.building, l.office, l.room 
             FROM equipment e 
             LEFT JOIN equipment_type et ON e.equip_type_id = et.equip_type_id 
             LEFT JOIN model m ON e.model_id = m.model_id 
@@ -359,38 +359,56 @@ try {
 		}
 		
 		td:nth-child(1) {
-			width: 30%;
+			width: 20%;
 		}
 
 		td:nth-child(2) {
-			width: 30%; 
+			width: 10%;
 			margin-left: -5px;
 		}
 
 		td:nth-child(3) {
-			width: 20%;
+			width: 25%;
 			margin-left: -5px;
 		}
 
 		td:nth-child(4) {
-			width: 20%;
+			width: 15%;
+			margin-left: -5px;
+		}
+
+		td:nth-child(5) {
+			width: 15%;
+			margin-left: -5px;
+		}
+
+		td:nth-child(6) {
+			width: 15%;
 			margin-left: -5px;
 		}
 		
 		.table th:nth-child(1) {
-			width: 30%; 
+			width: 20%;
 		}
 
 		th:nth-child(2) {
-			width: 30%; 
+			width: 10%;
 		}
 
 		th:nth-child(3) {
-			width: 20%; 
+			width: 25%;
 		}
 
 		th:nth-child(4) {
-			width: 20%;
+			width: 15%;
+		}
+
+		th:nth-child(5) {
+			width: 15%;
+		}
+
+		th:nth-child(6) {
+			width: 15%;
 		}
 		
 		.empty-row, .no-users {
@@ -470,6 +488,13 @@ try {
 			background-color: #f8d7da !important;
 			border-color: #f5c6cb !important;
 		}
+
+        .counter {
+            display: inline-block;
+            min-width: 20px;
+            color: #646464;
+            font-weight: bold;
+        }
     </style>
 </head>
 
@@ -582,7 +607,9 @@ try {
                     <thead>
                         <tr>
                             <th>Equipment Name</th>
-                            <th>Property Number</th>
+                            <th>ID</th>
+                            <th>Location</th>
+                            <th>Property No</th>
                             <th>Date</th>
                             <th>Actions</th>
                         </tr>
@@ -591,17 +618,20 @@ try {
 					<?php 
 					$maxRows = 9; 
 					$totalEntries = count($registered_equipments);
+					$counter = 1;
 
 					if ($totalEntries === 0): ?>
-						<tr class="no-equipment"><td colspan="4">No equipment registered</td></tr>
+						<tr class="no-equipment"><td colspan="6">No equipment registered</td></tr>
 						<?php 
 						for ($j = 1; $j < $maxRows; $j++): ?>
-							<tr class="empty-row"><td colspan="4"></td></tr>
+							<tr class="empty-row"><td colspan="6"></td></tr>
 						<?php endfor; 
 					else:
 						foreach ($registered_equipments as $equipment): ?>
-							<tr>
-								<td><?php echo htmlspecialchars($equipment['equip_name']); ?></td>
+							<tr data-equip-type="<?php echo htmlspecialchars($equipment['equip_type_id']); ?>">
+								<td><span class="counter"><?php echo $counter++; ?>.</span> <?php echo htmlspecialchars($equipment['equip_name']); ?></td>
+								<td><?php echo htmlspecialchars($equipment['equipment_id']); ?></td>
+								<td><?php echo htmlspecialchars($equipment['building'] . ' - ' . $equipment['office'] . ' - ' . $equipment['room']); ?></td>
 								<td><?php echo htmlspecialchars($equipment['property_num']); ?></td>
 								<td><?php echo htmlspecialchars($equipment['date_purchased']); ?></td>
 								<td>
@@ -618,7 +648,7 @@ try {
 							</tr>
 						<?php endforeach;
 						for ($j = $totalEntries; $j < $maxRows; $j++): ?>
-							<tr class="empty-row"><td colspan="4"></td></tr>
+							<tr class="empty-row"><td colspan="6"></td></tr>
 						<?php endfor;
 					endif; ?>
 				</tbody>
@@ -640,14 +670,31 @@ try {
                 const searchTerm = searchInput.value.toLowerCase();
                 const filterValue = filterSelect.value.toLowerCase();
                 const rows = Array.from(table.getElementsByTagName('tr')).slice(1);
+                let visibleCounter = 1;
 
                 rows.forEach(row => {
+                    if (row.classList.contains('empty-row')) {
+                        // Hide all empty rows when filtering
+                        row.style.display = (filterValue === 'all' && searchTerm === '') ? '' : 'none';
+                        return;
+                    }
+
                     if (row.cells.length <= 1) return;
                     const equipName = row.cells[0].textContent.toLowerCase();
                     
                     const matchesFilter = filterValue === 'all' || equipName.includes(filterValue);
                     const matchesSearch = searchTerm === '' || equipName.includes(searchTerm);
-                    row.style.display = (matchesFilter && matchesSearch) ? '' : 'none';
+                    const isVisible = matchesFilter && matchesSearch;
+                    row.style.display = isVisible ? '' : 'none';
+
+                    // Update counter for visible rows
+                    if (isVisible && !row.classList.contains('empty-row')) {
+                        const counterSpan = row.cells[0].querySelector('.counter');
+                        if (counterSpan) {
+                            counterSpan.textContent = visibleCounter + '.';
+                            visibleCounter++;
+                        }
+                    }
                 });
             }
 

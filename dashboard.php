@@ -39,7 +39,12 @@ if (isset($_SESSION['user_id'])) {
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <title>ICTEMMS</title>
   <style>
-    .modal-content {
+    body{
+		background-image: url('assets/images/dashboard_background.jpg');
+		background-size: cover;
+		background-position: center;
+	}
+	.modal-content {
       background-color: #ffffff;
       border-radius: 24px !important;
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1) !important;
