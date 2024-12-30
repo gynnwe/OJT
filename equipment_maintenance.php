@@ -375,7 +375,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                     <div class="mb-3">
                         <label for="actions_taken">Actions Taken:</label>
-                        <textarea name="actions_taken" id="actions_taken" class="form-control" required maxlength="40" placeholder="Required"></textarea>
+                        <textarea name="actions_taken" id="actions_taken" class="form-control" required maxlength="200" placeholder="Required"></textarea>
                     </div>
 
                     <div class="mb-3">
