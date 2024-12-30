@@ -104,7 +104,7 @@ $years = getYears($conn);
 
         .section-divider {
             border: none;
-            height: 1px;
+            height: 2px;
             background-color: #ddd;
             margin-top: 5px;
             margin-bottom: 10px;
