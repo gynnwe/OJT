@@ -365,35 +365,67 @@ $years = getYears($conn);
 			text-align: left !important;
 		}
 
-        .pagination .disabled .page-link {
-            pointer-events: none;
-            color: #ccc !important;
-            background-color: transparent !important;
-        }
+	.modal-fade {
+		  background-color: #ffffff;
+		  border-radius: 24px !important;
+		  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1) !important;
+		  border: none !important;
+		  padding: 15px;
+		  max-width: 100px;
+		  margin-left: 80px;
+		  margin-top: 80px;
+    }
 
-        .pagination {
-            justify-content: flex-end;
-            margin-top: -5.2px;
-        }
-
-        .pagination .page-link:hover {
-            color: #b86e63;
-        }
-
-        .page-link {
-            color: #474747;
-        }
-
-        ul.pagination {
-            margin-bottom: 0px;
-        }
-
-        .pagination .page-link {
-            border: none;
-            font-size: 0.8rem;
-            padding: 4px 8px;
-            color: #474747;
-        }
+    .modal-header {
+        border-bottom: none;
+        margin-top: -5px;
+    }
+	.modal-header h5 {
+      color: #3A3A3A;
+      font-weight: bold;
+          font-size: 13px;
+        padding-top: 4px;
+    }
+	.modal-body {
+		font-size: 14px;
+		color: #808080;
+		}
+		
+	.modal-footer button[type="submit"] {
+      width: 130px;
+      height: 33px;
+      background-color: #a81519;
+      color: white;
+      font-weight: bold;
+      font-size: 12px;
+      border: none;
+      border-radius: 24px;
+      margin-top: 10px;
+    }
+		
+	.modal-body button[type="submit"]:hover {
+      background-color: #E3595C !important;
+    }
+		
+	.modal-footer button[type="button"] {
+      width: 130px;
+      height: 33px;
+      background-color: #7C7C7C;
+      color: white;
+      font-weight: bold;
+      font-size: 12px;
+      border: none;
+      border-radius: 24px;
+      margin-top: 10px;
+    }
+		
+	.modal-body button[type="button"]:hover {
+      background-color: #555555 !important;
+    }
+		
+	.popup {
+		margin-top: 220px;
+	}
     </style>
 </head>
 
@@ -517,7 +549,7 @@ $years = getYears($conn);
                         <!-- Modal -->
                         <div class="modal fade" id="submitModal<?= $plan['id'] ?>" tabindex="-1" aria-labelledby="modalLabel<?= $plan['id'] ?>" aria-hidden="true">
                             <div class="modal-dialog">
-                                <div class="modal-content">
+                                <div class="modal-content popup">
                                     <div class="modal-header">
                                         <h5 class="modal-title" id="modalLabel<?= $plan['id'] ?>">Confirm Submission</h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -537,7 +569,7 @@ $years = getYears($conn);
                         </div>
                         <div class="modal fade" id="trashModal<?= $plan['id'] ?>" tabindex="-1" aria-labelledby="trashModalLabel<?= $plan['id'] ?>" aria-hidden="true">
                             <div class="modal-dialog">
-                                <div class="modal-content">
+                                <div class="modal-content popup">
                                     <div class="modal-header">
                                         <h5 class="modal-title" id="trashModalLabel<?= $plan['id'] ?>">Move to Trash</h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -559,7 +591,7 @@ $years = getYears($conn);
 
                         <div class="modal fade" id="recoverModal<?= $plan['id'] ?>" tabindex="-1" aria-labelledby="recoverModalLabel<?= $plan['id'] ?>" aria-hidden="true">
                             <div class="modal-dialog">
-                                <div class="modal-content">
+                                <div class="modal-content popup">
                                     <div class="modal-header">
                                         <h5 class="modal-title" id="recoverModalLabel<?= $plan['id'] ?>">Recover Maintenance Plan</h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -587,7 +619,6 @@ $years = getYears($conn);
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body" id="equipmentContainer<?= $plan['id'] ?>">
-                                            <!-- Year Dropdown -->
                                             <div class="mb-3">
                                                 <label for="year_maintained<?= $plan['id'] ?>" class="form-label">Select Year:</label>
                                                 <select name="year_maintained" id="year_maintained<?= $plan['id'] ?>" class="form-select" required>
@@ -654,12 +685,6 @@ $years = getYears($conn);
                                             <?php endforeach; ?>
                                         </div>
 
-                                        <!-- Add More Equipment Button -->
-                                        <!-- <div class="modal-body">
-                                            <button type="button" class="btn btn-success" id="addMoreEquipment<?= $plan['id'] ?>">
-                                                Add Another Equipment Type
-                                            </button>
-                                        </div> -->
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                             <input type="hidden" name="plan_id" value="<?= $plan['id'] ?>">

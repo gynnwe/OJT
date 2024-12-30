@@ -359,11 +359,11 @@ try {
 		}
 		
 		td:nth-child(1) {
-			width: 40%;
+			width: 30%;
 		}
 
 		td:nth-child(2) {
-			width: 20%; 
+			width: 30%; 
 			margin-left: -5px;
 		}
 
@@ -378,12 +378,11 @@ try {
 		}
 		
 		.table th:nth-child(1) {
-			width: 40%; 
+			width: 30%; 
 		}
 
 		th:nth-child(2) {
-			width: 20%; 
-			margin-left: -10px;
+			width: 30%; 
 		}
 
 		th:nth-child(3) {
