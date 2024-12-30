@@ -772,5 +772,54 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             });
         }
     </script>
+
+<script>
+let debounceTimeout;
+
+// Search Equipment List
+document.getElementById('search_term').addEventListener('input', function () {
+    clearTimeout(debounceTimeout);
+    debounceTimeout = setTimeout(() => {
+        this.form.submit();
+    }, 300); // Adjust the delay as needed (300ms works well)
+});
+
+// Search Maintenance Logs
+document.getElementById('search_logs').addEventListener('input', function () {
+    clearTimeout(debounceTimeout);
+    debounceTimeout = setTimeout(() => {
+        filterLogs();
+    }, 300); // Adjust the delay as needed (300ms works well)
+});
+
+document.getElementById('column_filter').addEventListener('change', filterLogs);
+
+function filterLogs() {
+    const searchValue = document.getElementById('search_logs').value.toLowerCase();
+    const columnIndex = document.getElementById('column_filter').value;
+    const rows = document.querySelectorAll('.maintenance-logs-section tbody tr');
+
+    rows.forEach(row => {
+        let match = false;
+
+        if (columnIndex === "all") {
+            row.querySelectorAll('td').forEach(cell => {
+                if (cell.textContent.toLowerCase().includes(searchValue)) {
+                    match = true;
+                }
+            });
+        } else {
+            const cell = row.querySelectorAll('td')[columnIndex];
+            if (cell && cell.textContent.toLowerCase().includes(searchValue)) {
+                match = true;
+            }
+        }
+
+        row.style.display = match ? '' : 'none';
+    });
+}
+
+</script>
+
 </body>
 </html>
