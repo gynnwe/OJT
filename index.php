@@ -1,3 +1,81 @@
+<?php
+session_start();
+
+include 'conn.php';
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $email = $_POST['email'];
+    $pass = $_POST['psw'];
+
+    try {
+        $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        $sql = "SELECT * FROM user WHERE email = :email";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':email', $email);
+        $stmt->execute();
+        
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($user && password_verify($pass, $user['password'])) {
+            $_SESSION['loggedin'] = true;
+            $_SESSION['user_id'] = $user['admin_id'];
+            $_SESSION['username'] = $user['username'];
+            $_SESSION['firstname'] = $user['firstname'];
+            $_SESSION['lastname'] = $user['lastname'];
+            $_SESSION['email'] = $user['email'];
+            $_SESSION['role'] = $user['role'];
+
+            header("location: dashboard.php");
+            exit;
+        } 
+
+        echo "<script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const emailField = document.getElementById('email');
+                const passwordField = document.getElementById('psw');
+                const form = document.querySelector('.form-container');
+                
+                emailField.classList.add('quake', 'error-field');
+                passwordField.classList.add('quake', 'error-field');
+                
+                const alertBox = document.createElement('div');
+                alertBox.textContent = 'Invalid credentials';
+                alertBox.style.position = 'absolute';
+                alertBox.style.bottom = '60px';
+                alertBox.style.left = '50%';
+                alertBox.style.transform = 'translateX(-50%)';
+                alertBox.style.backgroundColor = '#ff0000';
+                alertBox.style.color = '#fff';
+                alertBox.style.opacity = '0.5';
+                alertBox.style.padding = '5px 10px';
+                alertBox.style.fontSize = '8px';
+                alertBox.style.borderRadius = '5px';
+                alertBox.style.zIndex = '1000';
+                form.appendChild(alertBox);
+
+                setTimeout(() => {
+                    alertBox.style.transition = 'opacity 1s';
+                    alertBox.style.opacity = '0';
+                    setTimeout(() => alertBox.remove(), 1000);
+                }, 3000);
+
+                setTimeout(() => {
+                    emailField.classList.remove('quake', 'error-field');
+                    passwordField.classList.remove('quake', 'error-field');
+                }, 500);
+            });
+        </script>";
+
+    } catch(PDOException $e) {
+        echo "Error: " . $e->getMessage();
+    }
+
+    $conn = null;
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -23,6 +101,26 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
+        }
+
+        .quake {
+            animation: quake 0.05s ease-in-out 5;
+        }
+
+        .error-field {
+            border-color: red !important;
+        }
+
+        @keyframes quake {
+            0%, 100% {
+                transform: translateX(0);
+            }
+            20%, 60% {
+                transform: translateX(-5px);
+            }
+            40%, 80% {
+                transform: translateX(5px);
+            }
         }
 
         .main-container {
@@ -103,8 +201,8 @@
             margin-top: 5px;
             border: 2px solid #ccc;
             border-radius: 24px !important;
-			font-size: 14px !important;
-			background-color: white;
+            font-size: 14px !important;
+            background-color: white;
         }
 
         button {
@@ -130,12 +228,12 @@
 
         .password-container input[type="password"],
         .password-container input[type="text"] {
-			width: 100%;
+            width: 100%;
             padding: 10px;
             margin-top: 5px;
             border: 2px solid #ccc;
             border-radius: 24px !important;
-			font-size: 14px;
+            font-size: 14px;
         }
 
         .password-toggle {
@@ -145,8 +243,8 @@
             transform: translateY(-50%);
             cursor: pointer;
             font-size: 18px;
-			margin-top: 2px;
-			opacity: 50%;
+            margin-top: 2px;
+            opacity: 50%;
         }
 
         .sign-in-title {
@@ -170,7 +268,7 @@
             </div>
         </div>
         <div class="sign-in-form">
-            <form action="login_process.php" method="POST" class="form-container">
+            <form action="" method="POST" class="form-container">
                 <div class="sign-in-title">Sign In</div>
                 
                 <label for="email">Email Address</label>
@@ -192,18 +290,10 @@
         const passwordField = document.getElementById('psw');
 
         togglePassword.addEventListener('click', function() {
-            // Toggle the type attribute of the password field
             const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
             passwordField.setAttribute('type', type);
-
-            // Toggle the eye icon classes between bi-eye and bi-eye-slash
-            if (type === 'password') {
-                this.classList.remove('bi-eye-slash');
-                this.classList.add('bi-eye');
-            } else {
-                this.classList.remove('bi-eye');
-                this.classList.add('bi-eye-slash');
-            }
+            this.classList.toggle('bi-eye');
+            this.classList.toggle('bi-eye-slash');
         });
     </script>
 </body>

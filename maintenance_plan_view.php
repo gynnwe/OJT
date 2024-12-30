@@ -64,6 +64,112 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Maintenance Plan View</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: transparent;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            padding: 20px;
+            background: #fff;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+        }
+
+        h1, h4, h5 {
+            color: #343a40;
+        }
+
+        .btn {
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .btn-primary {
+            background-color: #800000; /* Maroon color */
+            border-color: #800000;
+        }
+
+        .btn-success {
+            background-color: #006400; /* Dark Green color */
+            border-color: #006400;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .table {
+            border: 1px solid #dee2e6;
+            border-radius: 12px; /* Rounded corners for the table */
+            overflow: hidden;
+        }
+
+        .table-bordered th, .table-bordered td {
+            border: 1px solid #dee2e6;
+            vertical-align: middle;
+            text-align: center;
+            padding: 12px;
+        }
+
+        .table-light {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+
+        .table tbody tr td:first-child {
+            font-weight: bold;
+            color: #495057;
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: #e9ecef;
+        }
+
+        input[type="search"], select {
+            border-radius: 25px;
+            border: 1px solid #ced4da;
+            padding: 5px 15px;
+            font-size: 16px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        input[type="search"]:focus, select:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 4px rgba(0, 123, 255, 0.4);
+        }
+
+        button.btn-action {
+            border: none;
+            padding: 8px 20px;
+            font-size: 14px;
+            border-radius: 20px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        button.btn-action.selected {
+            background-color: #dc3545;
+            color: white;
+            cursor: not-allowed;
+        }
+
+        button.btn-action:hover:not(.selected) {
+            background-color: #ffc107;
+            color: white;
+            transition: background-color 0.3s ease;
+        }
+    </style>
 </head>
 <body>
 <div class="container mt-5">
@@ -126,7 +232,6 @@ try {
             </div>
         <?php endforeach; ?>
 
-        <!-- Button to View and Print PDF -->
         <form action="generate_pdf.php" method="POST" target="_blank" style="display: inline;">
     <input type="hidden" name="plan_id" value="<?= htmlspecialchars($maintenancePlan['id']) ?>">
     <button type="submit" class="btn btn-primary mt-3">Print PDF</button>
@@ -136,7 +241,6 @@ try {
     <input type="hidden" name="plan_id" value="<?= htmlspecialchars($maintenancePlan['id']) ?>">
     <button type="submit" class="btn btn-success mt-3">Export to Excel</button>
 </form>
-
 
     <?php else: ?>
         <p>No maintenance plan found for the provided ID.</p>
