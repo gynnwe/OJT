@@ -230,6 +230,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         border-radius: 24px;
         color: #646464;
     }
+		
+	#equipment_type_filter {
+		width: 240px !important;
+	}
+		
+	.search-form-control {
+		width: 240px !important;
+	}
 
     textarea {
         resize: vertical;
@@ -581,7 +589,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     </div>
                     
                     <div style="flex:1;">
-                        <input type="text" id="search_term" name="search_term" class="form-control" placeholder="Search" value="<?php echo htmlspecialchars($searchTerm); ?>">
+                        <input type="text" id="search_term" name="search_term" class="form-control search-form-control" placeholder="Search" value="<?php echo htmlspecialchars($searchTerm); ?>">
                     </div>
                 </form>
 
@@ -662,6 +670,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 			<thead class="maintainance-thead">
 				<tr>
 					<th>Equipment Name</th>
+
 					<th>Maintenance Date</th>
 					<th>Job Order Number</th>
 					<th>Actions Taken</th>
@@ -709,7 +718,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <script>
         function generateJobOrderAndUpdate(equipmentId, equipmentName) {
             const selectedEquipmentDiv = document.getElementById('selected_equipment');
-            selectedEquipmentDiv.innerHTML = 'Selected Equipments <span class="selected-equipment-item">' + equipmentName + ' (ID: ' + equipmentId + ')</span>';
+            selectedEquipmentDiv.innerHTML = 'Selected Equipments: <span class="selected-equipment-item">' + equipmentName + ' (ID: ' + equipmentId + ')</span>';
 
             const date = new Date();
             const year = date.getFullYear();
