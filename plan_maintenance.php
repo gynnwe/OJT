@@ -139,6 +139,21 @@ $years = getYears($conn);
             font-weight: bold;
             color: #969696;
         }
+		
+		.text-muted {
+			padding-left: 12px;
+			font-weight: bold;
+			color: gray !important;
+		}
+		
+		.mb-text-muted {
+			margin-top: 10px;
+		}
+		
+		.serviceable-count {
+			color: maroon !important;
+			font-size: 14px;
+		}
 
         h3 {
             font-size: 13px !important;
@@ -755,7 +770,7 @@ $years = getYears($conn);
                                     </option>
                                 <?php endforeach; ?>
                             </select>
-                            <div class="mb-2">
+                            <div class="mb-2 mb-text-muted">
                                 <small class="text-muted">Total Serviceable Equipment: <span class="serviceable-count">0</span></small>
                             </div>
                         </div>

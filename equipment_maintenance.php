@@ -421,17 +421,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 	th:nth-child(2) {
 		width: 21%; 
+		margin-left: -5px;
 	}
 
 	th:nth-child(3) {
 		width: 19%; 
+		margin-left: -4px;
 	}
 
 	th:nth-child(4) {
 		width: 19%;
+		margin-left: -4px;
 	}
 	th:nth-child(5) {
 		width: 14%;
+		margin-left: -5px;
 	}
 		
 	.maintainance-table tbody {
