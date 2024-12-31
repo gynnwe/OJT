@@ -193,7 +193,7 @@ try {
 
         .register-card {
             flex: 1;
-            max-width: 400px;
+            max-width: 290px;
         }
 
         .list-card {
@@ -359,21 +359,21 @@ try {
 		}
 		
 		td:nth-child(1) {
-			width: 20%;
+			width: 17%;
 		}
 
 		td:nth-child(2) {
-			width: 10%;
+			width: 5%;
 			margin-left: -5px;
 		}
 
 		td:nth-child(3) {
-			width: 25%;
+			width: 28%;
 			margin-left: -5px;
 		}
 
 		td:nth-child(4) {
-			width: 15%;
+			width: 22%;
 			margin-left: -5px;
 		}
 
@@ -383,24 +383,27 @@ try {
 		}
 
 		td:nth-child(6) {
-			width: 15%;
+			width: 13%;
 			margin-left: -5px;
 		}
 		
 		.table th:nth-child(1) {
-			width: 20%;
+			width: 18%;
 		}
 
 		th:nth-child(2) {
-			width: 10%;
+			width: 5%;
+			margin-left: -8px;
 		}
 
 		th:nth-child(3) {
-			width: 25%;
+			width: 28%;
+			margin-left: -5px;
 		}
 
 		th:nth-child(4) {
-			width: 15%;
+			width: 22%;
+			margin-left: -2px;
 		}
 
 		th:nth-child(5) {
@@ -408,7 +411,7 @@ try {
 		}
 
 		th:nth-child(6) {
-			width: 15%;
+			width: 13%;
 		}
 		
 		.empty-row, .no-users {
