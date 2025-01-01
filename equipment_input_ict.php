@@ -71,10 +71,11 @@ try {
     $locations = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     // Fetch registered equipment with joined data
-    $sql = "SELECT e.*, et.equip_type_name, et.equip_type_id, m.model_name, l.building, l.office, l.room 
+    $sql = "SELECT e.equipment_id, e.equip_name, e.property_num, e.date_purchased, 
+                   e.equip_type_id, et.equip_type_name,
+                   l.building, l.office, l.room 
             FROM equipment e 
-            LEFT JOIN equipment_type et ON e.equip_type_id = et.equip_type_id 
-            LEFT JOIN model m ON e.model_id = m.model_id 
+            INNER JOIN equipment_type et ON e.equip_type_id = et.equip_type_id 
             LEFT JOIN location l ON e.location_id = l.location_id 
             WHERE e.deleted_id = 0 
             ORDER BY e.equipment_id ASC";
@@ -337,7 +338,7 @@ try {
 			background-color: white !important;
 			border: 1px solid #DFDFDF;
 			border-radius: 14px; 
-			display: block;
+			display: block !important;
 			width: 100%;
 			margin-top: 3.5px;
 			height: 32.5px;
@@ -359,7 +360,7 @@ try {
 		}
 		
 		td:nth-child(1) {
-			width: 17%;
+			width: 23%;
 		}
 
 		td:nth-child(2) {
@@ -368,7 +369,7 @@ try {
 		}
 
 		td:nth-child(3) {
-			width: 28%;
+			width: 21%;
 			margin-left: -5px;
 		}
 
@@ -388,7 +389,7 @@ try {
 		}
 		
 		.table th:nth-child(1) {
-			width: 18%;
+			width: 24%;
 		}
 
 		th:nth-child(2) {
@@ -397,7 +398,7 @@ try {
 		}
 
 		th:nth-child(3) {
-			width: 28%;
+			width: 22%;
 			margin-left: -5px;
 		}
 
@@ -416,15 +417,6 @@ try {
 		
 		.empty-row, .no-users {
 			height: 40px;
-		}
-		
-		.table tbody tr:nth-child(odd), .table tbody tr:nth-child(even) {
-			background-color: white;
-			border: 1px solid #DFDFDF;
-			border-radius: 14px; 
-			display: block;
-			width: 100%;
-			margin-top: 5px;
 		}
 		
 		.table td img {
@@ -596,14 +588,17 @@ try {
             <hr class="section-divider1">
             <div class="search-bar">
                 <select class="form-select" id="filterBy">
-                    <option value="all">All</option>
+                    <option value="all">All Equipment Types</option>
                     <?php foreach ($equipment_types as $type): ?>
-                        <option value="<?php echo htmlspecialchars($type['equip_type_name']); ?>">
-                            <?php echo htmlspecialchars($type['equip_type_name']); ?>
+                        <option value="<?php echo htmlspecialchars($type['equip_type_id']); ?>">
+                            <?php 
+                            error_log("Filter Option - ID: {$type['equip_type_id']}, Name: {$type['equip_type_name']}");
+                            echo htmlspecialchars($type['equip_type_name']); 
+                            ?>
                         </option>
                     <?php endforeach; ?>
                 </select>
-                <input type="text" class="form-control" placeholder="Search...">
+                <input type="text" class="form-control" id="searchInput" placeholder="Search equipment...">
             </div>
             <div class="table-responsive">
                 <table class="table table-striped">
@@ -618,43 +613,43 @@ try {
                         </tr>
                     </thead>
                     <tbody>
-					<?php 
-					$maxRows = 9; 
-					$totalEntries = count($registered_equipments);
-					$counter = 1;
+                    <?php 
+                    $maxRows = 9; 
+                    $totalEntries = count($registered_equipments);
+                    $counter = 1;
 
-					if ($totalEntries === 0): ?>
-						<tr class="no-equipment"><td colspan="6">No equipment registered</td></tr>
-						<?php 
-						for ($j = 1; $j < $maxRows; $j++): ?>
-							<tr class="empty-row"><td colspan="6"></td></tr>
-						<?php endfor; 
-					else:
-						foreach ($registered_equipments as $equipment): ?>
-							<tr data-equip-type="<?php echo htmlspecialchars($equipment['equip_type_id']); ?>">
-								<td><span class="counter"><?php echo $counter++; ?>.</span> <?php echo htmlspecialchars($equipment['equip_name']); ?></td>
-								<td><?php echo htmlspecialchars($equipment['equipment_id']); ?></td>
-								<td><?php echo htmlspecialchars($equipment['building'] . ' - ' . $equipment['office'] . ' - ' . $equipment['room']); ?></td>
-								<td><?php echo htmlspecialchars($equipment['property_num']); ?></td>
-								<td><?php echo htmlspecialchars($equipment['date_purchased']); ?></td>
-								<td>
-									<form method="POST" style="display: inline;">
-										<input type="hidden" name="equipment_id" value="<?php echo $equipment['equipment_id']; ?>">
-										<a href="?edit_id=<?php echo $equipment['equipment_id']; ?>" class="action-btn">
-											<img src="edit.png" alt="Edit" title="Edit">
-										</a>
-										<button type="submit" name="delete_equipment" class="action-btn" onclick="return confirm('Are you sure you want to delete this equipment?')">
-											<img src="delete.png" alt="Delete" title="Delete">
-										</button>
-									</form>
-								</td>
-							</tr>
-						<?php endforeach;
-						for ($j = $totalEntries; $j < $maxRows; $j++): ?>
-							<tr class="empty-row"><td colspan="6"></td></tr>
-						<?php endfor;
-					endif; ?>
-				</tbody>
+                    if ($totalEntries === 0): ?>
+                        <tr class="no-equipment"><td colspan="6">No equipment registered</td></tr>
+                        <?php 
+                        for ($j = 1; $j < $maxRows; $j++): ?>
+                            <tr class="empty-row"><td colspan="6"></td></tr>
+                        <?php endfor; 
+                    else:
+                        foreach ($registered_equipments as $equipment): ?>
+                            <tr class="equipment-type-<?php echo htmlspecialchars($equipment['equip_type_id']); ?>">
+                                <td><span class="counter"><?php echo $counter++; ?>.</span> <?php echo htmlspecialchars($equipment['equip_name']); ?></td>
+                                <td><?php echo htmlspecialchars($equipment['equipment_id']); ?></td>
+                                <td><?php echo htmlspecialchars($equipment['building'] . ' - ' . $equipment['office'] . ' - ' . $equipment['room']); ?></td>
+                                <td><?php echo htmlspecialchars($equipment['property_num']); ?></td>
+                                <td><?php echo htmlspecialchars($equipment['date_purchased']); ?></td>
+                                <td>
+                                    <form method="POST" style="display: inline;">
+                                        <input type="hidden" name="equipment_id" value="<?php echo $equipment['equipment_id']; ?>">
+                                        <a href="?edit_id=<?php echo $equipment['equipment_id']; ?>" class="action-btn">
+                                            <img src="edit.png" alt="Edit" title="Edit">
+                                        </a>
+                                        <button type="submit" name="delete_equipment" class="action-btn" onclick="return confirm('Are you sure you want to delete this equipment?')">
+                                            <img src="delete.png" alt="Delete" title="Delete">
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        <?php endforeach;
+                        for ($j = $totalEntries; $j < $maxRows; $j++): ?>
+                            <tr class="empty-row"><td colspan="6"></td></tr>
+                        <?php endfor;
+                    endif; ?>
+                    </tbody>
                 </table>
             </div>
         </div>
@@ -665,45 +660,79 @@ try {
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const searchInput = document.querySelector('.search-bar input');
+            const searchInput = document.querySelector('#searchInput');
             const filterSelect = document.getElementById('filterBy');
-            const table = document.querySelector('.table');
-
+            const tbody = document.querySelector('.table tbody');
+            
+            // Store the original table content
+            const originalRows = Array.from(tbody.getElementsByTagName('tr'))
+                .filter(row => !row.classList.contains('empty-row'))
+                .map(row => {
+                    const type = Array.from(row.classList)
+                        .find(cls => cls.startsWith('equipment-type-'))?.split('-')[2];
+                    
+                    const searchText = [
+                        row.cells[0]?.textContent || '',
+                        row.cells[1]?.textContent || '',
+                        row.cells[2]?.textContent || '',
+                        row.cells[3]?.textContent || ''
+                    ].join(' ').toLowerCase();
+                    
+                    return {
+                        element: row.cloneNode(true),
+                        type: type,
+                        searchText: searchText
+                    };
+                });
+            
             function filterTable() {
                 const searchTerm = searchInput.value.toLowerCase();
-                const filterValue = filterSelect.value.toLowerCase();
-                const rows = Array.from(table.getElementsByTagName('tr')).slice(1);
-                let visibleCounter = 1;
-
-                rows.forEach(row => {
-                    if (row.classList.contains('empty-row')) {
-                        // Hide all empty rows when filtering
-                        row.style.display = (filterValue === 'all' && searchTerm === '') ? '' : 'none';
-                        return;
-                    }
-
-                    if (row.cells.length <= 1) return;
-                    const equipName = row.cells[0].textContent.toLowerCase();
-                    
-                    const matchesFilter = filterValue === 'all' || equipName.includes(filterValue);
-                    const matchesSearch = searchTerm === '' || equipName.includes(searchTerm);
-                    const isVisible = matchesFilter && matchesSearch;
-                    row.style.display = isVisible ? '' : 'none';
-
-                    // Update counter for visible rows
-                    if (isVisible && !row.classList.contains('empty-row')) {
-                        const counterSpan = row.cells[0].querySelector('.counter');
-                        if (counterSpan) {
-                            counterSpan.textContent = visibleCounter + '.';
-                            visibleCounter++;
-                        }
-                    }
+                const filterValue = filterSelect.value;
+                
+                // Clear current table content
+                tbody.innerHTML = '';
+                let counter = 1;
+                
+                // Add filtered rows
+                const filteredRows = originalRows.filter(({type, searchText}) => {
+                    const matchesFilter = filterValue === 'all' || type === filterValue;
+                    const matchesSearch = searchTerm === '' || searchText.includes(searchTerm);
+                    return matchesFilter && matchesSearch;
                 });
-            }
 
+                if (filteredRows.length === 0) {
+                    const noDataRow = document.createElement('tr');
+                    noDataRow.className = 'no-equipment';
+                    noDataRow.innerHTML = '<td colspan="6" style="text-align: center;">No equipment registered</td>';
+                    tbody.appendChild(noDataRow);
+                } else {
+                    filteredRows.forEach(({element}) => {
+                        const newRow = element.cloneNode(true);
+                        const counterSpan = newRow.cells[0].querySelector('.counter');
+                        if (counterSpan) {
+                            counterSpan.textContent = counter + '.';
+                        }
+                        tbody.appendChild(newRow);
+                        counter++;
+                    });
+                }
+                
+                // Add empty rows while preserving their original styling
+                const visibleRows = tbody.getElementsByTagName('tr').length;
+                const maxRows = 9;
+                
+                for (let i = visibleRows; i < maxRows; i++) {
+                    const emptyRow = document.createElement('tr');
+                    emptyRow.className = 'empty-row';
+                    emptyRow.innerHTML = '<td colspan="6"></td>';
+                    tbody.appendChild(emptyRow);
+                }
+            }
+            
             if (searchInput && filterSelect) {
                 searchInput.addEventListener('input', filterTable);
                 filterSelect.addEventListener('change', filterTable);
+                filterTable();
             }
         });
 
