@@ -23,10 +23,15 @@ try {
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
     // Count total records for pagination
-    $count_sql = "SELECT COUNT(*) as total FROM ict_maintenance_logs";
-    $count_stmt = $conn->query($count_sql);
-    $total_records = $count_stmt->fetch(PDO::FETCH_ASSOC)['total'];
-    $total_pages = ceil($total_records / $records_per_page);
+    $count_sql = "
+    SELECT COUNT(DISTINCT e.property_num) as total 
+    FROM equipment e
+    LEFT JOIN ict_maintenance_logs ml ON ml.equipment_id = e.equipment_id
+";
+$count_stmt = $conn->query($count_sql);
+$total_records = $count_stmt->fetch(PDO::FETCH_ASSOC)['total'];
+$total_pages = ceil($total_records / $records_per_page);
+
 
     // Count total non-serviceable equipment
     $ns_count_sql = "SELECT COUNT(*) as total FROM equipment WHERE status = 'Non-serviceable'";
@@ -36,31 +41,35 @@ try {
 
     // Fetch the latest maintenance logs with pagination
     $sql = "
-        SELECT 
-            e.equip_name AS equipment_name,
-            e.property_num,
-            ml.maintenance_date AS last_maintenance_date,
-            ml.actions_taken,
-            r.remarks_name AS latest_remarks,
-            p.firstname,
-            p.lastname
-        FROM 
-            ict_maintenance_logs ml
-        LEFT JOIN 
-            equipment e ON ml.equipment_id = e.equipment_id
-        LEFT JOIN 
-            remarks r ON ml.remarks_id = r.remarks_id
-        LEFT JOIN 
-            personnel p ON ml.personnel_id = p.personnel_id
-        WHERE 
-            (ml.equipment_id, ml.maintenance_date) IN (
-                SELECT equipment_id, MAX(maintenance_date)
-                FROM ict_maintenance_logs
-                GROUP BY equipment_id
-            )
-        ORDER BY e.property_num, ml.maintenance_date DESC
-        LIMIT :offset, :records_per_page
-    ";
+    SELECT 
+        e.equip_name AS equipment_name,
+        e.property_num,
+        ml.maintenance_date AS last_maintenance_date,
+        r.remarks_name AS latest_remarks,
+        p.firstname,
+        p.lastname
+    FROM 
+        equipment e
+    LEFT JOIN 
+        ict_maintenance_logs ml ON e.equipment_id = ml.equipment_id
+    LEFT JOIN 
+        remarks r ON ml.remarks_id = r.remarks_id
+    LEFT JOIN 
+        personnel p ON ml.personnel_id = p.personnel_id
+    WHERE 
+        ml.maintenance_date = (
+            SELECT MAX(sub_ml.maintenance_date)
+            FROM ict_maintenance_logs sub_ml
+            WHERE sub_ml.equipment_id = ml.equipment_id
+        )
+    GROUP BY 
+        e.property_num
+    ORDER BY 
+        e.property_num ASC
+    LIMIT :offset, :records_per_page
+";
+
+
     
     $stmt = $conn->prepare($sql);
     $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
