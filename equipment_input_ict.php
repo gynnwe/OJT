@@ -1,4 +1,5 @@
 <?php
+
 session_start();
 if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
     header("location: index.php");
@@ -73,7 +74,8 @@ try {
     // Fetch registered equipment with joined data
     $sql = "SELECT e.equipment_id, e.equip_name, e.property_num, e.date_purchased, 
                    e.equip_type_id, et.equip_type_name,
-                   l.building, l.office, l.room 
+                   l.building, l.office, l.room,
+                   e.status, e.deleted_id 
             FROM equipment e 
             INNER JOIN equipment_type et ON e.equip_type_id = et.equip_type_id 
             LEFT JOIN location l ON e.location_id = l.location_id 
@@ -360,11 +362,11 @@ try {
 		}
 		
 		td:nth-child(1) {
-			width: 23%;
+			width: 26%;
 		}
 
 		td:nth-child(2) {
-			width: 5%;
+			width: 22%;
 			margin-left: -5px;
 		}
 
@@ -374,7 +376,7 @@ try {
 		}
 
 		td:nth-child(4) {
-			width: 22%;
+			width: 15%;
 			margin-left: -5px;
 		}
 
@@ -389,11 +391,11 @@ try {
 		}
 		
 		.table th:nth-child(1) {
-			width: 24%;
+			width: 27%;
 		}
 
 		th:nth-child(2) {
-			width: 5%;
+			width: 22%;
 			margin-left: -8px;
 		}
 
@@ -403,7 +405,7 @@ try {
 		}
 
 		th:nth-child(4) {
-			width: 22%;
+			width: 15%;
 			margin-left: -2px;
 		}
 
@@ -488,6 +490,16 @@ try {
             display: inline-block;
             min-width: 20px;
             color: #646464;
+            font-weight: bold;
+        }
+
+        .equipment-count {
+            color: #646464;
+            font-size: 14px;
+            padding-top: 5px;
+        }
+
+        #equipmentCounter{
             font-weight: bold;
         }
     </style>
@@ -599,13 +611,15 @@ try {
                     <?php endforeach; ?>
                 </select>
                 <input type="text" class="form-control" id="searchInput" placeholder="Search equipment...">
+                <div class="equipment-count">
+                    Equipment Quantity:  <span id="equipmentCounter">0</span>
+                </div>
             </div>
             <div class="table-responsive">
                 <table class="table table-striped">
                     <thead>
                         <tr>
                             <th>Equipment Name</th>
-                            <th>ID</th>
                             <th>Location</th>
                             <th>Property No</th>
                             <th>Date</th>
@@ -619,16 +633,16 @@ try {
                     $counter = 1;
 
                     if ($totalEntries === 0): ?>
-                        <tr class="no-equipment"><td colspan="6">No equipment registered</td></tr>
+                        <tr class="no-equipment"><td colspan="5">No equipment registered</td></tr>
                         <?php 
                         for ($j = 1; $j < $maxRows; $j++): ?>
-                            <tr class="empty-row"><td colspan="6"></td></tr>
+                            <tr class="empty-row"><td colspan="5"></td></tr>
                         <?php endfor; 
                     else:
                         foreach ($registered_equipments as $equipment): ?>
-                            <tr class="equipment-type-<?php echo htmlspecialchars($equipment['equip_type_id']); ?>">
+                            <tr class="equipment-type-<?php echo htmlspecialchars($equipment['equip_type_id']); ?>" 
+                                data-status="<?php echo htmlspecialchars($equipment['status']); ?>">
                                 <td><span class="counter"><?php echo $counter++; ?>.</span> <?php echo htmlspecialchars($equipment['equip_name']); ?></td>
-                                <td><?php echo htmlspecialchars($equipment['equipment_id']); ?></td>
                                 <td><?php echo htmlspecialchars($equipment['building'] . ' - ' . $equipment['office'] . ' - ' . $equipment['room']); ?></td>
                                 <td><?php echo htmlspecialchars($equipment['property_num']); ?></td>
                                 <td><?php echo htmlspecialchars($equipment['date_purchased']); ?></td>
@@ -646,7 +660,7 @@ try {
                             </tr>
                         <?php endforeach;
                         for ($j = $totalEntries; $j < $maxRows; $j++): ?>
-                            <tr class="empty-row"><td colspan="6"></td></tr>
+                            <tr class="empty-row"><td colspan="5"></td></tr>
                         <?php endfor;
                     endif; ?>
                     </tbody>
@@ -666,16 +680,16 @@ try {
             
             // Store the original table content
             const originalRows = Array.from(tbody.getElementsByTagName('tr'))
-                .filter(row => !row.classList.contains('empty-row'))
+                .filter(row => !row.classList.contains('empty-row') && !row.classList.contains('no-equipment'))
                 .map(row => {
                     const type = Array.from(row.classList)
                         .find(cls => cls.startsWith('equipment-type-'))?.split('-')[2];
                     
+                    // Only include relevant columns in search text (Equipment Name, Location, Property No)
                     const searchText = [
-                        row.cells[0]?.textContent || '',
-                        row.cells[1]?.textContent || '',
-                        row.cells[2]?.textContent || '',
-                        row.cells[3]?.textContent || ''
+                        row.cells[0]?.textContent.replace(/^\d+\.\s*/, '') || '', // Equipment Name (removing the counter)
+                        row.cells[1]?.textContent || '', // Location
+                        row.cells[2]?.textContent || ''  // Property No
                     ].join(' ').toLowerCase();
                     
                     return {
@@ -700,12 +714,16 @@ try {
                     return matchesFilter && matchesSearch;
                 });
 
-                if (filteredRows.length === 0) {
+                // Update the equipment counter
+                const counterElement = document.getElementById('equipmentCounter');
+                if (originalRows.length === 0) {
+                    counterElement.textContent = '0';
                     const noDataRow = document.createElement('tr');
                     noDataRow.className = 'no-equipment';
-                    noDataRow.innerHTML = '<td colspan="6" style="text-align: center;">No equipment registered</td>';
+                    noDataRow.innerHTML = '<td colspan="5" style="text-align: center;">No equipment registered</td>';
                     tbody.appendChild(noDataRow);
                 } else {
+                    counterElement.textContent = filteredRows.length;
                     filteredRows.forEach(({element}) => {
                         const newRow = element.cloneNode(true);
                         const counterSpan = newRow.cells[0].querySelector('.counter');
@@ -724,7 +742,7 @@ try {
                 for (let i = visibleRows; i < maxRows; i++) {
                     const emptyRow = document.createElement('tr');
                     emptyRow.className = 'empty-row';
-                    emptyRow.innerHTML = '<td colspan="6"></td>';
+                    emptyRow.innerHTML = '<td colspan="5"></td>';
                     tbody.appendChild(emptyRow);
                 }
             }
