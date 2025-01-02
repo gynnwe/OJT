@@ -362,16 +362,16 @@ try {
 		}
 		
 		td:nth-child(1) {
-			width: 26%;
+			width: 24%;
 		}
 
 		td:nth-child(2) {
-			width: 22%;
+			width: 24%;
 			margin-left: -5px;
 		}
 
 		td:nth-child(3) {
-			width: 21%;
+			width: 22%;
 			margin-left: -5px;
 		}
 
@@ -391,17 +391,17 @@ try {
 		}
 		
 		.table th:nth-child(1) {
-			width: 27%;
+			width: 24%;
 		}
 
 		th:nth-child(2) {
-			width: 22%;
-			margin-left: -8px;
+			width: 24%;
+			margin-left: -7px;
 		}
 
 		th:nth-child(3) {
 			width: 22%;
-			margin-left: -5px;
+			margin-left: -3px;
 		}
 
 		th:nth-child(4) {
@@ -495,12 +495,13 @@ try {
 
         .equipment-count {
             color: #646464;
-            font-size: 14px;
-            padding-top: 5px;
+            font-size: 13px;
+            padding-top: 5.5px;
         }
 
         #equipmentCounter{
             font-weight: bold;
+			color: #b35656;
         }
     </style>
 </head>
