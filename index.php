@@ -268,7 +268,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
         </div>
         <div class="sign-in-form">
-            <form action="" method="POST" class="form-container">
+            <form action="index.php" method="POST" class="form-container">
                 <div class="sign-in-title">Sign In</div>
                 
                 <label for="email">Email Address</label>
