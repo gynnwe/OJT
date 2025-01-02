@@ -61,6 +61,9 @@ if (!$logs) {
 $spreadsheet = new Spreadsheet();
 $sheet = $spreadsheet->getActiveSheet();
 
+// Set default font to Arial, size 11
+$spreadsheet->getDefaultStyle()->getFont()->setName('Arial')->setSize(11);
+
 // Set header
 $headerColumns = ['A1' => 'Date', 'B1' => 'JO Number', 'C1' => 'Actions Taken', 'D1' => 'Remarks', 'E1' => 'Responsible SDMD Personnel'];
 foreach ($headerColumns as $cell => $value) {
