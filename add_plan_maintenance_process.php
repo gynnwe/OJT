@@ -25,8 +25,8 @@ try {
     
     function savePlanDetails($conn, $maintenancePlanId, $equipmentTypeId, $counts) {
         $query = "
-            INSERT INTO plan_details (maintenance_plan_id, month, target, equip_type_id, details, accomplishment)
-            VALUES (:maintenancePlanId, :month, :target, :equipmentTypeId, '', '')";
+            INSERT INTO plan_details (maintenance_plan_id, month, target, equip_type_id)
+            VALUES (:maintenancePlanId, :month, :target, :equipmentTypeId)";
     
         $stmt = $conn->prepare($query);
     

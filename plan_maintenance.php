@@ -37,7 +37,7 @@ function fetchMaintenancePlan($conn, $planId)
 
 function fetchPlanDetails($conn, $planId)
 {
-    $query = "SELECT month, target, equip_type_id, details, accomplishment 
+    $query = "SELECT month, target, equip_type_id 
                   FROM plan_details 
                   WHERE maintenance_plan_id = :planId";
     $stmt = $conn->prepare($query);
@@ -492,9 +492,7 @@ $years = getYears($conn);
 
                 // Add month details to the current equipment type
                 $processedDetails[$currentEquipType]['months'][$detail['month']] = [
-                    'target' => $detail['target'],
-                    'details' => $detail['details'],
-                    'accomplishment' => $detail['accomplishment']
+                    'target' => $detail['target']
                 ];
             }
 

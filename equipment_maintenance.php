@@ -92,33 +92,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $equipment_id = $_POST['equipment_id'];
 
         try {
-            // Create a new PDO connection
             $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
             $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-            // Check if personnel is selected from dropdown
-            if (isset($_POST['personnel_id']) && !empty($_POST['personnel_id'])) {
-                $personnel_id = intval($_POST['personnel_id']); // Get selected personnel ID
+            // Get personnel_id (will be NULL if "Not Applicable" is selected)
+            $personnel_id = !empty($_POST['personnel_id']) ? intval($_POST['personnel_id']) : null;
 
-                try {
-                    // Insert into maintenance logs table with remarks_id included
-                    $stmtInsertLog = $conn->prepare("INSERT INTO ict_maintenance_logs (jo_number, personnel_id, equipment_id, maintenance_date, actions_taken, remarks_id) VALUES (?, ?, ?, ?, ?, ?)");
-                    if (!$stmtInsertLog->execute([$jo_number, $personnel_id, $equipment_id, $maintaindate, $actions_taken, $remarks_id])) {
-                        print_r($stmtInsertLog->errorInfo()); 
-                    } else {
-                        header("Location: " . $_SERVER['PHP_SELF']);
-        exit;
-                    }
-                } catch (PDOException $e) {
+            try {
+                // Modified query to handle NULL personnel_id
+                $stmtInsertLog = $conn->prepare("INSERT INTO ict_maintenance_logs (jo_number, personnel_id, equipment_id, maintenance_date, actions_taken, remarks_id) VALUES (?, ?, ?, ?, ?, ?)");
+                if (!$stmtInsertLog->execute([$jo_number, $personnel_id, $equipment_id, $maintaindate, $actions_taken, $remarks_id])) {
+                    print_r($stmtInsertLog->errorInfo()); 
+                } else {
+                    header("Location: " . $_SERVER['PHP_SELF']);
+                    exit;
                 }
-            } else {
-                header("Location: " . $_SERVER['PHP_SELF']);
-        exit;
+            } catch (PDOException $e) {
+                // Handle error
             }
-
         } catch (PDOException $e) {
             header("Location: " . $_SERVER['PHP_SELF']);
-        exit;
+            exit;
         }
     } else {
         header("Location: " . $_SERVER['PHP_SELF']);
@@ -546,15 +540,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                     <div class="mb-3">
                         <label for="personnel">Personnel:</label>
-                        <select name="personnel_id" id="personnel" class="form-select" required>
+                        <select name="personnel_id" id="personnel" class="form-select">
+                            <option value="">Not Applicable</option>
                             <?php if (!empty($personnel_options)): ?>
                                 <?php foreach ($personnel_options as $person): ?>
                                     <option value="<?php echo htmlspecialchars($person['personnel_id']); ?>">
                                         <?php echo htmlspecialchars($person['firstname'] . " " . $person['lastname'] . " - " . $person['office']); ?>
                                     </option>
                                 <?php endforeach; ?>
-                            <?php else: ?>
-                                <option value="">No personnel added.</option>
                             <?php endif; ?>
                         </select>
                     </div>

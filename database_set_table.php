@@ -179,8 +179,6 @@ try {
         month ENUM('January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December') NOT NULL,
         target DECIMAL(5,2) NOT NULL,
         equip_type_id INT(7) UNSIGNED NOT NULL,
-        details VARCHAR(255) NOT NULL,
-        accomplishment VARCHAR(255) NOT NULL,
         FOREIGN KEY (maintenance_plan_id) REFERENCES maintenance_plan(id),
         FOREIGN KEY (equip_type_id) REFERENCES equipment_type(equip_type_id)
     )";

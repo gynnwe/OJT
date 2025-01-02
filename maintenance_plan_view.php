@@ -28,7 +28,7 @@ try {
         $planId = $_GET['plan_id'];
 
         // Fetch plan details
-        $queryPlan = "SELECT * FROM maintenance_plan WHERE id = :planId";
+        $queryPlan = "SELECT id, year, date_prepared, count, status FROM maintenance_plan WHERE id = :planId";
         $stmtPlan = $conn->prepare($queryPlan);
         $stmtPlan->execute([':planId' => $planId]);
         $maintenancePlan = $stmtPlan->fetch(PDO::FETCH_ASSOC);

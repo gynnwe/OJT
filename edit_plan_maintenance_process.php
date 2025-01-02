@@ -41,9 +41,9 @@ try {
     // Insert new plan details
     $insertDetailQuery = "
         INSERT INTO plan_details 
-        (maintenance_plan_id, month, target, equip_type_id, details, accomplishment) 
+        (maintenance_plan_id, month, target, equip_type_id) 
         VALUES 
-        (:plan_id, :month, :target, :equip_type_id, :details, :accomplishment)
+        (:plan_id, :month, :target, :equip_type_id)
     ";
     $stmtInsertDetail = $conn->prepare($insertDetailQuery);
 
@@ -75,9 +75,7 @@ try {
                 ':plan_id' => $plan_id,
                 ':month' => $month,
                 ':target' => $target,
-                ':equip_type_id' => $equip_type_id,
-                ':details' => "Updated maintenance plan for $month", // You might want to make this dynamic
-                ':accomplishment' => "" // Left empty, can be updated later
+                ':equip_type_id' => $equip_type_id
             ]);
         }
     }

@@ -255,7 +255,28 @@ try {
         <div class="row">
             <div class="col-md-9">
                 <div class="white-card">
-                    <h6>Progress This Year</h6>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h6>Maintenance Progress This Year</h6>
+                        <select id="yearSelect" class="form-control" style="width: auto; padding: 2px 5px; border-radius: 10px; border: 1px solid #ddd;">
+                            <?php
+                            // Get years from maintenance_plan table
+                            $yearQuery = "SELECT DISTINCT year FROM maintenance_plan WHERE status = 'submitted' ORDER BY year DESC";
+                            $yearStmt = $conn->prepare($yearQuery);
+                            $yearStmt->execute();
+                            $years = $yearStmt->fetchAll(PDO::FETCH_COLUMN);
+                            
+                            // If no plans exist, at least show current year
+                            if (empty($years)) {
+                                $years = [date('Y')];
+                            }
+                            
+                            foreach ($years as $year) {
+                                $selected = ($year == date('Y')) ? 'selected' : '';
+                                echo "<option value='$year' $selected>$year</option>";
+                            }
+                            ?>
+                        </select>
+                    </div>
                     <div id="progressChart" class="progress-chart"></div>
                 </div>
                 <div class="solid-card activity-feed">
@@ -343,50 +364,110 @@ try {
 
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <script>
-        var options = {
-            series: [{
-                name: 'Progress',
-                data: []
-            }],
-            chart: {
-                type: 'bar',
-                height: 200,
-                toolbar: {
-                    show: false
-                },
-                background: 'transparent'
-            },
-            colors: ['#632121', '#FFA500'],
-            plotOptions: {
-                bar: {
-                    borderRadius: 4,
-                    columnWidth: '60%',
-                }
-            },
-            grid: {
-                borderColor: '#e7e7e7',
-                strokeDashArray: 5
-            },
-            xaxis: {
-                categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                labels: {
-                    style: {
-                        colors: '#666'
-                    }
-                }
-            },
-            yaxis: {
-                labels: {
-                    style: {
-                        colors: '#666'
-                    }
-                }
-            }
-        };
+<?php
+// Fetch planned targets and actual maintenance counts
+$currentYear = date('Y');
+$monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
-        var chart = new ApexCharts(document.querySelector("#progressChart"), options);
-        chart.render();
-    </script>
+// Get the latest submitted maintenance plan for current year
+$planQuery = "SELECT id FROM maintenance_plan WHERE year = ? AND status = 'submitted' ORDER BY id DESC LIMIT 1";
+$planStmt = $conn->prepare($planQuery);
+$planStmt->execute([$currentYear]);
+$planId = $planStmt->fetchColumn();
+
+$plannedData = array_fill(0, 12, 0);
+$implementedData = array_fill(0, 12, 0);
+
+if ($planId) {
+    // Fetch planned targets
+    $targetQuery = "SELECT month, SUM(target) as target FROM plan_details 
+                   WHERE maintenance_plan_id = ? 
+                   GROUP BY month";
+    $targetStmt = $conn->prepare($targetQuery);
+    $targetStmt->execute([$planId]);
+    while ($row = $targetStmt->fetch(PDO::FETCH_ASSOC)) {
+        $monthIndex = array_search($row['month'], $monthNames);
+        $plannedData[$monthIndex] = floatval($row['target']);
+    }
+
+    // Fetch implemented maintenance counts
+    $implementedQuery = "SELECT MONTH(maintenance_date) as month, COUNT(*) as count 
+                       FROM ict_maintenance_logs 
+                       WHERE YEAR(maintenance_date) = ? 
+                       GROUP BY MONTH(maintenance_date)";
+    $implementedStmt = $conn->prepare($implementedQuery);
+    $implementedStmt->execute([$currentYear]);
+    while ($row = $implementedStmt->fetch(PDO::FETCH_ASSOC)) {
+        $implementedData[$row['month'] - 1] = intval($row['count']);
+    }
+}
+?>
+
+var options = {
+    series: [{
+        name: 'Planned',
+        data: <?php echo json_encode($plannedData); ?>
+    }, {
+        name: 'Implemented',
+        data: <?php echo json_encode($implementedData); ?>
+    }],
+    chart: {
+        type: 'bar',
+        height: 200,
+        toolbar: {
+            show: false
+        },
+        background: 'transparent'
+    },
+    colors: ['#FFC917', '#FF7805'],
+    plotOptions: {
+        bar: {
+            borderRadius: 4,
+            columnWidth: '60%',
+            dataLabels: {
+                position: 'top'
+            }
+        }
+    },
+    dataLabels: {
+        enabled: true,
+        formatter: function (val) {
+            return val.toFixed(0);
+        },
+        offsetY: -20,
+        style: {
+            fontSize: '12px',
+            colors: ["#666"]
+        }
+    },
+    grid: {
+        borderColor: '#e7e7e7',
+        strokeDashArray: 5
+    },
+    xaxis: {
+        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        labels: {
+            style: {
+                colors: '#666'
+            }
+        }
+    },
+    yaxis: {
+        labels: {
+            style: {
+                colors: '#666'
+            }
+        }
+    },
+    legend: {
+        position: 'top',
+        horizontalAlign: 'right'
+    }
+};
+
+var chart = new ApexCharts(document.querySelector("#progressChart"), options);
+chart.render();
+</script>
     <script>
         function toggleDropdown(element) {
             var dropdownContent = element.nextElementSibling;
@@ -397,5 +478,72 @@ try {
             }
         }
     </script>
+    <script>
+document.getElementById('yearSelect').addEventListener('change', function() {
+    const selectedYear = this.value;
+    
+    fetch('dashboard-content.php?action=get_data&year=' + selectedYear)
+        .then(response => response.json())
+        .then(data => {
+            chart.updateSeries([
+                { name: 'Planned', data: data.planned },
+                { name: 'Implemented', data: data.implemented }
+            ]);
+        });
+});
+
+<?php
+// Add this at the end of your PHP section
+if (isset($_GET['action']) && $_GET['action'] === 'get_data' && isset($_GET['year'])) {
+    $data = getMaintenanceData($conn, $_GET['year']);
+    header('Content-Type: application/json');
+    echo json_encode($data);
+    exit;
+}
+
+// Helper function to get maintenance data
+function getMaintenanceData($conn, $year) {
+    $monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    
+    // Get the maintenance plan for selected year
+    $planQuery = "SELECT id FROM maintenance_plan WHERE year = ? AND status = 'submitted' ORDER BY id DESC LIMIT 1";
+    $planStmt = $conn->prepare($planQuery);
+    $planStmt->execute([$year]);
+    $planId = $planStmt->fetchColumn();
+
+    $plannedData = array_fill(0, 12, 0);
+    $implementedData = array_fill(0, 12, 0);
+
+    if ($planId) {
+        // Fetch planned targets
+        $targetQuery = "SELECT month, SUM(target) as target FROM plan_details 
+                       WHERE maintenance_plan_id = ? 
+                       GROUP BY month";
+        $targetStmt = $conn->prepare($targetQuery);
+        $targetStmt->execute([$planId]);
+        while ($row = $targetStmt->fetch(PDO::FETCH_ASSOC)) {
+            $monthIndex = array_search($row['month'], $monthNames);
+            $plannedData[$monthIndex] = floatval($row['target']);
+        }
+
+        // Fetch implemented maintenance counts
+        $implementedQuery = "SELECT MONTH(maintenance_date) as month, COUNT(*) as count 
+                           FROM ict_maintenance_logs 
+                           WHERE YEAR(maintenance_date) = ? 
+                           GROUP BY MONTH(maintenance_date)";
+        $implementedStmt = $conn->prepare($implementedQuery);
+        $implementedStmt->execute([$year]);
+        while ($row = $implementedStmt->fetch(PDO::FETCH_ASSOC)) {
+            $implementedData[$row['month'] - 1] = intval($row['count']);
+        }
+    }
+
+    return [
+        'planned' => $plannedData,
+        'implemented' => $implementedData
+    ];
+}
+?>
+</script>
 </body>
 </html>
