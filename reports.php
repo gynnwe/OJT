@@ -10,12 +10,12 @@ include 'conn.php';
 
 // Pagination settings
 $records_per_page = 5;
-$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
 $offset = ($page - 1) * $records_per_page;
 
 // Pagination settings for non-serviceable
 $ns_records_per_page = 5;
-$ns_page = isset($_GET['ns_page']) ? (int)$_GET['ns_page'] : 1;
+$ns_page = isset($_GET['ns_page']) ? (int) $_GET['ns_page'] : 1;
 $ns_offset = ($ns_page - 1) * $ns_records_per_page;
 
 try {
@@ -28,9 +28,9 @@ try {
     FROM equipment e
     LEFT JOIN ict_maintenance_logs ml ON ml.equipment_id = e.equipment_id
 ";
-$count_stmt = $conn->query($count_sql);
-$total_records = $count_stmt->fetch(PDO::FETCH_ASSOC)['total'];
-$total_pages = ceil($total_records / $records_per_page);
+    $count_stmt = $conn->query($count_sql);
+    $total_records = $count_stmt->fetch(PDO::FETCH_ASSOC)['total'];
+    $total_pages = ceil($total_records / $records_per_page);
 
 
     // Count total non-serviceable equipment
@@ -68,8 +68,8 @@ $total_pages = ceil($total_records / $records_per_page);
         e.property_num ASC
     LIMIT :offset, :records_per_page
     ";
-    
-    
+
+
     $stmt = $conn->prepare($sql);
     $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
     $stmt->bindValue(':records_per_page', $records_per_page, PDO::PARAM_INT);
@@ -147,6 +147,7 @@ $total_pages = ceil($total_records / $records_per_page);
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -161,10 +162,10 @@ $total_pages = ceil($total_records / $records_per_page);
 
         .container {
             max-width: 1350px;
-        margin: 0 auto;
-        padding: 16px;
-        margin-right: 2.6rem !important;
-    }
+            margin: 0 auto;
+            padding: 16px;
+            margin-right: 2.6rem !important;
+        }
 
         /* Equipment Overview Section */
         .equipment-overview {
@@ -375,12 +376,12 @@ $total_pages = ceil($total_records / $records_per_page);
             flex: 1;
         }
 
-        #equipmentFilter{
+        #equipmentFilter {
             background-color: lightgray;
         }
 
-        #nonServiceableFilter{
-            background-color: lightgray; 
+        #nonServiceableFilter {
+            background-color: lightgray;
         }
 
         .filter-select,
@@ -486,7 +487,7 @@ $total_pages = ceil($total_records / $records_per_page);
             .stats-container {
                 grid-template-columns: repeat(2, 1fr);
             }
-            
+
             .equipment-table {
                 display: block;
                 overflow-x: auto;
@@ -503,7 +504,7 @@ $total_pages = ceil($total_records / $records_per_page);
             .charts-container {
                 grid-template-columns: 1fr;
             }
-            
+
             .chart-wrapper {
                 min-height: 250px;
             }
@@ -513,17 +514,17 @@ $total_pages = ceil($total_records / $records_per_page);
             .chart-wrapper {
                 min-height: 200px;
             }
-            
+
             .non-serviceable-table {
                 display: block;
                 overflow-x: auto;
             }
         }
-
     </style>
 </head>
+
 <body>
-    
+
     <div class="container mt-4">
         <!-- Equipment Overview Section -->
         <div class="equipment-overview">
@@ -550,7 +551,8 @@ $total_pages = ceil($total_records / $records_per_page);
                     <div class="stat-label">Non-Serviceable Equipment</div>
                 </div>
             </div>
-            <button class="view-non-serviceable-btn" id="toggle-non-serviceable">VIEW NON-SERVICEABLE EQUIPMENTS</button>
+            <button class="view-non-serviceable-btn" id="toggle-non-serviceable">VIEW NON-SERVICEABLE
+                EQUIPMENTS</button>
         </div>
 
         <!-- Equipment List Section -->
@@ -592,20 +594,26 @@ $total_pages = ceil($total_records / $records_per_page);
                                 <td><?= htmlspecialchars($log['latest_remarks']); ?></td>
                                 <td><?= htmlspecialchars($log['firstname'] . ' ' . $log['lastname']); ?></td>
                                 <td>
-                                    <a href="generate_report.php?property_num=<?= urlencode($log['property_num']); ?>" class="btn btn-primary view-plan-btn">VIEW PLAN</a>
-                                    <a href="generate_excel.php?property_num=<?= urlencode($log['property_num']); ?>" class="btn btn-success view-plan-btn">EXPORT TO EXCEL</a>
+                                    <a href="generate_report.php?property_num=<?= urlencode($log['property_num']); ?>"
+                                        class="btn btn-primary view-plan-btn">VIEW PLAN</a>
+                                    <a href="generate_excel.php?property_num=<?= urlencode($log['property_num']); ?>"
+                                        class="btn btn-success view-plan-btn">EXPORT TO EXCEL</a>
 
                                 </td>
                             </tr>
                         <?php endforeach; ?>
                     <?php else: ?>
-                        <tr><td colspan="6">No maintenance logs found.</td></tr>
+                        <tr>
+                            <td colspan="6">No maintenance logs found.</td>
+                        </tr>
                     <?php endif; ?>
                 </tbody>
             </table>
             <div class="pagination">
-                <a href="?page=<?= max(1, $page - 1) ?>" class="pagination-btn <?= ($page <= 1) ? 'disabled' : '' ?>">Previous</a>
-                <a href="?page=<?= min($total_pages, $page + 1) ?>" class="pagination-btn <?= ($page >= $total_pages) ? 'disabled' : '' ?>">Next</a>
+                <a href="?page=<?= max(1, $page - 1) ?>"
+                    class="pagination-btn <?= ($page <= 1) ? 'disabled' : '' ?>">Previous</a>
+                <a href="?page=<?= min($total_pages, $page + 1) ?>"
+                    class="pagination-btn <?= ($page >= $total_pages) ? 'disabled' : '' ?>">Next</a>
             </div>
         </div>
 
@@ -658,48 +666,52 @@ $total_pages = ceil($total_records / $records_per_page);
                             </tr>
                         <?php endforeach; ?>
                     <?php else: ?>
-                        <tr><td colspan="8">No non-serviceable equipment found.</td></tr>
+                        <tr>
+                            <td colspan="8">No non-serviceable equipment found.</td>
+                        </tr>
                     <?php endif; ?>
                 </tbody>
             </table>
             <div class="pagination">
-                <a href="?ns_page=<?= max(1, $ns_page - 1) ?>&page=<?= $page ?>" class="pagination-btn <?= ($ns_page <= 1) ? 'disabled' : '' ?>">Previous</a>
-                <a href="?ns_page=<?= min($ns_total_pages, $ns_page + 1) ?>&page=<?= $page ?>" class="pagination-btn <?= ($ns_page >= $ns_total_pages) ? 'disabled' : '' ?>">Next</a>
+                <a href="?ns_page=<?= max(1, $ns_page - 1) ?>&page=<?= $page ?>"
+                    class="pagination-btn <?= ($ns_page <= 1) ? 'disabled' : '' ?>">Previous</a>
+                <a href="?ns_page=<?= min($ns_total_pages, $ns_page + 1) ?>&page=<?= $page ?>"
+                    class="pagination-btn <?= ($ns_page >= $ns_total_pages) ? 'disabled' : '' ?>">Next</a>
             </div>
         </div>
 
         <!-- Charts Section -->
-            <div class="row">
-                <div class="col-md-6 mb-4">
-                    <div class="chart-card">
-                        <div class="chart-header">Latest Maintenance Remarks</div>
-                        <div class="chart-body">
-                            <canvas id="remarksChart"></canvas>
-                        </div>
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <div class="chart-card">
+                    <div class="chart-header">Latest Maintenance Remarks</div>
+                    <div class="chart-body">
+                        <canvas id="remarksChart"></canvas>
                     </div>
                 </div>
-                <div class="col-md-6 mb-4">
-                    <div class="chart-card">
-                        <div class="chart-header">Maintenance Status</div>
-                        <div class="chart-body">
-                            <canvas id="maintainedChart"></canvas>
-                        </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="chart-card">
+                    <div class="chart-header">Maintenance Status</div>
+                    <div class="chart-body">
+                        <canvas id="maintainedChart"></canvas>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // Toggle non-serviceable section
             const toggleButton = document.getElementById('toggle-non-serviceable');
             if (toggleButton) {
-                toggleButton.addEventListener('click', function() {
+                toggleButton.addEventListener('click', function () {
                     const section = document.getElementById('non-serviceable-section');
                     if (section) {
                         section.style.display = section.style.display === 'none' ? 'block' : 'none';
-                        this.textContent = section.style.display === 'none' ? 
+                        this.textContent = section.style.display === 'none' ?
                             'VIEW NON-SERVICEABLE EQUIPMENTS' : 'HIDE NON-SERVICEABLE EQUIPMENTS';
                     }
                 });
@@ -722,7 +734,7 @@ $total_pages = ceil($total_records / $records_per_page);
                     responsive: true,
                     maintainAspectRatio: false,
                     scales: {
-                        y: { 
+                        y: {
                             beginAtZero: true,
                             title: {
                                 display: true,
@@ -746,7 +758,7 @@ $total_pages = ceil($total_records / $records_per_page);
                     datasets: [{
                         data: Object.values(remarksData),
                         backgroundColor: [
-                            '#9C27B0', '#3F51B5', '#009688', 
+                            '#9C27B0', '#3F51B5', '#009688',
                             '#FFC107', '#795548', '#607D8B'
                         ],
                         borderWidth: 1
@@ -756,7 +768,7 @@ $total_pages = ceil($total_records / $records_per_page);
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: { 
+                        legend: {
                             position: 'bottom',
                             labels: {
                                 boxWidth: 12
@@ -769,12 +781,12 @@ $total_pages = ceil($total_records / $records_per_page);
             // Add event listeners for equipment table
             const equipmentFilter = document.getElementById('equipmentFilter');
             const equipmentSearch = document.getElementById('equipmentSearch');
-            
+
             if (equipmentFilter && equipmentSearch) {
                 equipmentFilter.addEventListener('change', () => {
                     filterAndSearch('equipmentTableBody', 'equipmentFilter', 'equipmentSearch', ['equipment_name', 'property_num', 'last_maintenance_date', 'latest_remarks', 'responsible_personnel']);
                 });
-                
+
                 equipmentSearch.addEventListener('input', () => {
                     filterAndSearch('equipmentTableBody', 'equipmentFilter', 'equipmentSearch', ['equipment_name', 'property_num', 'last_maintenance_date', 'latest_remarks', 'responsible_personnel']);
                 });
@@ -846,4 +858,5 @@ $total_pages = ceil($total_records / $records_per_page);
         });
     </script>
 </body>
+
 </html>
