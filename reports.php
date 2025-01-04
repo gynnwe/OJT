@@ -63,13 +63,12 @@ $total_pages = ceil($total_records / $records_per_page);
             WHERE sub_ml.equipment_id = ml.equipment_id
         )
     GROUP BY 
-        e.property_num
+        e.equip_name, e.property_num, ml.maintenance_date, r.remarks_name, p.firstname, p.lastname
     ORDER BY 
         e.property_num ASC
     LIMIT :offset, :records_per_page
-";
-
-
+    ";
+    
     
     $stmt = $conn->prepare($sql);
     $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
