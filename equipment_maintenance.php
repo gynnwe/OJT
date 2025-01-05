@@ -253,7 +253,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     .btn-primary:hover {
-        background-color: #a12c30 !important;
+        background-color: #d6766f !important;
     }
 
     .btn-secondary {
@@ -261,11 +261,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     .btn-secondary:hover {
-        background-color: #5c636a !important;
+        background-color: #c7c7c7 !important;
     }
 
     .btn-select {
-        background-color: maroon;
+        background-color: #a81519;
         color: #fff;
         font-weight: bold;
         padding: 4px 12px;
@@ -276,7 +276,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     .btn-select:hover {
-        background-color: #a12c30;
+        background-color: #d6766f;
         color: #fff;
     }
 
@@ -387,6 +387,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 		display: inline-block;
 		padding: 7px 10px 0px 10px;
 		background-color: transparent;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 		
 	tbody tr:hover {

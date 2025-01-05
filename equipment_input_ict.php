@@ -12,7 +12,6 @@ try {
     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    // Handle Delete Operation
     if (isset($_POST['delete_equipment'])) {
         $equipment_id = $_POST['equipment_id'];
         $sql = "UPDATE equipment SET deleted_id = 1 WHERE equipment_id = :equipment_id";
@@ -355,6 +354,9 @@ try {
 			display: inline-block;
 			padding: 0px 10px;
 			padding-top: 7px;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
 		}
 		
 		.table tbody tr:hover {
@@ -366,7 +368,7 @@ try {
 		}
 
 		td:nth-child(2) {
-			width: 24%;
+			width: 22%;
 			margin-left: -5px;
 		}
 
@@ -376,7 +378,7 @@ try {
 		}
 
 		td:nth-child(4) {
-			width: 15%;
+			width: 17%;
 			margin-left: -5px;
 		}
 
@@ -395,8 +397,8 @@ try {
 		}
 
 		th:nth-child(2) {
-			width: 24%;
-			margin-left: -7px;
+			width: 22%;
+			margin-left: -6px;
 		}
 
 		th:nth-child(3) {
@@ -405,7 +407,7 @@ try {
 		}
 
 		th:nth-child(4) {
-			width: 15%;
+			width: 17%;
 			margin-left: -2px;
 		}
 

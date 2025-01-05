@@ -274,10 +274,12 @@ if (isset($_SESSION['message'])) {
 			border-collapse: separate;
 			border-spacing: 10px 40px;
 			border: none;
-			/*height: 38.35px;*/
 			display: inline-block;
 			padding: 6px 10px;
 			padding-top: 6px;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
 		}
 
 		.table td img {

@@ -274,6 +274,9 @@ if (isset($_SESSION['message'])) {
 			border: none; 
 			display: inline-block;
 			padding: 6px 10px;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
 		}
 
 		.table td img {
