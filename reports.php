@@ -595,7 +595,7 @@ try {
                                 <td><?= htmlspecialchars($log['firstname'] . ' ' . $log['lastname']); ?></td>
                                 <td>
                                     <a href="generate_report.php?property_num=<?= urlencode($log['property_num']); ?>"
-                                        class="btn btn-primary view-plan-btn">VIEW PLAN</a>
+                                        class="btn btn-primary view-plan-btn">VIEW HISTORY</a>
                                     <a href="generate_excel.php?property_num=<?= urlencode($log['property_num']); ?>"
                                         class="btn btn-success view-plan-btn">EXPORT TO EXCEL</a>
 
